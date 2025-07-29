@@ -37,7 +37,7 @@
     "vite-plugin-electron": "^0.28.4",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vue": "^3.4.21",
-    "vue-tsc": "^2.0.6"
+    "vue-tsc": "^3.0.4"
   },
   "dependencies": {
     "mdui": "^2.1.4",

@@ -82,6 +82,46 @@ async function createWindow() {
     return { action: 'deny' }
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+
+  // ---------- Window actions ----------
+  ipcMain.on('win:close', () => {
+    win.close()
+  })
+  ipcMain.on('win:min', () => {
+    win.minimize()
+  })
+  ipcMain.on('win:tray', () => {
+    win.hide()
+    win.setSkipTaskbar(true)
+  })
+  ipcMain.on('win:max', (_event, toMax: boolean) => {
+    if (win.isMaximized()) {
+      win.unmaximize()
+    } else {
+      win.maximize()
+    }
+  })
+  ipcMain.on('win:relaunch', () => {
+    app.relaunch()
+    app.quit()
+  })
+
+  // ---------- Steam actions ----------
+  const { shell } = require('electron')
+  ipcMain.on('steam:launch', (_event, id: string) => {
+    // const steamPath = require('steam-path')
+    // const steamExecutable = path.join(steamPath, 'steam.exe')
+    if (os.platform() === 'win32') {
+      // shell.openPath(steamExecutable)
+      shell.openExternal(`steam://rungameid/${id}`)
+    } else {
+      console.warn('Steam launch is only supported on Windows.')
+    }
+  })
+
+  ipcMain.on('elec:openExtLink', (_event, url) => {
+    shell.openExternal(url)
+  })
 }
 
 app.whenReady().then(createWindow)

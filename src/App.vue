@@ -3,45 +3,59 @@ import '@mdui/icons/cell-tower--rounded.js'
 import '@mdui/icons/view-list--rounded.js'
 import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
-
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const winMax = () => {}
+const router = useRouter()
+
+const winMax = () => {
+  window.win.max()
+}
 
 const winMin = () => {
-  window.dispatchEvent(new Event('minimize'))
+  window.win.min()
 }
 
 const winClose = () => {
-  window.dispatchEvent(new Event('close'))
+  window.win.close()
 }
 
 const mode = ref(0) // 0: Server Status
-const modes = [
-  'Lobby Server Status',
-  'Public Server List',
-  'Setup Management, Settings',
-]
+const modes = ['Lobby服务器状态', '服务器列表', '调校管理', '设置']
+const pages = ['status', 'list', 'setup', 'settings']
+const nav = (index: number) => {
+  mode.value = index
+  router.push({ name: pages[index] })
+}
 </script>
 <template>
-  <div class="absolute right-0 top-0 z-[9999] focus">
-    <div class="traffic-lights focus no-drag py-3 px-2">
-      <div class="traffic-light traffic-light-maximize" @click="winMax"></div>
-      <div class="traffic-light traffic-light-minimize" @click="winMin"></div>
-      <div class="traffic-light traffic-light-close" @click="winClose"></div>
-    </div>
-  </div>
   <mdui-layout class="size-full">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
-      class="py-1 px-5"
+      class="py-1 pl-5 drag"
     >
-      <mdui-button-icon class="p-2">
+      <div class="absolute right-0 top-0 z-[9999] focus">
+        <div class="traffic-lights focus no-drag py-3 px-2">
+          <div
+            class="traffic-light traffic-light-maximize"
+            @click="winMax"
+          ></div>
+          <div
+            class="traffic-light traffic-light-minimize"
+            @click="winMin"
+          ></div>
+          <div
+            class="traffic-light traffic-light-close"
+            @click="winClose"
+          ></div>
+        </div>
+      </div>
+      <mdui-button-icon class="p-2 mr-5">
         <img src="@/assets/electron.svg" />
       </mdui-button-icon>
-      <mdui-top-app-bar-title class="title text-xl mt-2">
-        <span>Competizione Companion</span>
+      <mdui-top-app-bar-title class="text-xl mt-2">
+        <span class="title">争锋小助手</span>
         <span
           class="mx-4 opacity-60"
           style="font-family: 'Harmony OS Sans SC'; font-weight: 200"
@@ -51,11 +65,10 @@ const modes = [
           modes[mode]
         }}</span>
       </mdui-top-app-bar-title>
-      <mdui-button-icon class="pointer-events-none"></mdui-button-icon>
     </mdui-top-app-bar>
 
     <mdui-navigation-rail value="status" divider class="pb-4" contained>
-      <mdui-tooltip content="Lobby Server Status" placement="right">
+      <mdui-tooltip content="Lobby服务器状态" placement="right">
         <mdui-button-icon
           class="mb-2"
           :style="{
@@ -64,13 +77,13 @@ const modes = [
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="mode = 0"
+          @click="nav(0)"
         >
           <mdui-icon-cell-tower--rounded></mdui-icon-cell-tower--rounded>
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip content="Public Server List" placement="right">
+      <mdui-tooltip content="服务器列表" placement="right">
         <mdui-button-icon
           class="mb-2"
           :style="{
@@ -79,13 +92,13 @@ const modes = [
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="mode = 1"
+          @click="nav(1)"
         >
           <mdui-icon-view-list--rounded></mdui-icon-view-list--rounded>
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip content="Setup Management" placement="right">
+      <mdui-tooltip content="调校管理" placement="right">
         <mdui-button-icon
           class="mb-2"
           :style="{
@@ -94,13 +107,13 @@ const modes = [
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="mode = 2"
+          @click="nav(2)"
         >
           <mdui-icon-display-settings--rounded></mdui-icon-display-settings--rounded>
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip content="Settings" placement="right" slot="bottom">
+      <mdui-tooltip content="设置" placement="right" slot="bottom">
         <mdui-button-icon
           :style="{
             background:
@@ -108,7 +121,7 @@ const modes = [
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="mode = 3"
+          @click="nav(3)"
         >
           <mdui-icon-settings--rounded></mdui-icon-settings--rounded>
         </mdui-button-icon>
@@ -140,5 +153,13 @@ span {
     Google Sans Text,
     Harmony OS Sans SC,
     sans-serif;
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
 }
 </style>

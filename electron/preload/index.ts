@@ -23,9 +23,41 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   // ...
 })
 
+contextBridge.exposeInMainWorld('steam', {
+  launch: (id: string) => {
+    ipcRenderer.send('steam:launch', id)
+  },
+})
+
+contextBridge.exposeInMainWorld('win', {
+  close: () => {
+    ipcRenderer.send('win:close')
+  },
+  min: () => {
+    ipcRenderer.send('win:min')
+  },
+  tray: () => {
+    ipcRenderer.send('win:tray')
+  },
+  max: () => {
+    ipcRenderer.send('win:max')
+  },
+  relaunch: () => {
+    ipcRenderer.send('win:relaunch')
+  },
+})
+
+contextBridge.exposeInMainWorld('electron', {
+  openExtLink: (url: string) => {
+    ipcRenderer.send('elec:openExtLink', url)
+  },
+})
+
 // --------- Preload scripts loading ---------
-function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
-  return new Promise((resolve) => {
+function domReady(
+  condition: DocumentReadyState[] = ['complete', 'interactive'],
+) {
+  return new Promise(resolve => {
     if (condition.includes(document.readyState)) {
       resolve(true)
     } else {
@@ -111,7 +143,7 @@ function useLoading() {
 const { appendLoading, removeLoading } = useLoading()
 domReady().then(appendLoading)
 
-window.onmessage = (ev) => {
+window.onmessage = ev => {
   ev.data.payload === 'removeLoading' && removeLoading()
 }
 

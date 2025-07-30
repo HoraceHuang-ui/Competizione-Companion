@@ -4,6 +4,8 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   color-scheme: light dark;
+  cursor: default;
+  user-select: none;
 }
 
 a {

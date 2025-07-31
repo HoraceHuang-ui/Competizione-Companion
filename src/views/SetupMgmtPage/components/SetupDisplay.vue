@@ -6,15 +6,16 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  scrollValue: {
-    type: Number,
-    default: 0,
-  },
+})
+
+const scrollValue = defineModel({
+  type: Number,
+  default: 0,
 })
 </script>
 
 <template>
-  <ScrollWrapper> {{ props.setup }}</ScrollWrapper>
+  <ScrollWrapper v-model="scrollValue"> {{ props.setup }}</ScrollWrapper>
 </template>
 
 <style scoped></style>

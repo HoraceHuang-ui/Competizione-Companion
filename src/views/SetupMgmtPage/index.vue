@@ -280,7 +280,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
         <SetupDisplay
           v-else
           :setup="files[side as Side]"
-          :scroll-value="setupScroll"
+          v-model="setupScroll"
         />
       </div>
     </mdui-card>

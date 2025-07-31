@@ -23,7 +23,7 @@ const winClose = () => {
 
 const mode = ref(0) // 0: Server Status
 const modes = ['Lobby服务器状态', '服务器列表', '调校管理', '启动ACC', '设置']
-const pages = ['status', 'list', 'setup', 'settings']
+const pages = ['status', 'list', 'setup', '', 'settings']
 const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
@@ -140,7 +140,10 @@ const launchACC = () => {
           @click="launchACC"
           :disabled="launching"
         >
-          <mdui-circular-progress v-if="launching"></mdui-circular-progress>
+          <mdui-circular-progress
+            v-if="launching"
+            class="p-2"
+          ></mdui-circular-progress>
           <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
         </mdui-button-icon>
       </mdui-tooltip>

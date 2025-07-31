@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, PropType, ref } from 'vue'
+import { computed, onMounted, PropType, ref, watch } from 'vue'
 
 const props = defineProps({
   height: {
@@ -29,6 +29,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['scroll'])
+const scrollModel = defineModel({
+  type: Number,
+  default: 0,
+})
 
 const outerRef = ref()
 const innerRef = ref()
@@ -59,10 +63,21 @@ const barWidth = computed(() => {
   return widthPre.value * trackWidth.value
 })
 
+watch(
+  scrollModel,
+  (newVal: number) => {
+    if (outerRef.value) {
+      outerRef.value.scrollTop = newVal
+    }
+  },
+  { immediate: true },
+)
+
 const onScroll = (e: Event) => {
   translateX.value = (e.target as HTMLDivElement).scrollLeft * widthPre.value
   translateY.value = (e.target as HTMLDivElement).scrollTop * heightPre.value
 
+  scrollModel.value = (e.target as HTMLDivElement).scrollTop
   emit('scroll', {
     left: (e.target as HTMLDivElement).scrollLeft,
     top: (e.target as HTMLDivElement).scrollTop,

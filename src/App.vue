@@ -3,6 +3,7 @@ import '@mdui/icons/cell-tower--rounded.js'
 import '@mdui/icons/view-list--rounded.js'
 import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
+import '@mdui/icons/send--rounded.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -21,11 +22,20 @@ const winClose = () => {
 }
 
 const mode = ref(0) // 0: Server Status
-const modes = ['Lobby服务器状态', '服务器列表', '调校管理', '设置']
+const modes = ['Lobby服务器状态', '服务器列表', '调校管理', '启动ACC', '设置']
 const pages = ['status', 'list', 'setup', 'settings']
 const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
+}
+
+const launching = ref(false)
+const launchACC = () => {
+  launching.value = true
+  window.steam.launch('805550')
+  setTimeout(() => {
+    launching.value = false
+  }, 3000)
 }
 </script>
 <template>
@@ -113,15 +123,36 @@ const nav = (index: number) => {
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip content="设置" placement="right" slot="bottom">
+      <mdui-tooltip
+        content="启动ACC"
+        placement="right"
+        slot="bottom"
+        v-if="mode !== 0"
+      >
         <mdui-button-icon
+          class="mb-2"
           :style="{
             background:
               mode == 3
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="nav(3)"
+          @click="launchACC"
+          :disabled="launching"
+        >
+          <mdui-circular-progress v-if="launching"></mdui-circular-progress>
+          <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+        </mdui-button-icon>
+      </mdui-tooltip>
+      <mdui-tooltip content="设置" placement="right" slot="bottom">
+        <mdui-button-icon
+          :style="{
+            background:
+              mode == 4
+                ? 'rgb(var(--mdui-color-secondary-container))'
+                : 'transparent',
+          }"
+          @click="nav(4)"
         >
           <mdui-icon-settings--rounded></mdui-icon-settings--rounded>
         </mdui-button-icon>

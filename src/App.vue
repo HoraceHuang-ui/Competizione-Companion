@@ -33,7 +33,7 @@ const nav = (index: number) => {
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
-      class="py-1 pl-5 drag"
+      class="py-1 pl-5 pr-4 drag"
     >
       <div class="absolute right-0 top-0 z-[9999] focus">
         <div class="traffic-lights focus no-drag py-3 px-2">

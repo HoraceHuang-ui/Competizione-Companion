@@ -16,6 +16,7 @@ const leftFileInput = ref<HTMLInputElement | null>(null)
 const rightFileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref({ left: false, right: false })
 const setupScroll = ref(0)
+const setupOpenGroups = ref([])
 type Side = 'left' | 'right'
 
 const groups = ['GT3', 'GT4', 'Cup', 'TCX']
@@ -132,7 +133,22 @@ const readOrCreateFile = async (side: Side) => {
       curTrack.value[side]?.value,
       fileName.endsWith('.json') ? fileName : `${fileName}.json`,
     )
-    files.value[side] = JSON.parse(content)
+    const jsonContent = JSON.parse(content)
+    if (!jsonContent.carName) {
+      snackbar({
+        message: '不是有效的调校文件，请检查文件内容。',
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
+      snackbar({
+        message: `请选择${curGroup.value}组别车型。`,
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    files.value[side] = jsonContent
   } catch (error) {
     snackbar({
       message: '读取调校文件失败，请检查文件名是否正确。',
@@ -172,7 +188,7 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
     const jsonContent = JSON.parse(content)
     if (!jsonContent.carName) {
       snackbar({
-        message: '读取的文件不是有效的调校文件，请检查文件内容。',
+        message: '不是有效的调校文件，请检查文件内容。',
         autoCloseDelay: 3000,
       })
       return
@@ -184,6 +200,7 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
       })
       return
     }
+    fileSearch.value[side] = file.name
     files.value[side] = jsonContent
   }
 }
@@ -197,7 +214,7 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
     const jsonContent = JSON.parse(content)
     if (!jsonContent.carName) {
       snackbar({
-        message: '读取的文件不是有效的调校文件，请检查文件内容。',
+        message: '不是有效的调校文件，请检查文件内容。',
         autoCloseDelay: 3000,
       })
       return
@@ -209,6 +226,7 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
       })
       return
     }
+    fileSearch.value[side] = file.name
     files.value[side] = jsonContent
   } else {
     snackbar({
@@ -253,7 +271,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
       <div
         v-for="side in ['left', 'right']"
         :key="side"
-        class="w-1/2 h-full"
+        class="w-1/2 h-full relative"
         :class="{
           'ml-4 border-r border-[rgb(var(--mdui-color-surface-container-highest))]':
             side === 'left',
@@ -434,49 +452,84 @@ const handleDragLeave = (side: 'left' | 'right') => {
         <SetupDisplay
           v-else
           :setup="files[side as Side]"
-          v-model="setupScroll"
+          :side="side"
+          v-model:scroll="setupScroll"
+          v-model="setupOpenGroups"
+          :carData="carData[curGroup]"
+          :fileName="fileSearch[side as Side]"
         />
+        <mdui-fab
+          class="absolute bottom-4"
+          :class="{
+            'left-0': side === 'left',
+            'left-4': side === 'right',
+          }"
+          v-if="files[side as Side]"
+        >
+          <mdui-icon-delete--rounded slot="icon"></mdui-icon-delete--rounded>
+        </mdui-fab>
       </div>
     </mdui-card>
-
-    <!--    <mdui-tooltip>-->
-    <!--      <mdui-button-icon class="cursor-default">-->
-    <!--        <mdui-icon-help-outline&#45;&#45;rounded></mdui-icon-help-outline&#45;&#45;rounded>-->
-    <!--      </mdui-button-icon>-->
-
-    <!--      <div slot="content" class="p-2">-->
-    <!--        <div>调整驾驶时自动保存遥测数据的圈数，数据可放入MoTeC中对比分析。</div>-->
-
-    <!--        <div-->
-    <!--          class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
-    <!--        >-->
-    <!--          调高-->
-    <!--        </div>-->
-    <!--        <div>-->
-    <!--          存储更多圈数，更不容易丢失你的神之一圈；但遥测文件较大，会占用显著更多的存储空间。-->
-    <!--        </div>-->
-
-    <!--        <div-->
-    <!--          class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
-    <!--        >-->
-    <!--          调低-->
-    <!--        </div>-->
-    <!--        <div>存储更少圈数，节约存储空间。</div>-->
-
-    <!--        <div-->
-    <!--          class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
-    <!--        >-->
-    <!--          备注-->
-    <!--        </div>-->
-    <!--        <div>-->
-    <!--          圈速没到记录的102%建议直接关了，走好理解好线路比片面地抠一些细节更重要。-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </mdui-tooltip>-->
 
     <div
       class="absolute bottom-2 left-0 right-0 text-center text-gray-400 text-sm"
     >
+      <!--      <mdui-tooltip>-->
+      <!--        <mdui-button-icon class="cursor-default">-->
+      <!--          <mdui-icon-help-outline&#45;&#45;rounded></mdui-icon-help-outline&#45;&#45;rounded>-->
+      <!--        </mdui-button-icon>-->
+
+      <!--        <div slot="content" class="px-2 pb-2">-->
+      <!--          <mdui-tabs value="adjust">-->
+      <!--            <mdui-tab value="adjust">调节</mdui-tab>-->
+      <!--            <mdui-tab value="theory">原理</mdui-tab>-->
+
+      <!--            <mdui-tab-panel slot="panel" value="adjust" class="text-left mt-2">-->
+      <!--              <div>调整冷胎时的胎压。</div>-->
+
+      <!--              <div-->
+      <!--                class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
+      <!--              >-->
+      <!--                调高-->
+      <!--              </div>-->
+      <!--              <div>-->
+      <!--                可提供更多侧向支撑，初段反應更強，增加指向性,-->
+      <!--                而且可以壓制胎溫的上升; 但接觸面會減少，容易過載產生滑移。-->
+      <!--              </div>-->
+
+      <!--              <div-->
+      <!--                class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
+      <!--              >-->
+      <!--                调低-->
+      <!--              </div>-->
+      <!--              <div>-->
+      <!--                使轮胎更容易产生形变，增加接觸面，抓地上限會增加,-->
+      <!--                胎溫會上升的更快；但指向性弱，初段反應不積極，動態不線性。-->
+      <!--              </div>-->
+
+      <!--              <div-->
+      <!--                class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
+      <!--              >-->
+      <!--                备注-->
+      <!--              </div>-->
+      <!--              <div>-->
+      <!--                一般建议干胎暖胎后稳定在26.7-27.2psi,-->
+      <!--                高溫的情況下建議27.1-27.3psi；雨胎稳定在29.5-31.0psi。-->
+      <!--              </div>-->
+      <!--            </mdui-tab-panel>-->
+
+      <!--            <mdui-tab-panel slot="panel" value="theory">-->
+      <!--              <div>ACC遥测数据的圈速记录原理：</div>-->
+      <!--              <ul class="list-disc ml-6 mt-2">-->
+      <!--                <li>ACC会在每次完成一圈后记录该圈的圈速。</li>-->
+      <!--                <li>如果圈速超过102%，则不会记录该圈。</li>-->
+      <!--                <li>如果圈速低于102%，则会记录该圈。</li>-->
+      <!--                <li>ACC会自动保存最近的若干个有效圈速数据。</li>-->
+      <!--              </ul>-->
+      <!--            </mdui-tab-panel>-->
+      <!--          </mdui-tabs>-->
+      <!--        </div>-->
+      <!--      </mdui-tooltip>-->
       调校技术支持来自
       <img
         src="@/assets/DEA_light.png"
@@ -487,4 +540,14 @@ const handleDragLeave = (side: 'left' | 'right') => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+::part(container) {
+  background: transparent;
+}
+::part(label) {
+  color: rgb(var(--mdui-color-on-surface-invert));
+}
+::part(indicator) {
+  background: rgb(var(--mdui-color-inverse-primary));
+}
+</style>

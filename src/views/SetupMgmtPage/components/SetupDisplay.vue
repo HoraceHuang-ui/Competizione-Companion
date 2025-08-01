@@ -298,13 +298,8 @@ const setupGroups = [
           <mdui-list-item
             slot="header"
             class="list-header title my-2 rounded-full"
-            style="
-              --mdui-state-layer-hover: 0;
-              --mdui-state-layer-focus: 0;
-              --mdui-state-layer-pressed: 0;
-              transition: all var(--mdui-motion-duration-short4)
-                var(--mdui-motion-easing-standard);
-            "
+            style="background: rgba(var(--mdui-color-secondary-container), 0.4)"
+            rounded
           >
             {{ group[0] }}
             <Component slot="icon" :is="group[2]"></Component>
@@ -430,16 +425,4 @@ const setupGroups = [
   </div>
 </template>
 
-<style lang="scss" scoped>
-.list-header {
-  background: rgba(var(--mdui-color-secondary-container), 0.4);
-
-  &:hover {
-    background: rgb(var(--mdui-color-secondary-container));
-  }
-
-  &:active {
-    background: rgb(var(--mdui-color-inverse-primary));
-  }
-}
-</style>
+<style lang="scss" scoped></style>

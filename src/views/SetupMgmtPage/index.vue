@@ -102,6 +102,17 @@ watch(
   { immediate: false, deep: true },
 )
 
+const filteredSetupList = computed(() => {
+  return {
+    left: setupList.value.left.filter((file: string) =>
+      file.toLowerCase().includes(fileSearch.value.left.toLowerCase()),
+    ),
+    right: setupList.value.right.filter((file: string) =>
+      file.toLowerCase().includes(fileSearch.value.right.toLowerCase()),
+    ),
+  }
+})
+
 const readOrCreateFile = async (side: Side) => {
   if (files.value[side] !== undefined) {
     // 如果已经有文件了，直接显示
@@ -119,11 +130,10 @@ const readOrCreateFile = async (side: Side) => {
     const content = await window.fs.setupFile(
       curCar.value[side]?.value,
       curTrack.value[side]?.value,
-      fileName,
+      fileName.endsWith('.json') ? fileName : `${fileName}.json`,
     )
-    files.value[side] = content
+    files.value[side] = JSON.parse(content)
   } catch (error) {
-    console.error('读取调校文件失败:', error)
     snackbar({
       message: '读取调校文件失败，请检查文件名是否正确。',
       autoCloseDelay: 3000,
@@ -139,7 +149,7 @@ const onSelectGroup = (group: string) => {
   }
 }
 const onSelectCar = (side: Side, car: [string, any]) => {
-  curCar.value[side] = { value: car[0], label: car[1].name }
+  curCar.value[side] = { value: car[0], label: car[1].shortName }
 }
 
 const files = ref({
@@ -159,7 +169,22 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
     const content = await file.text()
-    files.value[side] = content
+    const jsonContent = JSON.parse(content)
+    if (!jsonContent.carName) {
+      snackbar({
+        message: '读取的文件不是有效的调校文件，请检查文件内容。',
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
+      snackbar({
+        message: `请选择${curGroup.value}组别车型。`,
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    files.value[side] = jsonContent
   }
 }
 
@@ -169,8 +194,22 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
   const file = event.dataTransfer?.files?.[0]
   if (file && file.type === 'application/json') {
     const content = await file.text()
-    files.value[side] = content
-    console.log(`${side} file dropped:`, file.name)
+    const jsonContent = JSON.parse(content)
+    if (!jsonContent.carName) {
+      snackbar({
+        message: '读取的文件不是有效的调校文件，请检查文件内容。',
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
+      snackbar({
+        message: `请选择${curGroup.value}组别车型。`,
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    files.value[side] = jsonContent
   } else {
     snackbar({
       message: '文件读取失败，请拖入JSON类型的ACC调校文件。',
@@ -256,8 +295,8 @@ const handleDragLeave = (side: 'left' | 'right') => {
 
           <div
             class="w-full absolute bottom-0 left-0 right-0 flex flex-col items-center"
+            v-if="!isDragging[side as Side]"
           >
-            <mdui-divider></mdui-divider>
             <div class="text-sm font-light">或读取游戏文档</div>
             <div class="flex flex-row justify-center items-center flex-wrap">
               <mdui-dropdown placement="top">
@@ -306,7 +345,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
                       :value="car[0]"
                       @click="onSelectCar(side as Side, car)"
                     >
-                      {{ car[1].name }}
+                      {{ car[1].shortName }}
                     </mdui-menu-item>
                   </ScrollWrapper>
                 </mdui-menu>
@@ -331,11 +370,11 @@ const handleDragLeave = (side: 'left' | 'right') => {
                       @click="
                         curTrack[side as Side] = {
                           value: track[0],
-                          label: track[2],
+                          label: track[1],
                         }
                       "
                     >
-                      {{ track[2] }}
+                      {{ track[1] }}
                     </mdui-menu-item>
                   </ScrollWrapper>
                 </mdui-menu>
@@ -381,11 +420,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
                   <mdui-menu-item
                     v-for="file in fileSearch[side as Side].length == 0
                       ? setupList[side as Side]
-                      : setupList[side as Side].filter((f: string) =>
-                          f
-                            .toLowerCase()
-                            .includes(fileSearch[side as Side].toLowerCase()),
-                        )"
+                      : filteredSetupList[side as Side]"
                     :key="file"
                     @click="fileSearch[side as Side] = file"
                   >

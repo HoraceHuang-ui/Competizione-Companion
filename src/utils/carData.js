@@ -3,6 +3,7 @@ const data = {
   GT3: {
     amr_v8_vantage_gt3: {
       name: 'AMR V8 Vantage GT3',
+      shortName: 'AMR V8',
       tirePressureMin: 20.3,
       casterFunc: v => v * 0.18 + 10.7,
       toeMins: [-0.4, -0.4],
@@ -17,6 +18,7 @@ const data = {
     },
     audi_r8_lms_evo_ii: {
       name: 'Audi R8 LMS evo II',
+      shortName: 'R8 Evo2',
       tirePressureMin: 20.3,
       casterFunc: v => (v * (16.8 - 8.8)) / 34 + 8.8,
       toeMins: [-0.4, -0.4],
@@ -31,6 +33,7 @@ const data = {
     },
     bentley_continental_gt3_2018: {
       name: 'Bentley Continental GT3 2018',
+      shortName: 'Bentley',
       tirePressureMin: 20.3,
       casterFunc: v => v * 0.24 + 8.3,
       toeMins: [-0.4, -0.4],
@@ -51,6 +54,7 @@ const data = {
     },
     bmw_m4_gt3: {
       name: 'BMW M4 GT3',
+      shortName: 'BMW M4',
       tirePressureMin: 20.3,
       casterFunc: v => v * 0.195 + 6.1,
       toeMins: [-0.2, 0],
@@ -65,6 +69,7 @@ const data = {
     },
     ferrari_296_gt3: {
       name: 'Ferrari 296 GT3',
+      shortName: 'Ferrari 296',
       tirePressureMin: 20.3,
       casterFunc: v => (v * (13.8 - 8.5)) / 30 + 8.5,
       toeMins: [-0.4, -0.4],
@@ -85,6 +90,7 @@ const data = {
     },
     honda_nsx_gt3_evo: {
       name: 'Honda NSX GT3 Evo',
+      shortName: 'NSX Evo',
       tirePressureMin: 20.3,
       casterFunc: v => v * 0.19 + 7.2,
       toeMins: [-0.4, -0.4],
@@ -105,6 +111,7 @@ const data = {
     },
     lamborghini_huracan_gt3_evo2: {
       name: 'Lamborghini Huracán GT3 EVO2',
+      shortName: 'Lambo Evo2',
       tirePressureMin: 20.3,
       casterFunc: v => (v * (15 - 6.2)) / 34 + 6.2,
       toeMins: [-0.4, -0.4],
@@ -119,6 +126,7 @@ const data = {
     },
     lexus_rc_f_gt3: {
       name: 'Lexus RC F GT3',
+      shortName: 'Lexus RC F',
       tirePressureMin: 20.3,
       casterFunc: v => v * 0.19 + 7.9,
       toeMins: [-0.4, -0.4],
@@ -133,6 +141,7 @@ const data = {
     },
     mclaren_720s_gt3_evo: {
       name: 'McLaren 720S GT3 Evo',
+      shortName: 'McLaren 720S Evo',
       tirePressureMin: 20.3,
       casterFunc: v => (v * (16.3 - 5.3)) / 46 + 5.3,
       toeMins: [-0.48, -0.1],
@@ -147,6 +156,7 @@ const data = {
     },
     mercedes_amg_gt3_evo: {
       name: 'Mercedes-AMG GT3 2020',
+      shortName: 'AMG Evo',
       tirePressureMin: 20.3,
       casterFunc: v => v * (14.1 - 6) + 6,
       toeMins: [-0.4, -0.4],
@@ -161,6 +171,7 @@ const data = {
     },
     nissan_gt_r_gt3_2018: {
       name: 'Nissan GT-R Nismo GT3 2018',
+      shortName: 'Nissan GT-R',
       tirePressureMin: 20.3,
       casterFunc: v => v * 0.18 + 12.5,
       toeMins: [-0.2, 0],
@@ -175,6 +186,7 @@ const data = {
     },
     porsche_992_gt3_r: {
       name: 'Porsche 992 GT3 R',
+      shortName: '992 R',
       tirePressureMin: 20.3,
       casterFunc: v => (v * (12.4 - 6.5)) / 30 + 6.5,
       toeMins: [-0.4, -0.4],
@@ -193,6 +205,7 @@ const data = {
   GT4: {
     alpine_a110_gt4: {
       name: 'Alpine A110 GT4',
+      shortName: 'Alpine A110',
       tirePressureMin: 17,
       casterFunc: v => (v * (13.7 - 7.3)) / 34 + 7.3,
       toeMins: [-0.4, -0.4],
@@ -207,6 +220,7 @@ const data = {
     },
     amr_v8_vantage_gt4: {
       name: 'AMR V8 Vantage GT4',
+      shortName: 'AMR V8',
       tirePressureMin: 17,
       casterFunc: v => v * 0.18 + 10.7,
       toeMins: [-0.4, -0.4],
@@ -221,6 +235,7 @@ const data = {
     },
     audi_r8_gt4: {
       name: 'Audi R8 LMS GT4',
+      shortName: 'Audi R8',
       tirePressureMin: 17,
       casterFunc: v => (v * (13.3 - 6.6)) / 34 + 6.6,
       toeMins: [-0.4, -0.4],
@@ -235,6 +250,7 @@ const data = {
     },
     chevrolet_camaro_gt4r: {
       name: 'Chevrolet Camaro GT4.R',
+      shortName: 'Camaro',
       tirePressureMin: 17,
       casterFunc: v => 7.1,
       toeMins: [-0.2, 0.0],
@@ -249,6 +265,7 @@ const data = {
     },
     ginetta_g55_gt4: {
       name: 'Ginetta G55 GT4',
+      shortName: 'Ginetta G55',
       tirePressureMin: 17,
       casterFunc: v => v * 0.2625 + 3.7,
       toeMins: [-0.4, -0.4],
@@ -263,6 +280,7 @@ const data = {
     },
     maserati_mc_gt4: {
       name: 'Maserati GranTurismo MC GT4',
+      shortName: 'Maserati GT MC',
       tirePressureMin: 17,
       casterFunc: v => v * 0.22 + 3.4,
       toeMins: [-0.4, -0.4],
@@ -277,6 +295,7 @@ const data = {
     },
     mclaren_570s_gt4: {
       name: 'McLaren 570S GT4',
+      shortName: 'McLaren 570S',
       tirePressureMin: 17,
       casterFunc: v => v * 0.245 + 5.3,
       toeMins: [-0.4, -0.4],
@@ -291,6 +310,7 @@ const data = {
     },
     mercedes_amg_gt4: {
       name: 'Mercedes-AMG GT4',
+      shortName: 'AMG',
       tirePressureMin: 17,
       casterFunc: v => v * 0.18 + 9.2,
       toeMins: [-0.2, 0.0],
@@ -302,6 +322,7 @@ const data = {
     },
     porsche_718_cayman_gt4_mr: {
       name: 'Porsche 718 Cayman GT4 Clubsport',
+      shortName: '718 Cayman',
       tirePressureMin: 17,
       casterFunc: v => (v * (10.2 - 7.3)) / 28 + 7.3,
       toeMins: [-0.4, -0.4],
@@ -320,6 +341,7 @@ const data = {
   Cup: {
     ferrari_488_challenge_evo: {
       name: 'Ferrari 488 Challenge Evo',
+      shortName: '488 Challenge Evo',
       tirePressureMin: 17,
       casterFunc: v => (v * (20.6 - 5.0)) / 98 + 5.0,
       toeMins: [-0.4, -0.4],
@@ -334,6 +356,7 @@ const data = {
     },
     lamborghini_huracan_st_evo2: {
       name: 'Lamborghini Huracan ST EVO2',
+      shortName: 'Lambo ST Evo2',
       tirePressureMin: 20.3,
       casterFunc: v => (v * (17.4 - 10.7)) / 34 + 10.7,
       toeMins: [-0.4, -0.4],
@@ -348,6 +371,7 @@ const data = {
     },
     porsche_992_gt3_cup: {
       name: 'Porsche 992 GT3 Cup',
+      shortName: '992 Cup',
       tirePressureMin: 20.3,
       casterFunc: v => 14.8,
       toeMins: [-0.4, -0.4],
@@ -363,6 +387,7 @@ const data = {
   TCX: {
     bmw_m2_cs_racing: {
       name: 'BMW M2 CS Racing',
+      shortName: 'BMW M2 CS',
       tirePressureMin: 17,
       casterFunc: v => 8.5,
       toeMins: [-0.2, 0],

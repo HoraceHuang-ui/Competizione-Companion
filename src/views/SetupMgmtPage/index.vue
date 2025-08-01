@@ -19,6 +19,10 @@ const setupScroll = ref(0)
 const setupOpenGroups = ref([])
 type Side = 'left' | 'right'
 
+const counterSide = (side: Side) => {
+  return side === 'left' ? 'right' : 'left'
+}
+
 const groups = ['GT3', 'GT4', 'Cup', 'TCX']
 const curGroup = ref('GT3')
 const setupList = ref({
@@ -412,7 +416,11 @@ const handleDragLeave = (side: 'left' | 'right') => {
                 :value="fileSearch[side as Side]"
                 @input="fileSearch[side as Side] = $event.target.value"
                 placeholder="请输入或选择调校文件名"
-                class="mt-2 transition-all cursor-text"
+                style="
+                  transition: all var(--mdui-motion-duration-short4)
+                    var(--mdui-motion-easing-standard);
+                "
+                class="mt-2 cursor-text"
                 :class="{
                   'pl-4 pr-6': side === 'left',
                   'pl-6 pr-4': side === 'right',
@@ -457,6 +465,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
           v-model="setupOpenGroups"
           :carData="carData[curGroup]"
           :fileName="fileSearch[side as Side]"
+          :compareSetup="files[counterSide(side) as Side]"
         />
         <mdui-fab
           class="absolute bottom-4"
@@ -465,6 +474,12 @@ const handleDragLeave = (side: 'left' | 'right') => {
             'left-4': side === 'right',
           }"
           v-if="files[side as Side]"
+          @click="
+            () => {
+              files[side as Side] = undefined
+              fileSearch[side as Side] = ''
+            }
+          "
         >
           <mdui-icon-delete--rounded slot="icon"></mdui-icon-delete--rounded>
         </mdui-fab>

@@ -122,6 +122,72 @@ async function createWindow() {
   ipcMain.on('elec:openExtLink', (_event, url) => {
     shell.openExternal(url)
   })
+
+  /**
+   * 在一个目录中查找与目标名称大小写不敏感相等的真实文件夹名
+   */
+  const fs = require('fs')
+  function findCaseInsensitiveName(parentDir, targetName) {
+    const items = fs.readdirSync(parentDir, { withFileTypes: true })
+    const lowerTarget = targetName.toLowerCase()
+
+    for (const item of items) {
+      if (item.isDirectory() && item.name.toLowerCase() === lowerTarget) {
+        return item.name // 返回真实名字
+      }
+    }
+
+    return null // 找不到
+  }
+  ipcMain.handle('fs:setupList', async (_event, car, track) => {
+    const setupsDir = path.join(
+      os.homedir(),
+      'Documents',
+      'Assetto Corsa Competizione',
+      'Setups',
+    )
+    if (!fs.existsSync(setupsDir)) {
+      return []
+    }
+
+    const realCar = findCaseInsensitiveName(setupsDir, car)
+    if (!realCar) {
+      fs.mkdirSync(path.join(setupsDir, car), { recursive: true })
+    }
+    const realTrack = findCaseInsensitiveName(
+      path.join(setupsDir, realCar || car),
+      track,
+    )
+    if (!realTrack) {
+      fs.mkdirSync(path.join(setupsDir, realCar || car, track), {
+        recursive: true,
+      })
+    }
+
+    const setupsPath = path.join(setupsDir, realCar, realTrack)
+    return fs.readdirSync(setupsPath).filter(file => file.endsWith('.json'))
+  })
+
+  ipcMain.handle('fs:setupFile', async (_event, car, track, fileName) => {
+    const setupsDir = path.join(
+      os.homedir(),
+      'Documents',
+      'Assetto Corsa Competizione',
+      'Setups',
+    )
+    const realCar = findCaseInsensitiveName(setupsDir, car)
+    const realTrack = findCaseInsensitiveName(
+      path.join(setupsDir, realCar || car),
+      track,
+    )
+    const setupPath = path.join(setupsDir, realCar, realTrack, fileName)
+    if (fs.existsSync(setupPath)) {
+      return fs.readFileSync(setupPath, 'utf-8')
+    } else {
+      fs.writeFileSync(setupPath, '{}', 'utf-8')
+      return '{}'
+    }
+  })
 }
 
 app.whenReady().then(createWindow)

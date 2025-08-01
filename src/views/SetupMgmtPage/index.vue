@@ -2,7 +2,7 @@
 import '@mdui/icons/help-outline--rounded.js'
 import '@mdui/icons/file-upload--rounded.js'
 
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { snackbar } from 'mdui'
 import carData from '@/utils/carData'
 import SetupDisplay from '@/views/SetupMgmtPage/components/SetupDisplay.vue'
@@ -10,6 +10,7 @@ import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/arrow-drop-down--rounded.js'
 import '@mdui/icons/directions-car--rounded.js'
 import '@mdui/icons/location-on--rounded.js'
+import '@mdui/icons/check--rounded.js'
 
 const leftFileInput = ref<HTMLInputElement | null>(null)
 const rightFileInput = ref<HTMLInputElement | null>(null)
@@ -19,6 +20,14 @@ type Side = 'left' | 'right'
 
 const groups = ['GT3', 'GT4', 'Cup', 'TCX']
 const curGroup = ref('GT3')
+const setupList = ref({
+  left: [],
+  right: [],
+})
+const fileSearch = ref({
+  left: '',
+  right: '',
+})
 const tracks = [
   // 文件夹名，英文简写，英文全写，中文
   ['barcelona', 'Barcelona', 'Circuit de Barcelona-Catalunya', '巴塞罗那'],
@@ -65,6 +74,63 @@ const curTrack = ref({
   left: undefined,
   right: undefined,
 })
+
+const enableSearch = computed(() => {
+  return {
+    left: curTrack.value.left !== undefined && curCar.value.left !== undefined,
+    right:
+      curTrack.value.right !== undefined && curCar.value.right !== undefined,
+  }
+})
+
+watch(
+  [curCar, curTrack],
+  async () => {
+    if (enableSearch.value.left) {
+      setupList.value.left = await window.fs.setupList(
+        curCar.value.left?.value,
+        curTrack.value.left?.value,
+      )
+    }
+    if (enableSearch.value.right) {
+      setupList.value.right = await window.fs.setupList(
+        curCar.value.right?.value,
+        curTrack.value.right?.value,
+      )
+    }
+  },
+  { immediate: false, deep: true },
+)
+
+const readOrCreateFile = async (side: Side) => {
+  if (files.value[side] !== undefined) {
+    // 如果已经有文件了，直接显示
+    return
+  }
+  const fileName = fileSearch.value[side]
+  if (fileName === '') {
+    snackbar({
+      message: '请输入或选择调校文件名。',
+      autoCloseDelay: 3000,
+    })
+    return
+  }
+  try {
+    const content = await window.fs.setupFile(
+      curCar.value[side]?.value,
+      curTrack.value[side]?.value,
+      fileName,
+    )
+    files.value[side] = content
+  } catch (error) {
+    console.error('读取调校文件失败:', error)
+    snackbar({
+      message: '读取调校文件失败，请检查文件名是否正确。',
+      autoCloseDelay: 3000,
+    })
+  }
+}
+
 const onSelectGroup = (group: string) => {
   curGroup.value = group
   curCar.value = {
@@ -275,6 +341,59 @@ const handleDragLeave = (side: 'left' | 'right') => {
                 </mdui-menu>
               </mdui-dropdown>
             </div>
+            <mdui-dropdown
+              :disabled="
+                !enableSearch[side as Side] ||
+                setupList[side as Side].length == 0
+              "
+              placement="top"
+            >
+              <mdui-text-field
+                slot="trigger"
+                variant="outlined"
+                :disabled="!enableSearch[side as Side]"
+                :value="fileSearch[side as Side]"
+                @input="fileSearch[side as Side] = $event.target.value"
+                placeholder="请输入或选择调校文件名"
+                class="mt-2 transition-all cursor-text"
+                :class="{
+                  'pl-4 pr-6': side === 'left',
+                  'pl-6 pr-4': side === 'right',
+                  'opacity-30': !enableSearch[side as Side],
+                }"
+              >
+                <mdui-button-icon
+                  slot="end-icon"
+                  class="text-[rgb(var(--mdui-color-primary))]"
+                  :disabled="fileSearch[side as Side] == ''"
+                  @click="readOrCreateFile(side as Side)"
+                >
+                  <mdui-icon-check--rounded></mdui-icon-check--rounded>
+                </mdui-button-icon>
+              </mdui-text-field>
+
+              <mdui-menu>
+                <ScrollWrapper
+                  :height="
+                    setupList[side as Side].length > 8 ? '390px' : '100%'
+                  "
+                >
+                  <mdui-menu-item
+                    v-for="file in fileSearch[side as Side].length == 0
+                      ? setupList[side as Side]
+                      : setupList[side as Side].filter((f: string) =>
+                          f
+                            .toLowerCase()
+                            .includes(fileSearch[side as Side].toLowerCase()),
+                        )"
+                    :key="file"
+                    @click="fileSearch[side as Side] = file"
+                  >
+                    {{ file }}
+                  </mdui-menu-item>
+                </ScrollWrapper>
+              </mdui-menu>
+            </mdui-dropdown>
           </div>
         </div>
         <SetupDisplay

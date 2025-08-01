@@ -53,6 +53,15 @@ contextBridge.exposeInMainWorld('electron', {
   },
 })
 
+contextBridge.exposeInMainWorld('fs', {
+  setupList: (car: string, track: string) => {
+    return ipcRenderer.invoke('fs:setupList', car, track)
+  },
+  setupFile: (car: string, track: string, fileName: string) => {
+    return ipcRenderer.invoke('fs:setupFile', car, track, fileName)
+  },
+})
+
 // --------- Preload scripts loading ---------
 function domReady(
   condition: DocumentReadyState[] = ['complete', 'interactive'],

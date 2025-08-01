@@ -11,6 +11,7 @@ import '@mdui/icons/arrow-drop-down--rounded.js'
 import '@mdui/icons/directions-car--rounded.js'
 import '@mdui/icons/location-on--rounded.js'
 import '@mdui/icons/check--rounded.js'
+import ChipSelect from '@/components/ChipSelect.vue'
 
 const leftFileInput = ref<HTMLInputElement | null>(null)
 const rightFileInput = ref<HTMLInputElement | null>(null)
@@ -169,6 +170,7 @@ const onSelectGroup = (group: string) => {
   }
 }
 const onSelectCar = (side: Side, car: [string, any]) => {
+  console.log(car)
   curCar.value[side] = { value: car[0], label: car[1].shortName }
 }
 
@@ -321,86 +323,62 @@ const handleDragLeave = (side: 'left' | 'right') => {
           >
             <div class="text-sm font-light">或读取游戏文档</div>
             <div class="flex flex-row justify-center items-center flex-wrap">
-              <mdui-dropdown placement="top">
-                <mdui-chip
-                  slot="trigger"
-                  class="bg-[rgb(var(--mdui-color-on-primary))] mx-2 mt-2"
-                >
-                  {{ curGroup }}
-                  <mdui-icon-arrow-drop-down--rounded
-                    slot="end-icon"
-                  ></mdui-icon-arrow-drop-down--rounded>
-                </mdui-chip>
-                <mdui-menu>
-                  <mdui-menu-item
-                    v-for="group in groups"
-                    :key="group"
-                    :value="group"
-                    @click="onSelectGroup(group)"
-                  >
-                    {{ group }}
-                  </mdui-menu-item>
-                </mdui-menu>
-              </mdui-dropdown>
+              <ChipSelect
+                v-model="curGroup"
+                chip-class="bg-[rgb(var(--mdui-color-on-primary))] mx-2 mt-2"
+                dropdown-placement="top"
+                :items="groups"
+                @select="onSelectGroup"
+              >
+              </ChipSelect>
 
-              <mdui-dropdown placement="top">
-                <mdui-chip slot="trigger" class="mt-2">
-                  {{ curCar[side as Side]?.label || '请选择车型' }}
+              <ChipSelect
+                v-model="curCar[side as Side]"
+                placeholder="请选择车型"
+                dropdown-placement="top"
+                :items="Object.entries(carData[curGroup])"
+                chip-class="mt-2 mx-2"
+                :for-key="(car: [string, any]) => car[0]"
+                :for-value="(car: [string, any]) => car[0]"
+                :item-label="(car: [string, any]) => car[1].shortName"
+                :chip-label="(car: any) => car.label"
+                @select="item => onSelectCar(side as Side, item)"
+              >
+                <template #icon>
                   <mdui-icon-directions-car--rounded
-                    slot="icon"
+                    class="h-[1.125rem]"
                   ></mdui-icon-directions-car--rounded>
-                  <mdui-icon-arrow-drop-down--rounded
-                    slot="end-icon"
-                  ></mdui-icon-arrow-drop-down--rounded>
-                </mdui-chip>
-                <mdui-menu>
-                  <ScrollWrapper
-                    :height="
-                      Object.keys(carData[curGroup]).length > 8
-                        ? '390px'
-                        : '100%'
-                    "
-                  >
-                    <mdui-menu-item
-                      v-for="car in Object.entries(carData[curGroup])"
-                      :key="car[0]"
-                      :value="car[0]"
-                      @click="onSelectCar(side as Side, car)"
-                    >
-                      {{ car[1].shortName }}
-                    </mdui-menu-item>
-                  </ScrollWrapper>
-                </mdui-menu>
-              </mdui-dropdown>
+                </template>
+              </ChipSelect>
 
-              <mdui-dropdown placement="top">
-                <mdui-chip slot="trigger" class="mt-2 mx-2">
-                  {{ curTrack[side as Side]?.label || '请选择赛道' }}
+              <ChipSelect
+                v-model="curTrack[side as Side]"
+                placeholder="请选择赛道"
+                dropdown-placement="top"
+                :items="tracks"
+                chip-class="mt-2 mx-2"
+                :for-key="(track: [string, string, string, string]) => track[0]"
+                :for-value="
+                  (track: [string, string, string, string]) => track[0]
+                "
+                :item-label="
+                  (track: [string, string, string, string]) => track[1]
+                "
+                :chip-label="(track: any) => track.label"
+                @select="
+                  item =>
+                    (curTrack[side as Side] = {
+                      value: item[0],
+                      label: item[1],
+                    })
+                "
+              >
+                <template #icon>
                   <mdui-icon-location-on--rounded
-                    slot="icon"
+                    class="h-[1.125rem]"
                   ></mdui-icon-location-on--rounded>
-                  <mdui-icon-arrow-drop-down--rounded
-                    slot="end-icon"
-                  ></mdui-icon-arrow-drop-down--rounded>
-                </mdui-chip>
-                <mdui-menu>
-                  <ScrollWrapper height="390px">
-                    <mdui-menu-item
-                      v-for="track in tracks"
-                      :key="track[0]"
-                      :value="track[0]"
-                      @click="
-                        curTrack[side as Side] = {
-                          value: track[0],
-                          label: track[1],
-                        }
-                      "
-                    >
-                      {{ track[1] }}
-                    </mdui-menu-item>
-                  </ScrollWrapper>
-                </mdui-menu>
-              </mdui-dropdown>
+                </template>
+              </ChipSelect>
             </div>
             <mdui-dropdown
               :disabled="

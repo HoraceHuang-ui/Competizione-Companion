@@ -6,8 +6,13 @@ import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from '@/store'
+import { setTheme } from 'mdui'
+import { themeMap } from '@/utils/enums'
 
 const router = useRouter()
+const store = useStore()
+setTheme(themeMap[store.settings.general.darkMode])
 
 const winMax = () => {
   window.win.max()

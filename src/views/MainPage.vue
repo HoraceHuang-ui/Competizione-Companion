@@ -3,9 +3,11 @@ import { onMounted, ref } from 'vue'
 import '@mdui/icons/check-circle--rounded.js'
 import '@mdui/icons/error--rounded.js'
 import '@mdui/icons/refresh--rounded.js'
+import { useStore } from '@/store'
+
+const store = useStore()
 
 const dialogOpen = ref(false)
-
 const loading = ref(false)
 const status = ref({})
 const launching = ref(false)
@@ -82,7 +84,7 @@ onMounted(() => {
         </mdui-button-icon>
       </div>
       <div v-if="!status.status" class="opacity-70 text-center mb-3">
-        舞萌DX启动！
+        {{ store.settings.status.serverDownMsg }}
       </div>
     </div>
 

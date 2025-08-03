@@ -12,6 +12,9 @@ import '@mdui/icons/directions-car--rounded.js'
 import '@mdui/icons/location-on--rounded.js'
 import '@mdui/icons/check--rounded.js'
 import ChipSelect from '@/components/ChipSelect.vue'
+import { useStore } from '@/store'
+
+const store = useStore()
 
 const leftFileInput = ref<HTMLInputElement | null>(null)
 const rightFileInput = ref<HTMLInputElement | null>(null)
@@ -170,8 +173,13 @@ const onSelectGroup = (group: string) => {
   }
 }
 const onSelectCar = (side: Side, car: [string, any]) => {
-  console.log(car)
-  curCar.value[side] = { value: car[0], label: car[1].shortName }
+  curCar.value[side] = {
+    value: car[0],
+    label:
+      car[1][
+        ['name', 'shortName', 'localName'][store.settings.setup.carDisplay - 1]
+      ],
+  }
 }
 
 const files = ref({
@@ -325,7 +333,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
             <div class="flex flex-row justify-center items-center flex-wrap">
               <ChipSelect
                 v-model="curGroup"
-                chip-class="bg-[rgb(var(--mdui-color-on-primary))] mx-2 mt-2"
+                chip-class="mx-2 mt-2"
                 dropdown-placement="top"
                 :items="groups"
                 @select="onSelectGroup"
@@ -338,10 +346,17 @@ const handleDragLeave = (side: 'left' | 'right') => {
                 dropdown-placement="top"
                 :items="Object.entries(carData[curGroup])"
                 chip-class="mt-2 mx-2"
-                :for-key="(car: [string, any]) => car[0]"
-                :for-value="(car: [string, any]) => car[0]"
-                :item-label="(car: [string, any]) => car[1].shortName"
-                :chip-label="(car: any) => car.label"
+                :for-key="(car: [string, any]) => car?.[0]"
+                :for-value="(car: [string, any]) => car?.[0]"
+                :item-label="
+                  (car: [string, any]) =>
+                    car?.[1]?.[
+                      ['name', 'shortName', 'localName'][
+                        store.settings.setup.carDisplay - 1
+                      ]
+                    ]
+                "
+                :chip-label="(car: any) => car?.label"
                 @select="item => onSelectCar(side as Side, item)"
               >
                 <template #icon>
@@ -357,19 +372,23 @@ const handleDragLeave = (side: 'left' | 'right') => {
                 dropdown-placement="top"
                 :items="tracks"
                 chip-class="mt-2 mx-2"
-                :for-key="(track: [string, string, string, string]) => track[0]"
+                :for-key="
+                  (track: [string, string, string, string]) => track?.[0]
+                "
                 :for-value="
-                  (track: [string, string, string, string]) => track[0]
+                  (track: [string, string, string, string]) => track?.[0]
                 "
                 :item-label="
-                  (track: [string, string, string, string]) => track[1]
+                  (track: [string, string, string, string]) =>
+                    track?.[[2, 1, 3][store.settings.setup.trackDisplay - 1]]
                 "
-                :chip-label="(track: any) => track.label"
+                :chip-label="(track: any) => track?.label"
                 @select="
                   item =>
                     (curTrack[side as Side] = {
                       value: item[0],
-                      label: item[1],
+                      label:
+                        item[[2, 1, 3][store.settings.setup.trackDisplay - 1]],
                     })
                 "
               >

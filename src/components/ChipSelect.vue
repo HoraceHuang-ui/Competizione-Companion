@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
+import '@mdui/icons/check--rounded.js'
 
 const emit = defineEmits(['select'])
 
@@ -34,12 +35,12 @@ const props = defineProps({
   },
   dropdownPlacement: {
     type: String,
-    default: 'bottom',
+    default: 'auto',
   },
 })
 
 const selection = defineModel({
-  type: [Object, String],
+  type: [Object, String, Number],
   default: null,
 })
 
@@ -66,9 +67,17 @@ const onSelect = (item: any) => {
           v-for="item in props.items"
           :key="props.forKey(item)"
           :value="props.forValue(item)"
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
+              props.chipLabel(selection) === props.itemLabel(item),
+          }"
           @click="onSelect(item)"
         >
           {{ props.itemLabel(item) }}
+          <mdui-icon-check--rounded
+            slot="end-icon"
+            v-if="props.chipLabel(selection) === props.itemLabel(item)"
+          ></mdui-icon-check--rounded>
         </mdui-menu-item>
       </ScrollWrapper>
     </mdui-menu>

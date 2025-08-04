@@ -330,7 +330,7 @@ const data = {
     mercedes_amg_gt4: {
       name: 'Mercedes-AMG GT4',
       shortName: 'AMG',
-      shotName: '奔驰 AMG',
+      localName: '奔驰 AMG',
       tirePressureMin: 17,
       casterFunc: v => v * 0.18 + 9.2,
       toeMins: [-0.2, 0.0],
@@ -358,8 +358,8 @@ const data = {
     },
   },
 
-  // Cup
-  Cup: {
+  // GTC
+  GTC: {
     ferrari_488_challenge_evo: {
       name: 'Ferrari 488 Challenge Evo',
       shortName: '488 Challenge Evo',

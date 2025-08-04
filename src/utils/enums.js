@@ -12,3 +12,12 @@ export const themeMap = {
   2: 'auto',
   3: 'dark',
 }
+
+export const seriesColorMap = {
+  Mixed: '#000000',
+  GT3: '#191919',
+  GT2: '#FF3100',
+  GT4: '#262660',
+  GTC: '#F57E00',
+  TCX: '#007CA8',
+}

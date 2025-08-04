@@ -13,6 +13,7 @@ import '@mdui/icons/location-on--rounded.js'
 import '@mdui/icons/check--rounded.js'
 import ChipSelect from '@/components/ChipSelect.vue'
 import { useStore } from '@/store'
+import { seriesColorMap } from '@/utils/enums'
 
 const store = useStore()
 
@@ -27,7 +28,7 @@ const counterSide = (side: Side) => {
   return side === 'left' ? 'right' : 'left'
 }
 
-const groups = ['GT3', 'GT4', 'Cup', 'TCX']
+const groups = ['GT3', 'GT4', 'GTC', 'TCX']
 const curGroup = ref('GT3')
 const setupList = ref({
   left: [],
@@ -333,7 +334,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
             <div class="flex flex-row justify-center items-center flex-wrap">
               <ChipSelect
                 v-model="curGroup"
-                chip-class="mx-2 mt-2"
+                :chip-class="`mx-2 mt-2 bg-[${seriesColorMap[curGroup]}]`"
                 dropdown-placement="top"
                 :items="groups"
                 @select="onSelectGroup"

@@ -11,7 +11,7 @@ const router = VueRouter.createRouter({
     {
       name: 'list',
       path: '/list',
-      component: () => import('../views/ServerListPage.vue'),
+      component: () => import('../views/ServerListPage/index.vue'),
     },
     {
       name: 'setup',

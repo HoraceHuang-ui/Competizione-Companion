@@ -169,7 +169,7 @@ const openLink = (url: string) => {
                 <div class="flex flex-row items-center">
                   <div>版本</div>
                   <mdui-chip
-                    class="ml-2"
+                    class="ml-2 rounded-full"
                     style="
                       font-family: Consolas, 'Harmony OS Sans SC', sans-serif;
                     "

@@ -3,9 +3,15 @@ import '@mdui/icons/keyboard-arrow-up--rounded.js'
 import '@mdui/icons/keyboard-double-arrow-up--rounded.js'
 import '@mdui/icons/keyboard-arrow-down--rounded.js'
 import '@mdui/icons/keyboard-double-arrow-down--rounded.js'
+import '@mdui/icons/keyboard-arrow-left--rounded.js'
+import '@mdui/icons/keyboard-arrow-right--rounded.js'
 import { computed } from 'vue'
 
 const props = defineProps({
+  type: {
+    type: String,
+    default: 'vertical',
+  },
   total: {
     type: Number,
     default: 1,
@@ -45,7 +51,10 @@ const changePage = (page: number) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center wrapper">
+  <div
+    class="flex flex-col items-center justify-center wrapper"
+    v-if="props.type === 'vertical'"
+  >
     <mdui-button-icon :disabled="curPage <= 1" @click="changePage(1)">
       <mdui-icon-keyboard-double-arrow-up--rounded></mdui-icon-keyboard-double-arrow-up--rounded>
     </mdui-button-icon>
@@ -82,6 +91,27 @@ const changePage = (page: number) => {
       @click="changePage(totalPages)"
     >
       <mdui-icon-keyboard-double-arrow-down--rounded></mdui-icon-keyboard-double-arrow-down--rounded>
+    </mdui-button-icon>
+  </div>
+  <div v-else class="flex flex-row items-center justify-center wrapper">
+    <mdui-button-icon
+      class="bg-[rgb(var(--mdui-color-secondary-container))]"
+      :disabled="curPage <= 1"
+      @click="changePage(curPage - 1)"
+    >
+      <mdui-icon-keyboard-arrow-left--rounded></mdui-icon-keyboard-arrow-left--rounded>
+    </mdui-button-icon>
+
+    <div class="w-10 text-center font-bold">{{ curPage }}</div>
+    <div>/</div>
+    <div class="w-10 text-center">{{ props.total }}</div>
+
+    <mdui-button-icon
+      class="bg-[rgb(var(--mdui-color-primary-container))]"
+      :disabled="curPage >= totalPages"
+      @click="changePage(curPage + 1)"
+    >
+      <mdui-icon-keyboard-arrow-right--rounded></mdui-icon-keyboard-arrow-right--rounded>
     </mdui-button-icon>
   </div>
 </template>

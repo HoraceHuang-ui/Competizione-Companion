@@ -15,6 +15,7 @@ import ChipSelect from '@/components/ChipSelect.vue'
 import tracks from '@/utils/trackData'
 import { useStore } from '@/store'
 import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
+import MyCarousel from '@/components/MyCarousel.vue'
 
 const curPage = ref(1)
 const servers = ref([])
@@ -23,6 +24,7 @@ const loading = ref(false)
 const groups = ['Mixed', 'GT3', 'GT4', 'GT2', 'GTC', 'TCX']
 const store = useStore()
 const helpDialogOpen = ref(false)
+const helpPage = ref(1)
 
 const defaultFilters = {
   name: '',
@@ -85,6 +87,10 @@ const filtersCount = computed(() => {
 onMounted(() => {
   reqData()
 })
+
+const openExtUrl = (url: string) => {
+  window.electron.openExtLink(url)
+}
 </script>
 
 <template>
@@ -267,12 +273,116 @@ onMounted(() => {
       </div>
 
       <mdui-dialog
-        headline="ACC-Connector 使用说明"
+        class="help-dialog"
         :open="helpDialogOpen"
-        @close="helpDialogOpen = false"
+        @close="
+          () => {
+            helpDialogOpen = false
+            helpPage = 1
+          }
+        "
         close-on-esc
         close-on-overlay-click
-      ></mdui-dialog>
+        headline="ACC Connector 使用说明"
+      >
+        <div style="width: 500px; height: 500px">
+          <MyCarousel
+            class="size-full"
+            show-arrow="never"
+            show-indicator="never"
+            v-model="helpPage"
+            :autoplay="false"
+          >
+            <div class="help-item">
+              请确保 ACC Connector 已安装，并退出 ACC。
+              <mdui-button
+                class="mt-4 font-bold"
+                @click="
+                  openExtUrl(
+                    'https://github.com/lonemeow/acc-connector/releases/download/v0.9.13/ACC-Connector-Setup-0.9.13.exe',
+                  )
+                "
+                >下载 ACC Connector</mdui-button
+              >
+            </div>
+            <div class="help-item">
+              <ScrollWrapper class="flex flex-col items-center">
+                <img
+                  src="@/assets/helpImages/2_accPath.png"
+                  class="rounded-xl"
+                />
+                <ul class="list-disc list-outside pl-4 mt-2">
+                  <li>打开 ACC Connector，点击右下角 “Settings”。</li>
+                  <li>在 “ActualPath” 中填入你的 ACC 安装目录。</li>
+                  <li>
+                    安装目录可如上图打开，然后点击文件夹窗口顶部的地址栏并复制。
+                  </li>
+                  <li>粘贴完整地址，然后点击 “Save”。</li>
+                  <li>若此前已配置过，可跳过本步骤。</li>
+                </ul>
+              </ScrollWrapper>
+            </div>
+
+            <div class="help-item">
+              <ScrollWrapper class="flex flex-col items-center">
+                <img
+                  src="@/assets/helpImages/3_installHook.png"
+                  class="rounded-xl"
+                />
+                <ul class="list-disc list-outside pl-4 mt-2">
+                  <li>
+                    ACC 未运行状态下，在争锋小助手中选择一个服务器，点击 “>>”。
+                  </li>
+                  <li>ACC Connector 将被自动唤起并配置。</li>
+                  <li>
+                    选择刚才的服务器，点击右下角 “Install hook”，并启动ACC。
+                  </li>
+                </ul>
+              </ScrollWrapper>
+            </div>
+
+            <div class="help-item">
+              <ScrollWrapper class="flex flex-col items-center">
+                <img
+                  src="@/assets/helpImages/4_LANServer.png"
+                  class="rounded-xl"
+                />
+                <ul class="list-disc list-outside pl-4 mt-2">
+                  <li>在 ACC 中进入多人模式。</li>
+                  <li>
+                    Lobby 炸服时，需等待 “PINGING SERVERS”
+                    半分钟超时后才可进行下一步操作。
+                  </li>
+                  <li>
+                    待 “LAN SERVERS” 亮起时点击，即可看到刚才选择的服务器。
+                  </li>
+                  <li>正常进入服务器即可。Good luck & have fun!</li>
+                </ul>
+              </ScrollWrapper>
+            </div>
+
+            <div class="help-item">
+              <ScrollWrapper class="flex flex-col items-center">
+                <img
+                  src="@/assets/helpImages/5_removeHook.png"
+                  class="rounded-xl"
+                />
+                <ul class="list-disc list-outside pl-4 mt-2">
+                  <li>比赛结束后，退出 ACC。</li>
+                  <li>若后续不再在此服务器比赛，可点击右侧 “Remove” 移除。</li>
+                  <li>点击右下角 “Remove hook”，并退出 ACC Connector。</li>
+                </ul>
+              </ScrollWrapper>
+            </div>
+          </MyCarousel>
+        </div>
+        <Pagination
+          type="horizontal"
+          v-model="helpPage"
+          :total="5"
+          :page-size="1"
+        ></Pagination>
+      </mdui-dialog>
     </mdui-card>
 
     <div
@@ -313,5 +423,14 @@ onMounted(() => {
   & > :last-child {
     flex: 1;
   }
+}
+
+.help-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

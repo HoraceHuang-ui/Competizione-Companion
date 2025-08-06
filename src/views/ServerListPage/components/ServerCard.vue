@@ -1,0 +1,142 @@
+<script setup lang="ts">
+import tracks from '@/utils/trackData'
+import { useStore } from '@/store'
+import { seriesColorMap } from '@/utils/enums'
+import ScrollWrapper from '@/components/ScrollWrapper.vue'
+const store = useStore()
+
+const props = defineProps({
+  server: {
+    type: Object,
+    required: true,
+  },
+})
+
+const connectServer = (ip: string, tcpPort: number, name: string) => {
+  window.electron.openExtLink(
+    `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`,
+  )
+}
+</script>
+
+<template>
+  <mdui-card class="w-full p-3">
+    <mdui-tooltip :content="props.server.name" placement="bottom">
+      <div class="flex flex-row justify-between items-center">
+        <div class="title truncate w-5/6 font-bold text-xl">
+          {{ props.server.name }}
+        </div>
+        <mdui-chip
+          class="cursor-default"
+          :class="seriesColorMap[props.server.series]"
+          style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
+        >
+          {{ props.server.series }}
+        </mdui-chip>
+      </div>
+    </mdui-tooltip>
+    <div class="text-sm opacity-70 mb-1">
+      {{
+        tracks.find(t => t[0] === props.server.track.id.toLowerCase())?.[
+          [2, 1, 3][store.settings.setup.trackDisplay - 1]
+        ]
+      }}
+    </div>
+    <mdui-divider></mdui-divider>
+
+    <div class="flex flex-row-reverse justify-between items-center mt-2">
+      <mdui-tooltip
+        content="正赛期间不可加入"
+        placement="bottom"
+        v-if="!props.server.hot_join"
+      >
+        <mdui-icon-person-add-disabled--rounded
+          class="text-lg ml-2"
+        ></mdui-icon-person-add-disabled--rounded>
+      </mdui-tooltip>
+      <ScrollWrapper class="flex-1 mr-2">
+        <div class="flex flex-row">
+          <mdui-chip
+            v-for="session in props.server.sessions"
+            class="mr-2 pointer-events-none"
+            :class="
+              session.active
+                ? 'bg-[rgb(var(--mdui-color-primary-container))]'
+                : 'border border-[rgb(var(--mdui-color-outline-variant))]'
+            "
+            style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
+          >
+            <div class="font-bold text-base" slot="icon">
+              {{ session.type[0] }}
+            </div>
+            <div>{{ session.elapsed_time }} min</div>
+          </mdui-chip>
+        </div>
+      </ScrollWrapper>
+    </div>
+
+    <div class="flex flex-row justify-between items-center mt-2">
+      <div class="flex flex-row items-center">
+        <mdui-chip
+          class="mr-2 pointer-events-none"
+          :class="{
+            'bg-[rgb(var(--mdui-color-error-container))]':
+              props.server.drivers == props.server.max_drivers,
+          }"
+          style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
+        >
+          {{ props.server.drivers }} / {{ props.server.max_drivers }}
+          <mdui-icon-directions-car-filled--rounded
+            slot="icon"
+          ></mdui-icon-directions-car-filled--rounded>
+        </mdui-chip>
+        <mdui-chip
+          class="mr-2 pointer-events-none"
+          style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
+        >
+          {{ props.server.requirements.safety_rating }}
+          <div slot="icon" class="font-bold text-base">SA</div>
+        </mdui-chip>
+        <mdui-chip
+          class="mr-2 pointer-events-none"
+          style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
+        >
+          {{ props.server.requirements.track_medals }}
+          <div slot="icon" class="font-bold text-base">TM</div>
+        </mdui-chip>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <mdui-icon-water-drop--outlined
+          class="ml-2 text-lg"
+          v-if="props.server.conditions.rain"
+        ></mdui-icon-water-drop--outlined>
+        <mdui-icon-wb-sunny--outlined
+          class="ml-2 text-lg"
+          v-if="!props.server.conditions.rain && !props.server.conditions.night"
+        ></mdui-icon-wb-sunny--outlined>
+
+        <mdui-icon-nightlight--outlined
+          class="ml-2 text-lg"
+          v-if="props.server.conditions.night"
+        ></mdui-icon-nightlight--outlined>
+
+        <mdui-button
+          class="ml-3"
+          variant="tonal"
+          @click="
+            connectServer(
+              props.server.ip_address,
+              props.server.tcp_port,
+              props.server.name,
+            )
+          "
+        >
+          <mdui-icon-keyboard-double-arrow-right--rounded></mdui-icon-keyboard-double-arrow-right--rounded>
+        </mdui-button>
+      </div>
+    </div>
+  </mdui-card>
+</template>
+
+<style scoped lang="scss"></style>

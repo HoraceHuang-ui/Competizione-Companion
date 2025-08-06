@@ -14,10 +14,10 @@ export const themeMap = {
 }
 
 export const seriesColorMap = {
-  Mixed: '#000000',
-  GT3: '#191919',
-  GT2: '#FF3100',
-  GT4: '#262660',
-  GTC: '#F57E00',
-  TCX: '#007CA8',
+  Mixed: 'bg-[rgb(var(--mdui-color-background))]',
+  GT3: 'bg-[rgb(var(--mdui-color-surface-container-highest))]',
+  GT2: 'bg-[#FF3100] text-white',
+  GT4: 'bg-[#262660] text-white',
+  GTC: 'bg-[#F57E00] text-white',
+  TCX: 'bg-[#007CA8] text-white',
 }

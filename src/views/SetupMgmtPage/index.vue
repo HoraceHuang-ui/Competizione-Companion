@@ -14,6 +14,7 @@ import '@mdui/icons/check--rounded.js'
 import ChipSelect from '@/components/ChipSelect.vue'
 import { useStore } from '@/store'
 import { seriesColorMap } from '@/utils/enums'
+import tracks from '@/utils/trackData'
 
 const store = useStore()
 
@@ -38,44 +39,7 @@ const fileSearch = ref({
   left: '',
   right: '',
 })
-const tracks = [
-  // 文件夹名，英文简写，英文全写，中文
-  ['barcelona', 'Barcelona', 'Circuit de Barcelona-Catalunya', '巴塞罗那'],
-  ['brands_hatch', 'Brands Hatch', 'Brands Hatch Circuit', '布兰兹哈奇'],
-  ['hungaroring', 'Hungaroring', 'Hungaroring', '亨格罗宁'],
-  ['misano', 'Misano', 'Misano World Circuit', '米萨诺'],
-  ['monza', 'Monza', 'Monza Circuit', '蒙扎'],
-  ['nurburgring', 'Nürburgring', 'Nürburgring', '纽博格林南环'],
-  ['paul_ricard', 'Paul Ricard', 'Circuit Paul Ricard', '保罗·里卡德'],
-  ['silverstone', 'Silverstone', 'Silverstone', '银石'],
-  ['spa', 'Spa-Francorchamps', 'Circuit de Spa-Francorchamps', '斯帕'],
-  ['valencia', 'Valencia', 'Circuit Ricardo Tormo Valencia', '瓦伦西亚'],
-  ['zandvoort', 'Zandvoort', 'Circuit Zandvoort', '赞德沃特'],
-  ['zolder', 'Zolder', 'Circuit Zolder', '佐尔德'],
-  ['nurburgring_24h', '24h Nürb', ' 24h Nürburgring', '纽博格林24小时全环'],
-  ['imola', 'Imola', 'Autodromo Enzo e Dino Ferrari', '伊莫拉'],
-  ['red_bull_ring', 'Red Bull Ring', 'Red Bull Ring', '红牛环'],
-  ['oulton_park', 'Oulton Park', 'Oulton Park Circuit', '奥顿公园'],
-  ['snetterton', 'Snetterton', 'Snetterton Circuit', '斯内特顿'],
-  ['donington', 'Donington Park', 'Donington Park', '多宁顿公园'],
-  ['cota', 'COTA', 'Circuit of the Americas', '美国之路'],
-  [
-    'indianapolis',
-    'Indianapolis',
-    'Indianapolis Motor Speedway',
-    '印第安纳波利斯',
-  ],
-  ['watkins_glen', 'Watkins Glen', 'Watkins Glen International', '华金谷'],
-  ['mount_panorama', 'Mount Panorama', 'Mount Panorama Circuit', '澳山'],
-  [
-    'Laguna Seca',
-    'Laguna Seca',
-    'WeatherTech Raceway Laguna Seca',
-    '拉古纳塞卡',
-  ],
-  ['suzuka', 'Suzuka', 'Suzuka Circuit', '铃鹿'],
-  ['Kyalami', 'Kyalami', 'Kyalami Grand Prix Circuit', '卡拉米'],
-]
+
 const curCar = ref({
   left: undefined,
   right: undefined,

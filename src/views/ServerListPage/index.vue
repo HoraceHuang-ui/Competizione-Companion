@@ -5,33 +5,82 @@ import '@mdui/icons/directions-car-filled--rounded.js'
 import '@mdui/icons/wb-sunny--outlined.js'
 import '@mdui/icons/water-drop--outlined.js'
 import '@mdui/icons/nightlight--outlined.js'
-import { onMounted, ref } from 'vue'
+import '@mdui/icons/keyboard-double-arrow-right--rounded.js'
+import '@mdui/icons/help-outline--rounded.js'
+import { computed, onMounted, ref } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { seriesColorMap } from '@/utils/enums'
-
-const searchDialogShow = ref(false)
+import Pagination from '@/components/Pagination.vue'
+import ChipSelect from '@/components/ChipSelect.vue'
+import tracks from '@/utils/trackData'
+import { useStore } from '@/store'
+import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 
 const curPage = ref(1)
 const servers = ref([])
+const total = ref(0)
 const loading = ref(false)
+const groups = ['Mixed', 'GT3', 'GT4', 'GT2', 'GTC', 'TCX']
+const store = useStore()
+const helpDialogOpen = ref(false)
+
+const defaultFilters = {
+  name: '',
+  pageSize: 20,
+  sa: { min: undefined, max: undefined },
+  track: undefined,
+  group: undefined,
+  private: false,
+}
+const filters = ref(JSON.parse(JSON.stringify(defaultFilters)))
+
+const obj2Param = (obj: Record<string, any>) => {
+  return Object.entries(obj)
+    .map(([key, value]) => {
+      if (value === undefined || value === null) return ''
+      if (typeof value === 'object') {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(value))}`
+      }
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    })
+    .filter(Boolean)
+    .join('&')
+}
 
 const reqData = () => {
+  const params = obj2Param({
+    search: filters.value.name,
+    'safety_rating[min]': filters.value.sa.min,
+    'safety_rating[max]': filters.value.sa.max,
+    mode: filters.value.private ? 'private' : 'public',
+    limit: filters.value.pageSize,
+    skip: (curPage.value - 1) * filters.value.pageSize,
+    series: filters.value.group,
+    track: filters.value.track?.value,
+  })
   loading.value = true
-  fetch(
-    `https://acc-status.jonatan.net/api/v2/acc/servers?limit=20&skip=${curPage.value * 20}&mode=public`,
-    {
-      method: 'GET',
-    },
-  )
+  fetch(`https://acc-status.jonatan.net/api/v2/acc/servers?${params}`, {
+    method: 'GET',
+  })
     .then(resp => resp.json())
     .then(data => {
-      console.log(data)
       servers.value = data.servers
+      total.value = data.count
     })
     .finally(() => {
       loading.value = false
     })
 }
+
+const filtersCount = computed(() => {
+  let res = 0
+  if (filters.value.name?.length) res++
+  if (filters.value.sa.min || 0 > 0 || filters.value.sa.max || 100 < 100) res++
+  if (filters.value.track) res++
+  if (filters.value.group) res++
+  if (filters.value.private) res++
+  return res
+})
 
 onMounted(() => {
   reqData()
@@ -47,8 +96,12 @@ onMounted(() => {
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-4 flex flex-row justify-center relative"
     >
-      <div v-if="loading" class="size-full">
-        <mdui-circular-progress></mdui-circular-progress>
+      <div
+        v-if="loading || total == 0"
+        class="size-full flex flex-row justify-center items-center"
+      >
+        <mdui-circular-progress v-if="loading"></mdui-circular-progress>
+        <div v-else-if="total == 0">暂无数据</div>
       </div>
       <ScrollWrapper width="98%" v-else>
         <div
@@ -60,105 +113,166 @@ onMounted(() => {
             v-for="server in servers"
             :key="server.id"
           >
-            <mdui-card class="w-full p-3">
-              <mdui-tooltip :content="server.name" placement="bottom">
-                <div class="flex flex-row justify-between items-center">
-                  <div class="title truncate w-5/6 font-bold text-xl">
-                    {{ server.name }}
-                  </div>
-                  <mdui-chip
-                    :style="{ background: seriesColorMap[server.series] }"
-                  >
-                    {{ server.series }}
-                  </mdui-chip>
-                </div>
-              </mdui-tooltip>
-
-              <div class="flex flex-row justify-between items-center mt-2">
-                <div class="flex flex-row">
-                  <mdui-chip
-                    v-for="session in server.sessions"
-                    class="mr-2"
-                    :class="
-                      session.active
-                        ? 'bg-[rgb(var(--mdui-color-primary-container))]'
-                        : 'border border-[rgb(var(--mdui-color-outline-variant))]'
-                    "
-                  >
-                    <div class="font-bold text-base" slot="icon">
-                      {{ session.type[0] }}
-                    </div>
-                    <div>{{ session.elapsed_time }} min</div>
-                  </mdui-chip>
-                </div>
-                <mdui-tooltip
-                  content="正赛期间不可加入"
-                  placement="bottom"
-                  v-if="!server.hot_join"
-                >
-                  <mdui-icon-person-add-disabled--rounded
-                    class="text-lg ml-2"
-                  ></mdui-icon-person-add-disabled--rounded>
-                </mdui-tooltip>
-              </div>
-
-              <div class="flex flex-row justify-between items-center mt-2">
-                <div class="flex flex-row items-center">
-                  <mdui-chip
-                    class="mr-2"
-                    :class="{
-                      'bg-[rgb(var(--mdui-color-error-container))]':
-                        server.drivers == server.max_drivers,
-                    }"
-                  >
-                    {{ server.drivers }} / {{ server.max_drivers }}
-                    <mdui-icon-directions-car-filled--rounded
-                      slot="icon"
-                    ></mdui-icon-directions-car-filled--rounded>
-                  </mdui-chip>
-                  <mdui-chip
-                    v-for="req in Object.entries(server.requirements)"
-                    class="mr-2"
-                  >
-                    {{ req[1] }}
-                    <div slot="icon" class="font-bold text-base">
-                      {{
-                        req[0]
-                          .split('_')
-                          .map(it => it[0].toUpperCase())
-                          .join('')
-                      }}
-                    </div>
-                  </mdui-chip>
-                </div>
-
-                <div class="flex flex-row items-center">
-                  <mdui-icon-water-drop--outlined
-                    class="ml-2 text-lg"
-                    v-if="server.conditions.rain"
-                  ></mdui-icon-water-drop--outlined>
-                  <mdui-icon-wb-sunny--outlined
-                    class="ml-2 text-lg"
-                    v-if="!server.conditions.rain && !server.conditions.night"
-                  ></mdui-icon-wb-sunny--outlined>
-
-                  <mdui-icon-nightlight--outlined
-                    class="ml-2 text-lg"
-                    v-if="server.conditions.night"
-                  ></mdui-icon-nightlight--outlined>
-                </div>
-              </div>
-            </mdui-card>
+            <ServerCard :server="server" />
           </div>
         </div>
       </ScrollWrapper>
 
-      <mdui-fab
-        class="absolute bottom-4 left-4"
-        @click="searchDialogShow = true"
-      >
-        <mdui-icon-search--rounded slot="icon"></mdui-icon-search--rounded>
-      </mdui-fab>
+      <div class="absolute top-4 left-4">
+        <div class="text-sm opacity-70">总数：</div>
+        <div class="title text-lg font-bold opacity-85">{{ total }}</div>
+      </div>
+
+      <Pagination
+        class="absolute right-8 top-1/2 -translate-y-1/2"
+        :total="total"
+        v-model="curPage"
+        @change="reqData"
+      ></Pagination>
+
+      <div class="absolute bottom-2 left-4 flex flex-col">
+        <mdui-fab variant="surface" class="mb-4" @click="helpDialogOpen = true">
+          <mdui-icon-help-outline--rounded
+            slot="icon"
+          ></mdui-icon-help-outline--rounded>
+        </mdui-fab>
+
+        <mdui-tooltip placement="right-end" class="filter">
+          <div class="relative">
+            <mdui-fab>
+              <mdui-badge>{{ filtersCount }}</mdui-badge>
+              <mdui-icon-search--rounded
+                slot="icon"
+              ></mdui-icon-search--rounded>
+            </mdui-fab>
+            <mdui-badge
+              v-if="filtersCount > 0"
+              class="absolute right-0 top-0 text-base font-bold w-7 h-7 translate-x-2 -translate-y-2"
+              >{{ filtersCount }}</mdui-badge
+            >
+          </div>
+          <div
+            slot="content"
+            class="bg-[rgb(var(--mdui-color-on-secondary))] text-[rgb(var(--mdui-color-on-surface))] text-base border shadow-lg p-4 rounded-2xl"
+          >
+            <div class="w-full flex flex-row justify-between items-center mb-2">
+              <div class="text-2xl title">筛选服务器</div>
+              <div class="flex flex-row">
+                <mdui-button
+                  variant="text"
+                  @click="filters = JSON.parse(JSON.stringify(defaultFilters))"
+                  >重置</mdui-button
+                >
+                <mdui-button @click="reqData">确定</mdui-button>
+              </div>
+            </div>
+
+            <div class="flex flex-col" style="width: 400px">
+              <div class="form-item">
+                <div>名称</div>
+                <div>
+                  <mdui-text-field
+                    class="cursor-text"
+                    placeholder="搜索服务器名称…"
+                    :value="filters.name"
+                    @input="filters.name = $event.target.value"
+                  ></mdui-text-field>
+                </div>
+              </div>
+              <div class="form-item">
+                <div>SA</div>
+                <div class="flex flex-row items-center">
+                  <mdui-text-field
+                    class="mr-2 cursor-text"
+                    placeholder="最低"
+                    :value="filters.sa.min"
+                    @input="filters.sa.min = parseInt($event.target.value) || 0"
+                  ></mdui-text-field>
+                  <div class="mr-2">-</div>
+                  <mdui-text-field
+                    class="cursor-text"
+                    placeholder="最高"
+                    :value="filters.sa.max"
+                    @input="filters.sa.max = parseInt($event.target.value) || 0"
+                  ></mdui-text-field>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <div>赛道</div>
+                <div class="flex flex-row justify-end items-center">
+                  <ChipSelect
+                    v-model="filters.track"
+                    placeholder="请选择赛道"
+                    dropdown-placement="top"
+                    :items="tracks"
+                    chip-class="mt-2"
+                    :for-key="
+                      (track: [string, string, string, string]) => track?.[0]
+                    "
+                    :for-value="
+                      (track: [string, string, string, string]) => track?.[0]
+                    "
+                    :item-label="
+                      (track: [string, string, string, string]) =>
+                        track?.[
+                          [2, 1, 3][store.settings.setup.trackDisplay - 1]
+                        ]
+                    "
+                    :chip-label="(track: any) => track?.label"
+                    @select="
+                      item =>
+                        (filters.track = {
+                          value: item[0],
+                          label:
+                            item[
+                              [2, 1, 3][store.settings.setup.trackDisplay - 1]
+                            ],
+                        })
+                    "
+                  >
+                    <template #icon>
+                      <mdui-icon-location-on--rounded
+                        class="h-[1.125rem]"
+                      ></mdui-icon-location-on--rounded>
+                    </template>
+                  </ChipSelect>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <div>组别</div>
+                <ChipSelect
+                  v-model="filters.group"
+                  :chip-class="`mt-2 bg-[${seriesColorMap[filters.group]}]`"
+                  dropdown-placement="top"
+                  :items="groups"
+                  placeholder="请选择组别"
+                >
+                </ChipSelect>
+              </div>
+
+              <div class="form-item">
+                <div>私有</div>
+                <div class="flex flex-row justify-end">
+                  <mdui-switch
+                    :checked="filters.private"
+                    @change="filters.private = $event.target.checked"
+                  ></mdui-switch>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mdui-tooltip>
+      </div>
+
+      <mdui-dialog
+        headline="ACC-Connector 使用说明"
+        :open="helpDialogOpen"
+        @close="helpDialogOpen = false"
+        close-on-esc
+        close-on-overlay-click
+      ></mdui-dialog>
     </mdui-card>
 
     <div
@@ -172,4 +286,32 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+::part(header) {
+  font-family:
+    Google Sans,
+    Harmony OS Sans SC,
+    sans-serif;
+}
+
+.filter::part(popup) {
+  background: none;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.25rem 0;
+  width: 100%;
+
+  & > :first-child {
+    margin-right: 0.25rem;
+    width: 16%;
+  }
+  & > :last-child {
+    flex: 1;
+  }
+}
+</style>

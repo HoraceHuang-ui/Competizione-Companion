@@ -15,6 +15,7 @@ import ChipSelect from '@/components/ChipSelect.vue'
 import { useStore } from '@/store'
 import { seriesColorMap } from '@/utils/enums'
 import tracks from '@/utils/trackData'
+import { translate } from '@/i18n'
 
 const store = useStore()
 
@@ -95,39 +96,32 @@ const readOrCreateFile = async (side: Side) => {
   const fileName = fileSearch.value[side]
   if (fileName === '') {
     snackbar({
-      message: '请输入或选择调校文件名。',
+      message: translate('setup.emptyFileName'),
       autoCloseDelay: 3000,
     })
     return
   }
-  try {
-    const content = await window.fs.setupFile(
-      curCar.value[side]?.value,
-      curTrack.value[side]?.value,
-      fileName.endsWith('.json') ? fileName : `${fileName}.json`,
-    )
-    const jsonContent = JSON.parse(content)
-    if (!jsonContent.carName) {
-      snackbar({
-        message: '不是有效的调校文件，请检查文件内容。',
-        autoCloseDelay: 3000,
-      })
-      return
-    }
-    if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
-      snackbar({
-        message: `请选择${curGroup.value}组别车型。`,
-        autoCloseDelay: 3000,
-      })
-      return
-    }
-    files.value[side] = jsonContent
-  } catch (error) {
+  const content = await window.fs.setupFile(
+    curCar.value[side]?.value,
+    curTrack.value[side]?.value,
+    fileName.endsWith('.json') ? fileName : `${fileName}.json`,
+  )
+  const jsonContent = JSON.parse(content)
+  if (!jsonContent.carName) {
     snackbar({
-      message: '读取调校文件失败，请检查文件名是否正确。',
+      message: translate('setup.invalidJSON'),
       autoCloseDelay: 3000,
     })
+    return
   }
+  if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
+    snackbar({
+      message: translate('setup.invalidSeries', { series: curGroup.value }),
+      autoCloseDelay: 3000,
+    })
+    return
+  }
+  files.value[side] = jsonContent
 }
 
 const onSelectGroup = (group: string) => {
@@ -138,12 +132,16 @@ const onSelectGroup = (group: string) => {
   }
 }
 const onSelectCar = (side: Side, car: [string, any]) => {
+  let carLabel
+  if (store.settings.setup.carDisplay == 3) {
+    carLabel = translate(`cars.${car?.[0]}`)
+  } else {
+    carLabel =
+      car?.[1]?.[['name', 'shortName'][store.settings.setup.carDisplay - 1]]
+  }
   curCar.value[side] = {
     value: car[0],
-    label:
-      car[1][
-        ['name', 'shortName', 'localName'][store.settings.setup.carDisplay - 1]
-      ],
+    label: carLabel,
   }
 }
 
@@ -167,14 +165,16 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
     const jsonContent = JSON.parse(content)
     if (!jsonContent.carName) {
       snackbar({
-        message: '不是有效的调校文件，请检查文件内容。',
+        message: translate('setup.invalidJSON'),
         autoCloseDelay: 3000,
       })
       return
     }
     if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
       snackbar({
-        message: `请选择${curGroup.value}组别车型。`,
+        message: translate('setup.invalidSeries', {
+          series: curGroup.value,
+        }),
         autoCloseDelay: 3000,
       })
       return
@@ -193,14 +193,14 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
     const jsonContent = JSON.parse(content)
     if (!jsonContent.carName) {
       snackbar({
-        message: '不是有效的调校文件，请检查文件内容。',
+        message: translate('setup.invalidJSON'),
         autoCloseDelay: 3000,
       })
       return
     }
     if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
       snackbar({
-        message: `请选择${curGroup.value}组别车型。`,
+        message: translate('setup.invalidSeries', { series: curGroup.value }),
         autoCloseDelay: 3000,
       })
       return
@@ -209,7 +209,7 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
     files.value[side] = jsonContent
   } else {
     snackbar({
-      message: '文件读取失败，请拖入JSON类型的ACC调校文件。',
+      message: translate('setup.invalidFile'),
       autoCloseDelay: 3000,
     })
   }
@@ -276,7 +276,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
             @click="triggerFileInput(side as Side)"
             v-if="!isDragging[side as Side]"
           >
-            选择调校JSON文件
+            {{ $t('setup.chooseFile') }}
           </mdui-button>
           <mdui-icon-file-upload--rounded
             v-else
@@ -285,8 +285,8 @@ const handleDragLeave = (side: 'left' | 'right') => {
           <p class="text-sm text-gray-500 mt-2 pointer-events-none mb-12">
             {{
               isDragging[side as Side]
-                ? '松开鼠标以读取调校'
-                : '或直接拖拽到此处'
+                ? $t('setup.releaseToLoad')
+                : $t('setup.dragFile')
             }}
           </p>
 
@@ -294,7 +294,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
             class="w-full absolute bottom-0 left-0 right-0 flex flex-col items-center"
             v-if="!isDragging[side as Side]"
           >
-            <div class="text-sm font-light">或读取游戏文档</div>
+            <div class="text-sm font-light">{{ $t('setup.loadDocs') }}</div>
             <div class="flex flex-row justify-center items-center flex-wrap">
               <ChipSelect
                 v-model="curGroup"
@@ -307,19 +307,21 @@ const handleDragLeave = (side: 'left' | 'right') => {
 
               <ChipSelect
                 v-model="curCar[side as Side]"
-                placeholder="请选择车型"
+                :placeholder="$t('setup.carPlaceholder')"
                 dropdown-placement="top"
                 :items="Object.entries(carData[curGroup])"
                 chip-class="mt-2 mx-2"
                 :for-key="(car: [string, any]) => car?.[0]"
                 :for-value="(car: [string, any]) => car?.[0]"
                 :item-label="
-                  (car: [string, any]) =>
-                    car?.[1]?.[
-                      ['name', 'shortName', 'localName'][
-                        store.settings.setup.carDisplay - 1
-                      ]
+                  (car: [string, any]) => {
+                    if (store.settings.setup.carDisplay == 3) {
+                      return $t(`cars.${car?.[0]}`)
+                    }
+                    return car?.[1]?.[
+                      ['name', 'shortName'][store.settings.setup.carDisplay - 1]
                     ]
+                  }
                 "
                 :chip-label="(car: any) => car?.label"
                 @select="item => onSelectCar(side as Side, item)"
@@ -333,28 +335,37 @@ const handleDragLeave = (side: 'left' | 'right') => {
 
               <ChipSelect
                 v-model="curTrack[side as Side]"
-                placeholder="请选择赛道"
+                :placeholder="$t('setup.trackPlaceholder')"
                 dropdown-placement="top"
                 :items="tracks"
                 chip-class="mt-2 mx-2"
-                :for-key="
-                  (track: [string, string, string, string]) => track?.[0]
-                "
-                :for-value="
-                  (track: [string, string, string, string]) => track?.[0]
-                "
+                :for-key="(track: [string, string, string]) => track?.[0]"
+                :for-value="(track: [string, string, string]) => track?.[0]"
                 :item-label="
-                  (track: [string, string, string, string]) =>
-                    track?.[[2, 1, 3][store.settings.setup.trackDisplay - 1]]
+                  (track: [string, string, string]) => {
+                    if (store.settings.setup.trackDisplay == 3) {
+                      return $t(`tracks.${track?.[0]}`)
+                    }
+                    return track?.[
+                      [2, 1][store.settings.setup.trackDisplay - 1]
+                    ]
+                  }
                 "
                 :chip-label="(track: any) => track?.label"
                 @select="
-                  item =>
-                    (curTrack[side as Side] = {
+                  item => {
+                    let trackLabel
+                    if (store.settings.setup.trackDisplay == 3) {
+                      trackLabel = $t(`tracks.${item?.[0]}`)
+                    } else {
+                      trackLabel =
+                        item?.[[2, 1][store.settings.setup.trackDisplay - 1]]
+                    }
+                    curTrack[side as Side] = {
                       value: item[0],
-                      label:
-                        item[[2, 1, 3][store.settings.setup.trackDisplay - 1]],
-                    })
+                      label: trackLabel,
+                    }
+                  }
                 "
               >
                 <template #icon>
@@ -377,7 +388,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
                 :disabled="!enableSearch[side as Side]"
                 :value="fileSearch[side as Side]"
                 @input="fileSearch[side as Side] = $event.target.value"
-                placeholder="请输入或选择调校文件名"
+                :placeholder="$t('setup.inputPlaceholder')"
                 style="
                   transition: all var(--mdui-motion-duration-short4)
                     var(--mdui-motion-easing-standard);
@@ -507,7 +518,7 @@ const handleDragLeave = (side: 'left' | 'right') => {
       <!--          </mdui-tabs>-->
       <!--        </div>-->
       <!--      </mdui-tooltip>-->
-      调校技术支持来自
+      {{ $t('setup.techSupport') }}
       <img
         src="@/assets/DEA_light.png"
         class="inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"

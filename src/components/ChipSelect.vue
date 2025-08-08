@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/check--rounded.js'
+import '@mdui/icons/arrow-drop-down--rounded.js'
 
 const emit = defineEmits(['select'])
 

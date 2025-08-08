@@ -16,13 +16,12 @@ import {
   tyreCompoundEn,
   values2altEn,
   values2En,
-  values4En,
 } from '@/utils/enums'
-import { computed } from 'vue'
 import { useStore } from '@/store'
+import { translate } from '@/i18n'
 
 const store = useStore()
-const enLabel = computed(() => (store.settings.setup.setupLabelEn ? 1 : 2))
+const enLabel = store.settings.setup.setupLabelEn
 
 const props = defineProps({
   setup: {
@@ -68,88 +67,74 @@ const tyresSetup = [
   [
     'tyreCompound',
     'Compound',
-    '轮胎种类',
     s => [displayItem(s?.basicSetup.tyres.tyreCompound)],
   ],
   [
     'tyrePressure',
     'Pressure',
-    '胎压',
     (s, c) =>
       s?.basicSetup.tyres.tyrePressure.map(v =>
         displayItem((c.tirePressureMin + v / 10).toFixed(1)),
       ),
     'psi',
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'toe',
     'Toe',
-    '束角',
     (s, c) =>
       s?.basicSetup.alignment.toe.map((v, i) =>
         displayItem((v / 100 + c.toeMins[i >> 1]).toFixed(2)),
       ),
     '°',
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'camber',
     'Camber',
-    '负外倾角',
     s => s?.basicSetup.alignment.camber.map(v => displayItem(v)),
     'clicks',
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'caster',
     'Caster',
-    '主销倾角',
     (s, c) => [
       displayItem(c?.casterFunc(s.basicSetup.alignment.casterLF).toFixed(1)),
       displayItem(c?.casterFunc(s.basicSetup.alignment.casterRF).toFixed(1)),
     ],
     '°',
-    [values2altEn, values2alt][enLabel.value - 1],
+    enLabel ? values2altEn : values2alt.map(it => translate(`setup.${it}`)),
   ],
 ]
 
 const electronicsSetup = [
-  ['tC1', 'TC1', 'TC1', s => [displayItem(s?.basicSetup.electronics.tC1)]],
-  ['tC2', 'TC2', 'TC2', s => [displayItem(s?.basicSetup.electronics.tC2)]],
-  ['abs', 'ABS', 'ABS', s => [displayItem(s?.basicSetup.electronics.abs)]],
+  ['tC1', 'TC1', s => [displayItem(s?.basicSetup.electronics.tC1)]],
+  ['tC2', 'TC2', s => [displayItem(s?.basicSetup.electronics.tC2)]],
+  ['abs', 'ABS', s => [displayItem(s?.basicSetup.electronics.abs)]],
   [
     'eCUMap',
     'ECU Map',
-    'ECU 映射',
     s => [displayItem(s && s.basicSetup.electronics.eCUMap + 1)],
   ],
   [
     'telemetryLaps',
     'Telemetry Laps',
-    '遥测圈数',
     s => [displayItem(s?.basicSetup.electronics.telemetryLaps)],
   ],
 ]
 
 const strategySetup = [
-  [
-    'fuel',
-    'Fuel',
-    '油量',
-    s => [displayItem(s?.basicSetup.strategy.fuel + 1)],
-    'L',
-  ],
+  ['fuel', 'Fuel', s => [displayItem(s?.basicSetup.strategy.fuel + 1)], 'L'],
   [
     'brakePadCompound',
     'Brake Pad Compound',
-    '刹车皮',
     s => [
       displayItem(s?.basicSetup.strategy.frontBrakePadCompound + 1),
       displayItem(s?.basicSetup.strategy.rearBrakePadCompound + 1),
     ],
     undefined,
-    [values2En, values2][enLabel.value - 1],
+    enLabel ? values2En : values2.map(it => translate(`setup.${it}`)),
   ],
 ]
 
@@ -157,32 +142,28 @@ const mechanicalSetup = [
   [
     'aRB',
     'Anti-roll Bar',
-    '防倾杆',
     s => [
       displayItem(s?.advancedSetup.mechanicalBalance.aRBFront),
       displayItem(s?.advancedSetup.mechanicalBalance.aRBRear),
     ],
     undefined,
-    [values2En, values2][enLabel.value - 1],
+    enLabel ? values2En : values2.map(it => translate(`setup.${it}`)),
   ],
   [
     'preload',
     'Differential Preload',
-    '差速器预载',
     s => [displayItem(s && s.advancedSetup.drivetrain.preload * 10 + 20)],
     'Nm',
   ],
   [
     'brakeTorque',
     'Brake Torque',
-    '刹车力度',
     s => [displayItem(s && s.advancedSetup.mechanicalBalance.brakeTorque + 80)],
     '%',
   ],
   [
     'brakeBias',
     'Brake Bias',
-    '刹车比',
     (s, c) => [
       displayItem(
         s && s.advancedSetup.mechanicalBalance.brakeBias / 5 + c.brakeBiasMin,
@@ -193,7 +174,6 @@ const mechanicalSetup = [
   [
     'steerRatio',
     'Steer Ratio',
-    '转向比',
     (s, c) => [
       displayItem(s && s.basicSetup.alignment.steerRatio + c.steeringRatioMin),
     ],
@@ -201,35 +181,32 @@ const mechanicalSetup = [
   [
     'wheelRate',
     'Wheel Rate',
-    '悬挂刚度',
     (s, c) =>
       s?.advancedSetup.mechanicalBalance.wheelRate.map((v, i) =>
         displayItem(c.wheelRates[i >> 1][v] * 1000),
       ),
     'N/m',
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'bumpStopRateUp',
     'Bump Stop Rate',
-    '减震胶块硬度',
     s =>
       s?.advancedSetup.mechanicalBalance.bumpStopRateUp.map(v =>
         displayItem(v * 100 + 300),
       ),
     'N',
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'bumpStopWindow',
     'Bump Stop Range',
-    '减震胶块行程',
     s =>
       s?.advancedSetup.mechanicalBalance.bumpStopWindow.map(v =>
         displayItem(v),
       ),
     undefined,
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
 ]
 
@@ -237,34 +214,30 @@ const dampersSetup = [
   [
     'bumpSlow',
     'Bump',
-    '压缩阻尼',
     s => s?.advancedSetup.dampers.bumpSlow.map(v => displayItem(v)),
     undefined,
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'bumpFast',
     'Fast Bump',
-    '快速压缩阻尼',
     s => s?.advancedSetup.dampers.bumpFast.map(v => displayItem(v)),
     undefined,
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'reboundSlow',
     'Rebound',
-    '回弹阻尼',
     s => s?.advancedSetup.dampers.reboundSlow.map(v => displayItem(v)),
     undefined,
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
   [
     'reboundFast',
-    'fastRebound',
-    '快速回弹阻尼',
+    'Fast Rebound',
     s => s?.advancedSetup.dampers.reboundFast.map(v => displayItem(v)),
     undefined,
-    [values4En, values4][enLabel.value - 1],
+    enLabel ? values4 : values4.map(it => translate(`setup.${it}`)),
   ],
 ]
 
@@ -272,7 +245,6 @@ const aeroSetup = [
   [
     'rideHeight',
     'Ride Height',
-    '车高',
     (s, c) => [
       displayItem(
         s && s.advancedSetup.aeroBalance.rideHeight[0] + c.rideHeightMinFront,
@@ -282,55 +254,49 @@ const aeroSetup = [
       ),
     ],
     'mm',
-    [values2En, values2][enLabel.value - 1],
+    enLabel ? values2En : values2.map(it => translate(`setup.${it}`)),
   ],
   [
     'brakeDuct',
     'Brake Duct',
-    '刹车通风管',
     s => s?.advancedSetup.aeroBalance.brakeDuct.map(v => displayItem(v)),
     undefined,
-    [values2En, values2][enLabel.value - 1],
+    enLabel ? values2En : values2.map(it => translate(`setup.${it}`)),
   ],
   [
     'splitter',
     'Front Splitter',
-    '前扩散器',
     s => [displayItem(s && s.advancedSetup.aeroBalance.splitter + 1)],
   ],
   [
     'wing',
     'Rear Wing',
-    '尾翼',
     s => [displayItem(s && s.advancedSetup.aeroBalance.rearWing)],
   ],
 ]
 
 const setupGroups = [
-  ['tyres', 'Tyres', '轮胎', tyresSetup, 'mdui-icon-tire-repair--rounded'],
+  ['tyres', 'Tyres', tyresSetup, 'mdui-icon-tire-repair--rounded'],
   [
     'electronics',
     'Electronics',
-    '电子',
     electronicsSetup,
     'mdui-icon-electric-car--rounded',
   ],
   [
     'strategy',
     'Strategy',
-    '策略',
     strategySetup,
     'mdui-icon-settings-suggest--rounded',
   ],
   [
     'mechanical',
     'Mechanical',
-    '机械',
     mechanicalSetup,
     'mdui-icon-construction--rounded',
   ],
-  ['dampers', 'Dampers', '阻尼', dampersSetup, 'mdui-icon-compress--rounded'],
-  ['air', 'Aero', '空力', aeroSetup, 'mdui-icon-air--rounded'],
+  ['dampers', 'Dampers', dampersSetup, 'mdui-icon-compress--rounded'],
+  ['air', 'Aero', aeroSetup, 'mdui-icon-air--rounded'],
 ]
 </script>
 
@@ -354,7 +320,7 @@ const setupGroups = [
         <mdui-collapse-item
           v-for="group in setupGroups"
           :key="group[0]"
-          :title="group[enLabel]"
+          :title="enLabel ? group[1] : $t(`setup.categories.${group[0]}`)"
           :value="group[0]"
         >
           <mdui-list-item
@@ -363,8 +329,8 @@ const setupGroups = [
             style="background: rgba(var(--mdui-color-secondary-container), 0.4)"
             rounded
           >
-            {{ group[enLabel] }}
-            <Component slot="icon" :is="group[4]"></Component>
+            {{ enLabel ? group[1] : $t(`setup.categories.${group[0]}`) }}
+            <Component slot="icon" :is="group[3]"></Component>
             <mdui-icon-keyboard-arrow-down
               slot="end-icon"
               style="
@@ -378,12 +344,14 @@ const setupGroups = [
           </mdui-list-item>
           <div
             class="mx-4 my-2 flex flex-row justify-between"
-            v-for="items in group[3]"
+            v-for="items in group[2]"
           >
             <div class="text-left">
-              <span class="font-bold">{{ items[enLabel] }}</span>
+              <span class="font-bold">{{
+                enLabel ? items[1] : $t(`setup.params.${items[0]}.name`)
+              }}</span>
               <span class="opacity-70">{{
-                items.length >= 5 && items[4] ? ` [${items[4]}]` : ''
+                items.length >= 4 && items[3] ? ` [${items[3]}]` : ''
               }}</span>
             </div>
             <div
@@ -407,32 +375,34 @@ const setupGroups = [
                 "
               >
                 {{
-                  [tyreCompoundEn, tyreCompound][enLabel - 1][
+                  (enLabel
+                    ? tyreCompoundEn
+                    : tyreCompound.map(it => translate(`setup.${it}`)))[
                     props.setup.basicSetup.tyres.tyreCompound
                   ]
                 }}
               </mdui-chip>
               <mdui-chip
-                v-else-if="items.length < 6"
+                v-else-if="items.length < 5"
                 style="font-family: Consolas, 'Harmony OS Sans SC', sans-serif"
                 :class="
                   props.compareSetup
                     ? {
                         'bg-red-700 text-white':
-                          items[3](
+                          items[2](
                             props.compareSetup,
                             props.carData[props.compareSetup.carName],
                           )[0].dispValue >
-                          items[3](
+                          items[2](
                             props.setup,
                             props.carData[props.setup.carName],
                           )[0].dispValue,
                         'bg-green-700 text-white':
-                          items[3](
+                          items[2](
                             props.compareSetup,
                             props.carData[props.compareSetup.carName],
                           )[0].dispValue <
-                          items[3](
+                          items[2](
                             props.setup,
                             props.carData[props.setup.carName],
                           )[0].dispValue,
@@ -441,13 +411,13 @@ const setupGroups = [
                 "
               >
                 {{
-                  items[3](props.setup, props.carData[props.setup.carName])[0]
+                  items[2](props.setup, props.carData[props.setup.carName])[0]
                     .dispValue
                 }}
               </mdui-chip>
-              <div v-if="items.length >= 6" class="flex flex-col items-end">
+              <div v-if="items.length >= 5" class="flex flex-col items-end">
                 <div
-                  v-for="(c, idx) in items[3](
+                  v-for="(c, idx) in items[2](
                     props.setup,
                     props.carData[props.setup.carName],
                   )"
@@ -455,7 +425,7 @@ const setupGroups = [
                   class="flex flex-row justify-end items-center"
                 >
                   <div class="opacity-70 font-italic font-light">
-                    {{ items[5][idx] }}
+                    {{ items[4][idx] }}
                   </div>
                   <mdui-chip
                     class="ml-2 my-0.5"
@@ -466,12 +436,12 @@ const setupGroups = [
                       props.compareSetup
                         ? {
                             'bg-red-700 text-white':
-                              items[3](
+                              items[2](
                                 props.compareSetup,
                                 props.carData[props.compareSetup.carName],
                               )[idx].dispValue > c.dispValue,
                             'bg-green-700 text-white':
-                              items[3](
+                              items[2](
                                 props.compareSetup,
                                 props.carData[props.compareSetup?.carName],
                               )[idx].dispValue < c.dispValue,

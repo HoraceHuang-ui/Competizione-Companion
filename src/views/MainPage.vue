@@ -63,7 +63,9 @@ onMounted(() => {
             class="text-red-500 dark:text-red-400"
           ></mdui-icon-error--rounded>
           <div class="mx-2 mt-0.5">
-            {{ status.status == 1 ? '悲报' : '喜报' }}
+            {{
+              status.status == 1 ? $t('status.badNews') : $t('status.goodNews')
+            }}
           </div>
         </div>
       </div>
@@ -71,9 +73,9 @@ onMounted(() => {
         {{
           'status' in status
             ? status.status === 1
-              ? '服务器没炸'
-              : '服务器炸啦'
-            : '查服务器炸没炸的服务器炸了'
+              ? $t('status.serverUp')
+              : $t('status.serverDown')
+            : $t('status.apiDown')
         }}
         <mdui-button-icon
           style="color: rgb(var(--mdui-color-primary))"
@@ -96,10 +98,10 @@ onMounted(() => {
         :disabled="launching"
         :loading="launching"
         class="w-max mb-3"
-        >启动ACC</mdui-button
+        >{{ $t('general.launchACC') }}</mdui-button
       >
       <span
-        >API 服务来自
+        >{{ $t('status.apiFrom') }}
         <a class="inline cursor-pointer" @click="accStatusExt"
           >acc-status.jonatan.net</a
         ></span

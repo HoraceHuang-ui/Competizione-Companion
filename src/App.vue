@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { setTheme } from 'mdui'
 import { themeMap } from '@/utils/enums'
+import { translate } from '@/i18n'
 
 const router = useRouter()
 const store = useStore()
@@ -27,7 +28,13 @@ const winClose = () => {
 }
 
 const mode = ref(0) // 0: Server Status
-const modes = ['Lobby服务器状态', '服务器列表', '调校管理', '启动ACC', '设置']
+const modes = [
+  translate('general.status'),
+  translate('general.servers'),
+  translate('general.setup'),
+  translate('general.launchACC'),
+  translate('general.settings'),
+]
 const pages = ['status', 'list', 'setup', '', 'settings']
 const nav = (index: number) => {
   mode.value = index
@@ -70,7 +77,7 @@ const launchACC = () => {
         <img src="@/assets/electron.svg" />
       </mdui-button-icon>
       <mdui-top-app-bar-title class="text-xl mt-2">
-        <span class="title">争锋小助手</span>
+        <span class="title">{{ translate('general.appName') }}</span>
         <span
           class="mx-4 opacity-60"
           style="font-family: 'Harmony OS Sans SC'; font-weight: 200"
@@ -83,7 +90,7 @@ const launchACC = () => {
     </mdui-top-app-bar>
 
     <mdui-navigation-rail value="status" divider class="pb-4" contained>
-      <mdui-tooltip content="Lobby服务器状态" placement="right">
+      <mdui-tooltip :content="translate('general.status')" placement="right">
         <mdui-button-icon
           class="mb-2"
           :style="{
@@ -98,7 +105,7 @@ const launchACC = () => {
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip content="服务器列表" placement="right">
+      <mdui-tooltip :content="translate('general.servers')" placement="right">
         <mdui-button-icon
           class="mb-2"
           :style="{
@@ -113,7 +120,7 @@ const launchACC = () => {
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip content="调校管理" placement="right">
+      <mdui-tooltip :content="translate('general.setup')" placement="right">
         <mdui-button-icon
           class="mb-2"
           :style="{
@@ -129,7 +136,7 @@ const launchACC = () => {
       </mdui-tooltip>
 
       <mdui-tooltip
-        content="启动ACC"
+        :content="translate('general.launchACC')"
         placement="right"
         slot="bottom"
         v-if="mode !== 0"
@@ -152,7 +159,11 @@ const launchACC = () => {
           <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
         </mdui-button-icon>
       </mdui-tooltip>
-      <mdui-tooltip content="设置" placement="right" slot="bottom">
+      <mdui-tooltip
+        :content="translate('general.settings')"
+        placement="right"
+        slot="bottom"
+      >
         <mdui-button-icon
           :style="{
             background:

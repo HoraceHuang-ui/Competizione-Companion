@@ -4,6 +4,8 @@ import { useStore } from '@/store'
 import { seriesColorMap } from '@/utils/enums'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 const store = useStore()
+import '@mdui/icons/person-add-disabled--rounded.js'
+import { translate } from '@/i18n'
 
 const props = defineProps({
   server: {
@@ -16,6 +18,16 @@ const connectServer = (ip: string, tcpPort: number, name: string) => {
   window.electron.openExtLink(
     `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`,
   )
+}
+
+const trackDisp = (trackId: string) => {
+  const res = tracks.find(t => t[0] === trackId.toLowerCase())
+
+  if (store.settings.setup.trackDisplay == 3) {
+    return translate(`tracks.${res?.[0]}`)
+  } else {
+    return res?.[[2, 1][store.settings.setup.trackDisplay - 1]]
+  }
 }
 </script>
 
@@ -36,17 +48,13 @@ const connectServer = (ip: string, tcpPort: number, name: string) => {
       </div>
     </mdui-tooltip>
     <div class="text-sm opacity-70 mb-1">
-      {{
-        tracks.find(t => t[0] === props.server.track.id.toLowerCase())?.[
-          [2, 1, 3][store.settings.setup.trackDisplay - 1]
-        ]
-      }}
+      {{ trackDisp(props.server.track.id) }}
     </div>
     <mdui-divider></mdui-divider>
 
     <div class="flex flex-row-reverse justify-between items-center mt-2">
       <mdui-tooltip
-        content="正赛期间不可加入"
+        :content="$t('servers.noHotJoin')"
         placement="bottom"
         v-if="!props.server.hot_join"
       >

@@ -5,18 +5,37 @@ import ChipSelect from '@/components/ChipSelect.vue'
 import '@mdui/icons/light-mode--rounded.js'
 import '@mdui/icons/brightness-auto--rounded.js'
 import '@mdui/icons/dark-mode--outlined.js'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { getTheme, setTheme } from 'mdui'
 import { themeMap } from '@/utils/enums'
+import {
+  availableLangCodes,
+  availableLangNames,
+  Lang,
+  switchLang,
+  translate,
+  translateWithLocale,
+  langMap,
+} from '@/i18n'
 
 const store = useStore()
-const langs = ['en_US', 'zh_CN']
 
-const langMap = {
-  en_US: 'English',
-  zh_CN: '简体中文',
+if (!localStorage.lang) {
+  localStorage.lang = 'en_US'
 }
-const dispMap = ['英文全写', '英文简写', '中文简写']
+const lang = ref(localStorage.lang || 'en_US')
+const langMsg = computed(() => {
+  console.log(translateWithLocale('settings.languageChangeMsg', lang.value))
+  return translateWithLocale('settings.languageChangeMsg', lang.value)
+})
+const dispMap = ['dispEnFull', 'dispEnShort', 'dispLocalShort']
+const dispItems = computed(() => {
+  if (lang.value === 'en_US') {
+    return [1, 2]
+  } else {
+    return [1, 2, 3]
+  }
+})
 
 const langDialogOpen = ref(false)
 const resetDialogOpen = ref(false)
@@ -39,6 +58,28 @@ const checkUpdate = () => {
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
 }
+
+const changeLang = () => {
+  switchLang(lang.value)
+  langDialogOpen.value = false
+  if (lang.value === 'en_US') {
+    store.settings.setup.carDisplay = 2
+    store.settings.setup.trackDisplay = 2
+  }
+  window.win.relaunch()
+}
+
+const langChangeCancel = () => {
+  langDialogOpen.value = false
+  lang.value = localStorage.lang as Lang
+}
+
+const onLangSelect = (item: Lang) => {
+  if (item !== localStorage.lang) {
+    console.log(lang.value)
+    langDialogOpen.value = true
+  }
+}
 </script>
 
 <template>
@@ -53,24 +94,24 @@ const openLink = (url: string) => {
       <ScrollWrapper class="pl-2 pr-1">
         <div class="pl-6 pt-6 pr-5">
           <div class="category">
-            <div class="title header">通用</div>
+            <div class="title header">{{ $t('settings.general') }}</div>
             <div class="item">
               <div class="item-in">
-                <div>语言（先占个位，暂不支持）</div>
+                <div>{{ $t('settings.language') }}</div>
                 <ChipSelect
-                  v-model="store.settings.general.lang"
-                  :items="langs"
+                  v-model="lang"
+                  :items="availableLangCodes"
                   chip-class="rounded-full"
                   :chip-label="item => langMap[item]"
                   :item-label="item => langMap[item]"
-                  @select="item => (store.settings.general.lang = item)"
+                  @select="onLangSelect"
                 >
                 </ChipSelect>
               </div>
             </div>
             <div class="item">
               <div class="item-in">
-                <div>亮暗色模式</div>
+                <div>{{ $t('settings.darkMode') }}</div>
                 <mdui-segmented-button-group
                   class="rounded-full"
                   selects="single"
@@ -102,17 +143,17 @@ const openLink = (url: string) => {
               class="ml-6"
               variant="text"
               @click="resetDialogOpen = true"
-              >重置所有设置</mdui-button
+              >{{ $t('settings.reset') }}</mdui-button
             >
           </div>
           <div class="category">
-            <div class="title header">Lobby服务器状态页</div>
+            <div class="title header">{{ $t('general.status') }}</div>
             <div class="item">
               <div class="item-in">
-                <div>炸服时提示</div>
+                <div>{{ $t('settings.serverDownMsg') }}</div>
                 <mdui-text-field
                   class="w-60 bg-[rgb(var(--mdui-color-on-secondary))] cursor-text"
-                  placeholder="请输入文字"
+                  :placeholder="$t('settings.serverDownMsgPlaceholder')"
                   variant="outlined"
                   :value="store.settings.status.serverDownMsg"
                   @input="
@@ -123,36 +164,36 @@ const openLink = (url: string) => {
             </div>
           </div>
           <div class="category">
-            <div class="title header">调校管理页</div>
+            <div class="title header">{{ $t('general.setup') }}</div>
             <div class="item">
               <div class="item-in">
-                <div>车型显示</div>
+                <div>{{ $t('settings.carDisp') }}</div>
                 <ChipSelect
                   v-model="store.settings.setup.carDisplay"
                   chip-class="rounded-full"
-                  :items="[1, 2, 3]"
-                  :item-label="item => dispMap[item - 1]"
-                  :chip-label="item => dispMap[item - 1]"
+                  :items="dispItems"
+                  :item-label="item => $t(`settings.${dispMap[item - 1]}`)"
+                  :chip-label="item => $t(`settings.${dispMap[item - 1]}`)"
                 >
                 </ChipSelect>
               </div>
             </div>
             <div class="item">
               <div class="item-in">
-                <div>赛道显示</div>
+                <div>{{ $t('settings.trackDisp') }}</div>
                 <ChipSelect
                   v-model="store.settings.setup.trackDisplay"
                   chip-class="rounded-full"
-                  :items="[1, 2, 3]"
-                  :item-label="item => dispMap[item - 1]"
-                  :chip-label="item => dispMap[item - 1]"
+                  :items="dispItems"
+                  :item-label="item => $t(`settings.${dispMap[item - 1]}`)"
+                  :chip-label="item => $t(`settings.${dispMap[item - 1]}`)"
                 >
                 </ChipSelect>
               </div>
             </div>
-            <div class="item">
+            <div class="item" v-if="lang !== 'en_US'">
               <div class="item-in">
-                <div>参数显示英文</div>
+                <div>{{ $t('settings.paramsEn') }}</div>
                 <mdui-switch
                   :checked="store.settings.setup.setupLabelEn"
                   @change="
@@ -163,11 +204,11 @@ const openLink = (url: string) => {
             </div>
           </div>
           <div class="category">
-            <div class="title header">关于</div>
+            <div class="title header">{{ $t('settings.about') }}</div>
             <div class="item">
               <div class="item-in">
                 <div class="flex flex-row items-center">
-                  <div>版本</div>
+                  <div>{{ $t('settings.version') }}</div>
                   <mdui-chip
                     class="ml-2 rounded-full"
                     style="
@@ -193,14 +234,14 @@ const openLink = (url: string) => {
                     <img src="@/assets/github-mark.png" class="p-1" />
                   </mdui-button-icon>
                   <mdui-button variant="tonal" @click="checkUpdate">
-                    检查更新
+                    {{ $t('settings.checkUpdate') }}
                   </mdui-button>
                 </div>
               </div>
             </div>
             <div class="item larger">
               <div class="item-in larger">
-                <span>鸣谢</span>
+                <span>{{ $t('settings.credits') }}</span>
                 <div class="flex flex-col items-end">
                   <div class="flex flex-row items-center">
                     <div class="mr-4">Dynamic Esports Academy</div>
@@ -240,12 +281,29 @@ const openLink = (url: string) => {
       :open="resetDialogOpen"
       close-on-overlay-click
       close-on-esc
-      headline="确认重置所有设置？"
+      :headline="$t('settings.resetConfirm')"
     >
-      <mdui-button slot="action" variant="text" @click="resetDialogOpen = false"
-        >取消</mdui-button
+      <mdui-button
+        slot="action"
+        variant="text"
+        @click="resetDialogOpen = false"
+        >{{ $t('general.cancel') }}</mdui-button
       >
-      <mdui-button slot="action" @click="resetSettings">确认</mdui-button>
+      <mdui-button slot="action" @click="resetSettings">{{
+        $t('general.confirm')
+      }}</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog
+      :open="langDialogOpen"
+      :headline="$t('settings.languageChangeTitle')"
+    >
+      {{ langMsg }}
+      <mdui-button slot="action" variant="text" @click="langChangeCancel">{{
+        $t('general.cancel')
+      }}</mdui-button>
+      <mdui-button slot="action" @click="changeLang">{{
+        $t('general.confirm')
+      }}</mdui-button>
     </mdui-dialog>
   </div>
 </template>

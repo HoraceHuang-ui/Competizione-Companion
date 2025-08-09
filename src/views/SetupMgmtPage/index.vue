@@ -35,10 +35,14 @@ const setupList = ref({
   left: [],
   right: [],
 })
-const fileSearch = ref({
-  left: '',
-  right: '',
-})
+const fileSearch = ref(
+  sessionStorage.setupFileNames
+    ? JSON.parse(sessionStorage.setupFileNames)
+    : {
+        left: '',
+        right: '',
+      },
+)
 
 const curCar = ref({
   left: undefined,
@@ -48,6 +52,14 @@ const curTrack = ref({
   left: undefined,
   right: undefined,
 })
+const files = ref(
+  sessionStorage.setupFiles
+    ? JSON.parse(sessionStorage.setupFiles)
+    : {
+        left: undefined,
+        right: undefined,
+      },
+)
 
 const enableSearch = computed(() => {
   return {
@@ -74,6 +86,15 @@ watch(
     }
   },
   { immediate: false, deep: true },
+)
+
+watch(
+  files,
+  () => {
+    sessionStorage.setupFiles = JSON.stringify(files.value)
+    sessionStorage.setupFileNames = JSON.stringify(fileSearch.value)
+  },
+  { deep: true },
 )
 
 const filteredSetupList = computed(() => {
@@ -143,11 +164,6 @@ const onSelectCar = (side: Side, car: [string, any]) => {
     label: carLabel,
   }
 }
-
-const files = ref({
-  left: undefined,
-  right: undefined,
-})
 
 const triggerFileInput = (side: 'left' | 'right') => {
   if (side === 'left') {
@@ -301,6 +317,9 @@ const handleDragLeave = (side: 'left' | 'right') => {
                 dropdown-placement="top"
                 :items="groups"
                 @select="onSelectGroup"
+                :disabled="
+                  files['left'] !== undefined || files['right'] !== undefined
+                "
               >
               </ChipSelect>
 

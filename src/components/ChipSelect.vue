@@ -38,6 +38,10 @@ const props = defineProps({
     type: String,
     default: 'auto',
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const selection = defineModel({
@@ -52,8 +56,15 @@ const onSelect = (item: any) => {
 </script>
 
 <template>
-  <mdui-dropdown :placement="props.dropdownPlacement">
-    <mdui-chip slot="trigger" :class="props.chipClass">
+  <mdui-dropdown
+    :placement="props.dropdownPlacement"
+    :disabled="props.disabled"
+  >
+    <mdui-chip
+      slot="trigger"
+      :class="props.chipClass"
+      :disabled="props.disabled"
+    >
       {{ selection ? props.chipLabel(selection) : props.placeholder }}
       <div slot="icon" class="pt-0.5">
         <slot name="icon"> </slot>

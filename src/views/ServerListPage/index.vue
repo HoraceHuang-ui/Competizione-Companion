@@ -314,7 +314,10 @@ const openExtUrl = (url: string) => {
               >
             </div>
             <div class="help-item">
-              <ScrollWrapper class="flex flex-col items-center">
+              <ScrollWrapper
+                class="flex flex-col items-center"
+                show-bar="always"
+              >
                 <img
                   src="@/assets/helpImages/2_accPath.png"
                   class="rounded-xl"
@@ -332,7 +335,10 @@ const openExtUrl = (url: string) => {
             </div>
 
             <div class="help-item">
-              <ScrollWrapper class="flex flex-col items-center">
+              <ScrollWrapper
+                class="flex flex-col items-center"
+                show-bar="always"
+              >
                 <img
                   src="@/assets/helpImages/3_installHook.png"
                   class="rounded-xl"
@@ -350,7 +356,10 @@ const openExtUrl = (url: string) => {
             </div>
 
             <div class="help-item">
-              <ScrollWrapper class="flex flex-col items-center">
+              <ScrollWrapper
+                class="flex flex-col items-center"
+                show-bar="always"
+              >
                 <img
                   src="@/assets/helpImages/4_LANServer.png"
                   class="rounded-xl"
@@ -369,7 +378,10 @@ const openExtUrl = (url: string) => {
             </div>
 
             <div class="help-item">
-              <ScrollWrapper class="flex flex-col items-center">
+              <ScrollWrapper
+                class="flex flex-col items-center"
+                show-bar="always"
+              >
                 <img
                   src="@/assets/helpImages/5_removeHook.png"
                   class="rounded-xl"

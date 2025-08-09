@@ -37,7 +37,6 @@ const dispItems = computed(() => {
   }
 })
 
-const langDialogOpen = ref(false)
 const resetDialogOpen = ref(false)
 
 const resetSettings = () => {
@@ -59,25 +58,11 @@ const openLink = (url: string) => {
   window.electron.openExtLink(url)
 }
 
-const changeLang = () => {
+const onLangSelect = (item: Lang) => {
   switchLang(lang.value)
-  langDialogOpen.value = false
   if (lang.value === 'en_US') {
     store.settings.setup.carDisplay = 2
     store.settings.setup.trackDisplay = 2
-  }
-  window.win.relaunch()
-}
-
-const langChangeCancel = () => {
-  langDialogOpen.value = false
-  lang.value = localStorage.lang as Lang
-}
-
-const onLangSelect = (item: Lang) => {
-  if (item !== localStorage.lang) {
-    console.log(lang.value)
-    langDialogOpen.value = true
   }
 }
 </script>
@@ -290,18 +275,6 @@ const onLangSelect = (item: Lang) => {
         >{{ $t('general.cancel') }}</mdui-button
       >
       <mdui-button slot="action" @click="resetSettings">{{
-        $t('general.confirm')
-      }}</mdui-button>
-    </mdui-dialog>
-    <mdui-dialog
-      :open="langDialogOpen"
-      :headline="$t('settings.languageChangeTitle')"
-    >
-      {{ langMsg }}
-      <mdui-button slot="action" variant="text" @click="langChangeCancel">{{
-        $t('general.cancel')
-      }}</mdui-button>
-      <mdui-button slot="action" @click="changeLang">{{
         $t('general.confirm')
       }}</mdui-button>
     </mdui-dialog>

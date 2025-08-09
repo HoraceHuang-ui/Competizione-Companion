@@ -29,11 +29,11 @@ const winClose = () => {
 
 const mode = ref(0) // 0: Server Status
 const modes = [
-  translate('general.status'),
-  translate('general.servers'),
-  translate('general.setup'),
-  translate('general.launchACC'),
-  translate('general.settings'),
+  'general.status',
+  'general.servers',
+  'general.setup',
+  'general.launchACC',
+  'general.settings',
 ]
 const pages = ['status', 'list', 'setup', '', 'settings']
 const nav = (index: number) => {
@@ -84,7 +84,7 @@ const launchACC = () => {
           >|</span
         >
         <span style="color: rgb(var(--mdui-color-primary))">{{
-          modes[mode]
+          $t(modes[mode])
         }}</span>
       </mdui-top-app-bar-title>
     </mdui-top-app-bar>

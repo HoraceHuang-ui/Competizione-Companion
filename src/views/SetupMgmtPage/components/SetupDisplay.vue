@@ -19,6 +19,7 @@ import {
 } from '@/utils/enums'
 import { useStore } from '@/store'
 import { translate } from '@/i18n'
+import HelpTooltip from '@/views/SetupMgmtPage/components/HelpTooltip.vue'
 
 const store = useStore()
 const enLabel = store.settings.setup.setupLabelEn
@@ -320,7 +321,6 @@ const setupGroups = [
         <mdui-collapse-item
           v-for="group in setupGroups"
           :key="group[0]"
-          :title="enLabel ? group[1] : $t(`setup.categories.${group[0]}`)"
           :value="group[0]"
         >
           <mdui-list-item
@@ -346,16 +346,17 @@ const setupGroups = [
             class="mx-4 my-2 flex flex-row justify-between"
             v-for="items in group[2]"
           >
-            <div class="text-left">
-              <span class="font-bold">{{
-                enLabel ? items[1] : $t(`setup.params.${items[0]}.name`)
-              }}</span>
-              <span class="opacity-70">{{
-                items.length >= 4 && items[3] ? ` [${items[3]}]` : ''
-              }}</span>
+            <div class="text-left flex flex-row">
+              <div class="font-bold">
+                {{ enLabel ? items[1] : $t(`setup.params.${items[0]}.name`) }}
+              </div>
+              <div class="opacity-70">
+                {{ items.length >= 4 && items[3] ? ` [${items[3]}]` : '' }}
+              </div>
+              <HelpTooltip :param-key="items[0]" class="ml-2" />
             </div>
             <div
-              class="flex-1 h-[1px] mx-2 bg-[rgb(var(--mdui-color-on-secondary))] mt-[1ch]"
+              class="flex-1 h-[1px] mx-2 bg-[rgb(var(--mdui-color-outline))] mt-[1ch] opacity-40"
             ></div>
             <div class="text-right">
               <mdui-chip

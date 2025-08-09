@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import '@mdui/icons/help-outline--rounded.js'
 import '@mdui/icons/file-upload--rounded.js'
 
 import { computed, ref, watch } from 'vue'
@@ -462,62 +461,6 @@ const handleDragLeave = (side: 'left' | 'right') => {
     <div
       class="absolute bottom-2 left-0 right-0 text-center text-gray-400 text-sm"
     >
-      <!--      <mdui-tooltip>-->
-      <!--        <mdui-button-icon class="cursor-default">-->
-      <!--          <mdui-icon-help-outline&#45;&#45;rounded></mdui-icon-help-outline&#45;&#45;rounded>-->
-      <!--        </mdui-button-icon>-->
-
-      <!--        <div slot="content" class="px-2 pb-2">-->
-      <!--          <mdui-tabs value="adjust">-->
-      <!--            <mdui-tab value="adjust">调节</mdui-tab>-->
-      <!--            <mdui-tab value="theory">原理</mdui-tab>-->
-
-      <!--            <mdui-tab-panel slot="panel" value="adjust" class="text-left mt-2">-->
-      <!--              <div>调整冷胎时的胎压。</div>-->
-
-      <!--              <div-->
-      <!--                class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
-      <!--              >-->
-      <!--                调高-->
-      <!--              </div>-->
-      <!--              <div>-->
-      <!--                可提供更多侧向支撑，初段反應更強，增加指向性,-->
-      <!--                而且可以壓制胎溫的上升; 但接觸面會減少，容易過載產生滑移。-->
-      <!--              </div>-->
-
-      <!--              <div-->
-      <!--                class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
-      <!--              >-->
-      <!--                调低-->
-      <!--              </div>-->
-      <!--              <div>-->
-      <!--                使轮胎更容易产生形变，增加接觸面，抓地上限會增加,-->
-      <!--                胎溫會上升的更快；但指向性弱，初段反應不積極，動態不線性。-->
-      <!--              </div>-->
-
-      <!--              <div-->
-      <!--                class="bg-[rgb(var(&#45;&#45;mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"-->
-      <!--              >-->
-      <!--                备注-->
-      <!--              </div>-->
-      <!--              <div>-->
-      <!--                一般建议干胎暖胎后稳定在26.7-27.2psi,-->
-      <!--                高溫的情況下建議27.1-27.3psi；雨胎稳定在29.5-31.0psi。-->
-      <!--              </div>-->
-      <!--            </mdui-tab-panel>-->
-
-      <!--            <mdui-tab-panel slot="panel" value="theory">-->
-      <!--              <div>ACC遥测数据的圈速记录原理：</div>-->
-      <!--              <ul class="list-disc ml-6 mt-2">-->
-      <!--                <li>ACC会在每次完成一圈后记录该圈的圈速。</li>-->
-      <!--                <li>如果圈速超过102%，则不会记录该圈。</li>-->
-      <!--                <li>如果圈速低于102%，则会记录该圈。</li>-->
-      <!--                <li>ACC会自动保存最近的若干个有效圈速数据。</li>-->
-      <!--              </ul>-->
-      <!--            </mdui-tab-panel>-->
-      <!--          </mdui-tabs>-->
-      <!--        </div>-->
-      <!--      </mdui-tooltip>-->
       {{ $t('setup.techSupport') }}
       <img
         src="@/assets/DEA_light.png"

@@ -147,4 +147,8 @@ const trackDisp = (trackId: string) => {
   </mdui-card>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+::part(popup) {
+  border-radius: var(--mdui-shape-corner-small);
+}
+</style>

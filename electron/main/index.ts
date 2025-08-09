@@ -1,8 +1,18 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, Menu, Tray } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
+import Store from 'electron-store'
+
+const store = new Store({
+  defaults: {
+    w: 1200,
+    h: 700,
+    max: false,
+    tray: false,
+  },
+})
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -41,15 +51,17 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null
 const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
+let tray = null
+const iconPath = path.join(process.env.VITE_PUBLIC, 'favicon.ico')
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    title: 'Competizione Companion',
+    icon: iconPath,
     minWidth: 1200,
     minHeight: 700,
-    width: 1200,
-    height: 700,
+    width: store.get('w') || 1200,
+    height: store.get('h') || 700,
     frame: false,
     webPreferences: {
       preload,
@@ -60,6 +72,24 @@ async function createWindow() {
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // contextIsolation: false,
     },
+  })
+  if (store.get('max')) {
+    win.maximize()
+  }
+
+  win.on('resized', () => {
+    if (win.isMinimized()) {
+      return
+    }
+    const [width, height] = win.getSize()
+    store.set('w', width)
+    store.set('h', height)
+  })
+  win.on('maximize', () => {
+    store.set('max', true)
+  })
+  win.on('unmaximize', () => {
+    store.set('max', false)
   })
 
   if (VITE_DEV_SERVER_URL) {
@@ -187,6 +217,22 @@ async function createWindow() {
       fs.writeFileSync(setupPath, '{}', 'utf-8')
       return '{}'
     }
+  })
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Quit',
+      click: () => {
+        win.destroy()
+      },
+    },
+  ])
+  tray = new Tray(iconPath)
+  tray.setToolTip('Competizione Companion')
+  tray.setContextMenu(contextMenu)
+  tray.on('click', () => {
+    win.isVisible() ? win.hide() : win.show()
+    win.isVisible() ? win.setSkipTaskbar(false) : win.setSkipTaskbar(true)
   })
 }
 

@@ -65,6 +65,11 @@ const onLangSelect = (item: Lang) => {
     store.settings.setup.trackDisplay = 2
   }
 }
+
+const changeTray = (checked: boolean) => {
+  store.settings.general.minToTray = checked
+  window.electron.storeSet('tray', checked)
+}
 </script>
 
 <template>
@@ -122,6 +127,19 @@ const onLangSelect = (item: Lang) => {
                     <mdui-icon-dark-mode--outlined></mdui-icon-dark-mode--outlined>
                   </mdui-segmented-button>
                 </mdui-segmented-button-group>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('settings.minToTray') }}</div>
+                <mdui-switch
+                  :checked="store.settings.general.minToTray"
+                  @change="
+                    e => {
+                      changeTray(e.target.checked)
+                    }
+                  "
+                ></mdui-switch>
               </div>
             </div>
             <mdui-button

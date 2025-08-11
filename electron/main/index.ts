@@ -115,7 +115,12 @@ async function createWindow() {
 
   // ---------- Window actions ----------
   ipcMain.on('win:close', () => {
-    win.close()
+    if (store.get('tray')) {
+      win.hide()
+      win.setSkipTaskbar(true)
+    } else {
+      win.close()
+    }
   })
   ipcMain.on('win:min', () => {
     win.minimize()
@@ -151,6 +156,10 @@ async function createWindow() {
 
   ipcMain.on('elec:openExtLink', (_event, url) => {
     shell.openExternal(url)
+  })
+
+  ipcMain.on('elec:storeSet', (_event, key, value) => {
+    store.set(key, value)
   })
 
   /**

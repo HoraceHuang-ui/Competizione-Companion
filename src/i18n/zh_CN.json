@@ -294,6 +294,7 @@
     "languageChangeTitle": "切换语言",
     "languageChangeMsg": "您即将切换到简体中文（zh_CN），确定后程序将重启。确定继续吗？",
     "darkMode": "亮暗色模式",
+    "minToTray": "最小化到托盘",
     "reset": "重置所有设置",
     "resetConfirm": "确认重置所有设置？",
     "serverDownMsg": "炸服时提示",

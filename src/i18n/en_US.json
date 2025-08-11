@@ -294,6 +294,7 @@
     "languageChangeTitle": "Switch Language",
     "languageChangeMsg": "You are about to switch to English (en_US), the app will reload. Continue?",
     "darkMode": "Theme Mode",
+    "minToTray": "Minimize to Tray",
     "reset": "Reset All Settings",
     "resetConfirm": "Reset All Settings?",
     "serverDownMsg": "Server Down Message",

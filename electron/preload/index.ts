@@ -51,6 +51,9 @@ contextBridge.exposeInMainWorld('electron', {
   openExtLink: (url: string) => {
     ipcRenderer.send('elec:openExtLink', url)
   },
+  storeSet: (key: string, value: any) => {
+    ipcRenderer.send('elec:storeSet', key, value)
+  },
 })
 
 contextBridge.exposeInMainWorld('fs', {

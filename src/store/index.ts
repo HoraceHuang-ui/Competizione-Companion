@@ -14,6 +14,7 @@ export const useStore = defineStore('userStore', {
       general: {
         lang: 'zh_CN',
         darkMode: '2',
+        minToTray: false,
         themeColor: '',
       },
       status: {

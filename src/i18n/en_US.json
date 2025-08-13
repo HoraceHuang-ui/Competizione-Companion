@@ -10,7 +10,11 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "close": "Close",
-    "share": "Share"
+    "share": "Share",
+    "newVerDetected": "New Version Detected!",
+    "updVer": "Version: ",
+    "updSize": "Size: ",
+    "update": "Update"
   },
   "status": {
     "goodNews": "Good News",

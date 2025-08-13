@@ -10,7 +10,11 @@
     "cancel": "取消",
     "confirm": "确定",
     "close": "关闭",
-    "share": "分享"
+    "share": "分享",
+    "newVerDetected": "检测到新版本！",
+    "updVer": "版本：",
+    "updSize": "大小：",
+    "update": "更新"
   },
   "status": {
     "goodNews": "喜报",

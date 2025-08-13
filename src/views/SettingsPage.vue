@@ -376,7 +376,7 @@ const confirmUpd = () => {
       :open="updDialogShow"
       close-on-overlay-click
       close-on-esc
-      :headline="'检查到更新'"
+      :headline="$t('general.newVerDetected')"
       @close="updDialogShow = false"
     >
       <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
@@ -387,11 +387,12 @@ const confirmUpd = () => {
         />
       </div>
       <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
-        版本：{{ appVer }} 👉
+        {{ $t('general.updVer') }}{{ appVer }} 👉
         {{ updInfo.version }}
       </div>
       <div class="text-red-600 dark:text-red-400">
-        {{ '大小：' + (updInfo.size / 1024 / 1024).toFixed(1) }}MB
+        {{ $t('general.updSize')
+        }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
       </div>
       <mdui-button
         slot="action"
@@ -399,7 +400,9 @@ const confirmUpd = () => {
         @click="updDialogShow = false"
         >{{ $t('general.cancel') }}</mdui-button
       >
-      <mdui-button slot="action" @click="confirmUpd">更新</mdui-button>
+      <mdui-button slot="action" @click="confirmUpd">{{
+        $t('general.update')
+      }}</mdui-button>
     </mdui-dialog>
   </div>
 </template>

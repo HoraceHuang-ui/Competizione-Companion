@@ -15,6 +15,7 @@ import { useStore } from '@/store'
 import { seriesColorMap } from '@/utils/enums'
 import tracks from '@/utils/trackData'
 import { translate } from '@/i18n'
+import SetupCode from '@/views/SetupMgmtPage/components/SetupCode.vue'
 
 const store = useStore()
 
@@ -237,6 +238,15 @@ const handleDragEnter = (side: 'left' | 'right') => {
 const handleDragLeave = (side: 'left' | 'right') => {
   isDragging.value[side] = false
 }
+
+const codeShareOpen = ref<String | undefined>(undefined)
+const importSetup = (setup: any, fileName: string) => {
+  if (codeShareOpen.value) {
+    files.value[codeShareOpen.value] = setup
+    fileSearch.value[codeShareOpen.value] = fileName
+  }
+  codeShareOpen.value = undefined
+}
 </script>
 
 <template>
@@ -287,17 +297,23 @@ const handleDragLeave = (side: 'left' | 'right') => {
           @dragover.prevent
           @drop.prevent="handleDrop(side as Side, $event)"
         >
-          <mdui-button
-            @click="triggerFileInput(side as Side)"
-            v-if="!isDragging[side as Side]"
-          >
-            {{ $t('setup.chooseFile') }}
-          </mdui-button>
+          <div v-if="!isDragging[side as Side]" class="flex flex-col w-max">
+            <mdui-button @click="triggerFileInput(side as Side)">
+              {{ $t('setup.chooseFile') }}
+            </mdui-button>
+            <mdui-button
+              @click="codeShareOpen = side"
+              class="mt-3"
+              variant="elevated"
+            >
+              {{ $t('setup.importFromCode') }}
+            </mdui-button>
+          </div>
           <mdui-icon-file-upload--rounded
             v-else
             class="pointer-events-none mb-4 text-4xl text-[rgb(var(--mdui-color-primary))]"
           ></mdui-icon-file-upload--rounded>
-          <p class="text-sm text-gray-500 mt-2 pointer-events-none mb-12">
+          <p class="text-sm text-gray-500 mt-2 pointer-events-none mb-14">
             {{
               isDragging[side as Side]
                 ? $t('setup.releaseToLoad')
@@ -457,25 +473,28 @@ const handleDragLeave = (side: 'left' | 'right') => {
           :carData="carData[curGroup]"
           :fileName="fileSearch[side as Side]"
           :compareSetup="files[counterSide(side) as Side]"
-        />
-        <mdui-fab
-          class="absolute bottom-4"
-          :class="{
-            'left-0': side === 'left',
-            'left-4': side === 'right',
-          }"
-          v-if="files[side as Side]"
-          @click="
+          @closeSetup="
             () => {
               files[side as Side] = undefined
               fileSearch[side as Side] = ''
             }
           "
-        >
-          <mdui-icon-delete--rounded slot="icon"></mdui-icon-delete--rounded>
-        </mdui-fab>
+        />
       </div>
     </mdui-card>
+
+    <mdui-dialog
+      :headline="$t('setup.importSetup')"
+      :open="codeShareOpen"
+      @close="() => {}"
+    >
+      <SetupCode
+        :isOut="false"
+        @importSetup="importSetup"
+        class="w-[350px]"
+        @closeDialog="codeShareOpen = undefined"
+      />
+    </mdui-dialog>
 
     <div
       class="absolute bottom-2 left-0 right-0 text-center text-gray-400 text-sm"

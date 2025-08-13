@@ -1,9 +1,11 @@
-import { app, BrowserWindow, shell, ipcMain, Menu, Tray } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
 import Store from 'electron-store'
+import brotli from 'brotli-compress'
+import axios from 'axios'
 
 const store = new Store({
   defaults: {
@@ -114,12 +116,12 @@ async function createWindow() {
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 
   // ---------- Window actions ----------
-  ipcMain.on('win:close', () => {
-    if (store.get('tray')) {
+  ipcMain.on('win:close', (_event, force: boolean) => {
+    if (force || !store.get('tray')) {
+      win.close()
+    } else {
       win.hide()
       win.setSkipTaskbar(true)
-    } else {
-      win.close()
     }
   })
   ipcMain.on('win:min', () => {
@@ -160,6 +162,15 @@ async function createWindow() {
 
   ipcMain.on('elec:storeSet', (_event, key, value) => {
     store.set(key, value)
+  })
+
+  ipcMain.handle('axios:post', async (_event, url, body) => {
+    const result = await axios.post(url, body)
+    return result.data
+  })
+  ipcMain.handle('axios:get', async (_event, url) => {
+    const result = await axios.get(url)
+    return result.data
   })
 
   /**
@@ -207,25 +218,40 @@ async function createWindow() {
     return fs.readdirSync(setupsPath).filter(file => file.endsWith('.json'))
   })
 
-  ipcMain.handle('fs:setupFile', async (_event, car, track, fileName) => {
-    const setupsDir = path.join(
-      os.homedir(),
-      'Documents',
-      'Assetto Corsa Competizione',
-      'Setups',
-    )
-    const realCar = findCaseInsensitiveName(setupsDir, car)
-    const realTrack = findCaseInsensitiveName(
-      path.join(setupsDir, realCar || car),
-      track,
-    )
-    const setupPath = path.join(setupsDir, realCar, realTrack, fileName)
-    if (fs.existsSync(setupPath)) {
-      return fs.readFileSync(setupPath, 'utf-8')
-    } else {
-      fs.writeFileSync(setupPath, '{}', 'utf-8')
-      return '{}'
-    }
+  ipcMain.handle(
+    'fs:setupFile',
+    async (_event, car, track, fileName, writeVal) => {
+      const setupsDir = path.join(
+        os.homedir(),
+        'Documents',
+        'Assetto Corsa Competizione',
+        'Setups',
+      )
+      const realCar = findCaseInsensitiveName(setupsDir, car)
+      const realTrack = findCaseInsensitiveName(
+        path.join(setupsDir, realCar || car),
+        track,
+      )
+      const setupPath = path.join(setupsDir, realCar, realTrack, fileName)
+      if (fs.existsSync(setupPath)) {
+        return fs.readFileSync(setupPath, 'utf-8')
+      } else {
+        fs.writeFileSync(setupPath, writeVal, 'utf-8')
+        return writeVal
+      }
+    },
+  )
+
+  ipcMain.handle('brotli:compress', async (_event, input) => {
+    const buf = Buffer.from(input, 'utf-8')
+    const compressed = await brotli.compress(buf, { quality: 5 })
+    return Buffer.from(compressed).toString('base64')
+  })
+
+  ipcMain.handle('brotli:decompress', async (_event, input) => {
+    const buf = Buffer.from(input, 'base64')
+    const decompressed = await brotli.decompress(buf)
+    return Buffer.from(decompressed).toString('utf-8')
   })
 
   const contextMenu = Menu.buildFromTemplate([

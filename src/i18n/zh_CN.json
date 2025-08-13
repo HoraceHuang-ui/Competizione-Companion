@@ -1,4 +1,5 @@
 {
+  "langCode": "zh_CN",
   "general": {
     "appName": "争锋小助手",
     "status": "Lobby 服务器状态",
@@ -7,7 +8,9 @@
     "settings": "设置",
     "launchACC": "启动 ACC",
     "cancel": "取消",
-    "confirm": "确定"
+    "confirm": "确定",
+    "close": "关闭",
+    "share": "分享"
   },
   "status": {
     "goodNews": "喜报",
@@ -65,7 +68,18 @@
     "carPlaceholder": "请选择车型",
     "trackPlaceholder": "请选择赛道",
     "inputPlaceholder": "请输入或选择调校文件名",
-    "techSupport": "调教技术支持来自",
+    "shareCode": "分享调校",
+    "setupNameLabel": "调教名称",
+    "setupNamePlaceholder": "输入调校名称",
+    "copyCode": "复制调校码",
+    "importFromCode": "从调校码导入",
+    "importSetup": "导入调校",
+    "codeLabel": "调校码",
+    "codePlaceholder": "在此处粘贴调校码",
+    "carFromCode": "车型：",
+    "saveAndView": "保存并查看",
+    "viewOnly": "仅查看",
+    "techSupport": "调校技术支持来自",
     "adjust": "调节",
     "theory": "原理",
     "increase": "调高",
@@ -179,7 +193,7 @@
           "sum": "调整驾驶时自动保存遥测数据的圈数，数据可放入MoTeC中对比分析。",
           "inc": "存储更多圈数，更不容易丢失你的神之一圈；但遥测文件较大，会占用显著更多的存储空间。",
           "dec": "存储更少圈数，节约存储空间。",
-          "notes": ""
+          "notes": "圈速没到世界纪录的102%之前建议关了，走好理解好线路比片面地抠细节更重要。"
       },
       "aRB": {
         "name": "防倾杆",

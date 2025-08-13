@@ -30,8 +30,8 @@ contextBridge.exposeInMainWorld('steam', {
 })
 
 contextBridge.exposeInMainWorld('win', {
-  close: () => {
-    ipcRenderer.send('win:close')
+  close: (force = false) => {
+    ipcRenderer.send('win:close', force)
   },
   min: () => {
     ipcRenderer.send('win:min')
@@ -44,6 +44,15 @@ contextBridge.exposeInMainWorld('win', {
   },
   relaunch: () => {
     ipcRenderer.send('win:relaunch')
+  },
+})
+
+contextBridge.exposeInMainWorld('axios', {
+  post: async (url: string, body: any) => {
+    return await ipcRenderer.invoke('axios:post', url, body)
+  },
+  get: async (url: string) => {
+    return await ipcRenderer.invoke('axios:get', url)
   },
 })
 
@@ -60,8 +69,22 @@ contextBridge.exposeInMainWorld('fs', {
   setupList: (car: string, track: string) => {
     return ipcRenderer.invoke('fs:setupList', car, track)
   },
-  setupFile: (car: string, track: string, fileName: string) => {
-    return ipcRenderer.invoke('fs:setupFile', car, track, fileName)
+  setupFile: (
+    car: string,
+    track: string,
+    fileName: string,
+    writeVal: string,
+  ) => {
+    return ipcRenderer.invoke('fs:setupFile', car, track, fileName, writeVal)
+  },
+})
+
+contextBridge.exposeInMainWorld('brotli', {
+  compress: (input: string) => {
+    return ipcRenderer.invoke('brotli:compress', input)
+  },
+  decompress: (input: string) => {
+    return ipcRenderer.invoke('brotli:decompress', input)
   },
 })
 

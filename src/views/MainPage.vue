@@ -29,6 +29,8 @@ const queryData = () => {
     .then(data => {
       console.log(data)
       status.value = data
+    })
+    .finally(() => {
       loading.value = false
     })
 }

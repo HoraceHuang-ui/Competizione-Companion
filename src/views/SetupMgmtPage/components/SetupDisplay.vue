@@ -7,6 +7,7 @@ import '@mdui/icons/construction--rounded.js'
 import '@mdui/icons/compress--rounded.js'
 import '@mdui/icons/air--rounded.js'
 import '@mdui/icons/delete--rounded.js'
+import '@mdui/icons/share--rounded.js'
 import '@mdui/icons/settings-suggest--rounded.js'
 import {
   tyreCompound,
@@ -20,6 +21,8 @@ import {
 import { useStore } from '@/store'
 import { translate } from '@/i18n'
 import HelpTooltip from '@/views/SetupMgmtPage/components/HelpTooltip.vue'
+import { ref } from 'vue'
+import SetupCode from '@/views/SetupMgmtPage/components/SetupCode.vue'
 
 const store = useStore()
 const enLabel = store.settings.setup.setupLabelEn
@@ -56,6 +59,8 @@ const curOpenGroups = defineModel({
   type: Array,
   default: [],
 })
+
+const codeShareOpen = ref(false)
 
 function displayItem(compValue, dispValue = compValue) {
   return {
@@ -299,14 +304,70 @@ const setupGroups = [
   ['dampers', 'Dampers', dampersSetup, 'mdui-icon-compress--rounded'],
   ['air', 'Aero', aeroSetup, 'mdui-icon-air--rounded'],
 ]
+
+const extractNumbers = (obj: any, inPitStrategy = false) => {
+  let nums: number[] = []
+  if (Array.isArray(obj)) {
+    if (inPitStrategy) {
+      // pitStrategy 特殊处理：只取第一个元素
+      if (obj.length > 0) {
+        nums.push(...extractNumbers(obj[0]))
+      }
+    } else {
+      for (let val of obj) {
+        nums.push(...extractNumbers(val))
+      }
+    }
+  } else if (typeof obj === 'object' && obj !== null) {
+    for (let key in obj) {
+      if (key === 'pitStrategy' && Array.isArray(obj[key])) {
+        nums.push(...extractNumbers(obj[key], true))
+      } else {
+        nums.push(...extractNumbers(obj[key]))
+      }
+    }
+  } else if (typeof obj === 'number') {
+    nums.push(obj)
+  }
+  return nums
+}
 </script>
 
 <template>
   <div class="size-full flex flex-col items-center relative">
     <div
-      class="title w-5/6 text-center font-bold text-xl mt-2 mb-1 text-[rgb(var(--mdui-color-primary))] truncate"
+      class="title w-full font-bold text-xl mt-2 mb-1 text-[rgb(var(--mdui-color-primary))] flex flex-row justify-between items-center"
+      :class="{
+        'pl-1 pr-3': props.side === 'left',
+        'pl-5': props.side === 'right',
+      }"
     >
-      {{ props.fileName.replace('.json', '') }}
+      <div class="truncate" style="flex: 1">
+        {{ props.fileName.replace('.json', '') }}
+      </div>
+      <div class="flex flex-row">
+        <mdui-tooltip :content="$t('general.close')" placement="bottom">
+          <mdui-button-icon
+            class="text-lg"
+            @click="$emit('closeSetup')"
+            style="color: rgb(var(--mdui-color-on-surface))"
+          >
+            <mdui-icon-delete--rounded></mdui-icon-delete--rounded>
+          </mdui-button-icon>
+        </mdui-tooltip>
+        <mdui-tooltip
+          :content="$t('general.share')"
+          placement="bottom"
+          @click="codeShareOpen = true"
+        >
+          <mdui-button-icon
+            class="text-lg"
+            style="color: rgb(var(--mdui-color-on-surface))"
+          >
+            <mdui-icon-share--rounded></mdui-icon-share--rounded>
+          </mdui-button-icon>
+        </mdui-tooltip>
+      </div>
     </div>
     <ScrollWrapper v-model="scrollValue" class="rounded-2xl">
       <mdui-collapse
@@ -459,6 +520,23 @@ const setupGroups = [
         </mdui-collapse-item>
       </mdui-collapse>
     </ScrollWrapper>
+
+    <mdui-dialog
+      :headline="$t('setup.shareCode')"
+      :open="codeShareOpen"
+      close-on-overlay-click
+      close-on-esc
+      @close="codeShareOpen = false"
+    >
+      <SetupCode
+        class="w-[350px]"
+        :extractedSetup="extractNumbers(props.setup).join(',')"
+        :alias="props.fileName"
+        :car="props.setup.carName"
+        isOut
+        @closeDialog="codeShareOpen = false"
+      />
+    </mdui-dialog>
   </div>
 </template>
 

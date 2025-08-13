@@ -204,6 +204,21 @@ span {
     Harmony OS Sans SC,
     sans-serif;
 }
+.marked {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: bold;
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
+
+  ul {
+    list-style: disc inside;
+    margin-bottom: 0.5rem;
+  }
+}
 
 .drag {
   -webkit-app-region: drag;

@@ -5,9 +5,11 @@ import ChipSelect from '@/components/ChipSelect.vue'
 import '@mdui/icons/light-mode--rounded.js'
 import '@mdui/icons/brightness-auto--rounded.js'
 import '@mdui/icons/dark-mode--outlined.js'
+import '@mdui/icons/update--rounded.js'
 import { computed, ref } from 'vue'
-import { getTheme, setTheme } from 'mdui'
+import { getTheme, setTheme, snackbar } from 'mdui'
 import { themeMap } from '@/utils/enums'
+import { marked } from 'marked'
 import {
   availableLangCodes,
   availableLangNames,
@@ -49,11 +51,6 @@ const darkModeChange = (event: Event) => {
   store.settings.general.darkMode = mode
   setTheme(themeMap[mode])
 }
-
-const checkUpdate = () => {
-  console.log('upd')
-}
-
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
 }
@@ -69,6 +66,72 @@ const onLangSelect = (item: Lang) => {
 const changeTray = (checked: boolean) => {
   store.settings.general.minToTray = checked
   window.electron.storeSet('tray', checked)
+}
+
+const verCompare = (a: string, b: string) => {
+  const arr1 = a.split('.')
+  const arr2 = b.split('.')
+
+  if (arr1.length != arr2.length) {
+    return 114
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
+      return 1
+    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
+      return -1
+    }
+  }
+  return 0
+}
+
+const appVer = ref('')
+// BUILD: '../../app.asar/package.json'
+// DEV: '../../package.json'
+fetch('../../package.json')
+  .then(response => response.json())
+  .then(resp => {
+    appVer.value = resp.version
+  })
+
+const needsUpdate = (latestStr: string) => {
+  return verCompare(latestStr, appVer.value) > 0
+}
+
+const updChecking = ref(false)
+const latest = ref(false)
+const updDialogShow = ref(false)
+const updInfo = ref<any>({})
+const checkUpdate = () => {
+  updChecking.value = true
+  window.axios
+    .get(
+      'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
+    )
+    .then((resp: any) => {
+      console.log(resp)
+      if (needsUpdate(resp.version)) {
+        updInfo.value = resp
+        updDialogShow.value = true
+      } else {
+        latest.value = true
+      }
+      updChecking.value = false
+    })
+    .catch((err: Error) => {
+      snackbar({
+        message: '检查更新失败',
+        autoCloseDelay: 3000,
+      })
+      updChecking.value = false
+      console.error(err)
+    })
+}
+const confirmUpd = () => {
+  updDialogShow.value = false
+  window.electron.openExtLink(updInfo.value.dlUrl)
+  window.win.close(true)
 }
 </script>
 
@@ -218,7 +281,7 @@ const changeTray = (checked: boolean) => {
                       font-family: Consolas, 'Harmony OS Sans SC', sans-serif;
                     "
                   >
-                    0.0.1 Alpha
+                    {{ appVer }}
                   </mdui-chip>
                 </div>
                 <div class="flex flex-row justify-end items-center">
@@ -236,7 +299,12 @@ const changeTray = (checked: boolean) => {
                   >
                     <img src="@/assets/github-mark.png" class="p-1" />
                   </mdui-button-icon>
-                  <mdui-button variant="tonal" @click="checkUpdate">
+                  <mdui-button
+                    variant="tonal"
+                    @click="checkUpdate"
+                    :disabled="updChecking || latest"
+                    :loading="updChecking"
+                  >
                     {{ $t('settings.checkUpdate') }}
                   </mdui-button>
                 </div>
@@ -262,16 +330,24 @@ const changeTray = (checked: boolean) => {
                       width="44"
                     />
                   </div>
-                  <div class="mt-2">lonemeow/acc-setup-diff</div>
+                  <div class="mt-2">
+                    lonemeow/acc-setup-diff; lonemeow/acc-connector
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="item pointer-events-none">
+            <div class="larger pointer-events-none">
+              <mdui-divider class="my-4 opacity-60"></mdui-divider>
               <div class="item-in">
                 <div
                   class="title w-full text-center text-[rgb(var(--mdui-color-outline))]"
                 >
-                  Made with ❤️ by horacehuang17
+                  <p class="text-sm mb-1">
+                    {{
+                      '感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，为本项目提出各种宝贵建议'
+                    }}
+                  </p>
+                  <p>Made with ❤️ by horacehuang17</p>
                 </div>
               </div>
             </div>
@@ -295,6 +371,35 @@ const changeTray = (checked: boolean) => {
       <mdui-button slot="action" @click="resetSettings">{{
         $t('general.confirm')
       }}</mdui-button>
+    </mdui-dialog>
+    <mdui-dialog
+      :open="updDialogShow"
+      close-on-overlay-click
+      close-on-esc
+      :headline="'检查到更新'"
+      @close="updDialogShow = false"
+    >
+      <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
+      <div class="overflow-y-scroll max-h-[300px] w-[400px] scroll-wrapper">
+        <div
+          class="marked"
+          v-html="marked(updInfo?.desc?.[$t('langCode')] || '')"
+        />
+      </div>
+      <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
+        版本：{{ appVer }} 👉
+        {{ updInfo.version }}
+      </div>
+      <div class="text-red-600 dark:text-red-400">
+        {{ '大小：' + (updInfo.size / 1024 / 1024).toFixed(1) }}MB
+      </div>
+      <mdui-button
+        slot="action"
+        variant="text"
+        @click="updDialogShow = false"
+        >{{ $t('general.cancel') }}</mdui-button
+      >
+      <mdui-button slot="action" @click="confirmUpd">更新</mdui-button>
     </mdui-dialog>
   </div>
 </template>
@@ -344,6 +449,12 @@ const changeTray = (checked: boolean) => {
       align-items: baseline;
     }
   }
+}
+
+.scroll-wrapper {
+  scrollbar-color: rgba(var(--mdui-color-outline-variant), 0.8) transparent;
+  scrollbar-width: thin;
+  scrollbar-arrow-color: transparent;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -14,7 +14,8 @@
     "newVerDetected": "检测到新版本！",
     "updVer": "版本：",
     "updSize": "大小：",
-    "update": "更新"
+    "update": "更新",
+    "checkUpdFail": "检查更新失败"
   },
   "status": {
     "goodNews": "喜报",
@@ -328,7 +329,8 @@
     "version": "版本",
     "checkUpdate": "检查更新",
     "upToDate": "当前已是最新版本",
-    "credits": "鸣谢"
+    "credits": "鸣谢",
+    "thanksMsg": "感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，是你们的支持让这个项目越来越好"
   },
   "cars": {
     "amr_v8_vantage_gt3": "马丁 V8",
@@ -336,6 +338,7 @@
     "bentley_continental_gt3_2018": "宾利欧陆 2018",
     "bmw_m4_gt3": "宝马 M4",
     "ferrari_296_gt3": "法拉利 296",
+    "ford_mustang_gt3": "福特野马",
     "honda_nsx_gt3_evo": "本田 NSX Evo",
     "lamborghini_huracan_gt3_evo2": "兰博 Evo2",
     "lexus_rc_f_gt3": "凌志 RC F",

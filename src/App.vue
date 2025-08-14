@@ -4,12 +4,13 @@ import '@mdui/icons/view-list--rounded.js'
 import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { setTheme } from 'mdui'
+import { setTheme, snackbar } from 'mdui'
 import { themeMap } from '@/utils/enums'
 import { translate } from '@/i18n'
+import { marked } from 'marked'
 
 const router = useRouter()
 const store = useStore()
@@ -49,6 +50,76 @@ const launchACC = () => {
     launching.value = false
   }, 3000)
 }
+
+const verCompare = (a: string, b: string) => {
+  const arr1 = a.split('.')
+  const arr2 = b.split('.')
+
+  if (arr1.length != arr2.length) {
+    return 114
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
+      return 1
+    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
+      return -1
+    }
+  }
+  return 0
+}
+
+const appVer = ref('')
+// BUILD: '../../app.asar/package.json'
+// DEV: '../../package.json'
+fetch('../package.json')
+  .then(response => response.json())
+  .then(resp => {
+    appVer.value = resp.version
+  })
+
+const needsUpdate = (latestStr: string) => {
+  return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
+}
+
+const updChecking = ref(false)
+const latest = ref(false)
+const updDialogShow = ref(false)
+const updInfo = ref<any>({})
+const checkUpdate = () => {
+  updChecking.value = true
+  window.axios
+    .get(
+      'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
+    )
+    .then((resp: any) => {
+      console.log(resp)
+      if (needsUpdate(resp.version)) {
+        updInfo.value = resp
+        updDialogShow.value = true
+      } else {
+        latest.value = true
+      }
+      updChecking.value = false
+    })
+    .catch((err: Error) => {
+      snackbar({
+        message: translate('general.updCheckFail'),
+        autoCloseDelay: 3000,
+      })
+      updChecking.value = false
+      console.error(err)
+    })
+}
+const confirmUpd = () => {
+  updDialogShow.value = false
+  window.electron.openExtLink(updInfo.value.dlUrl)
+  window.win.close(true)
+}
+
+onMounted(() => {
+  checkUpdate()
+})
 </script>
 <template>
   <mdui-layout class="size-full">
@@ -74,7 +145,7 @@ const launchACC = () => {
         </div>
       </div>
       <mdui-button-icon class="p-2 mr-5">
-        <img src="@/assets/electron.svg" />
+        <img src="../build/icon.ico" />
       </mdui-button-icon>
       <mdui-top-app-bar-title class="text-xl mt-2">
         <span class="title">{{ translate('general.appName') }}</span>
@@ -181,6 +252,41 @@ const launchACC = () => {
     <mdui-layout-main>
       <router-view id="mainRouterView"></router-view>
     </mdui-layout-main>
+
+    <mdui-dialog
+      :open="updDialogShow"
+      close-on-overlay-click
+      close-on-esc
+      :headline="$t('general.newVerDetected')"
+      @close="updDialogShow = false"
+    >
+      <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
+      <div
+        class="overflow-y-scroll max-h-[300px] w-[400px] scroll-wrapper-app-vue"
+      >
+        <div
+          class="marked"
+          v-html="marked(updInfo?.desc?.[$t('langCode')] || '')"
+        />
+      </div>
+      <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
+        {{ $t('general.updVer') }}{{ appVer }} 👉
+        {{ updInfo.version }}
+      </div>
+      <div class="text-red-600 dark:text-red-400">
+        {{ $t('general.updSize')
+        }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
+      </div>
+      <mdui-button
+        slot="action"
+        variant="text"
+        @click="updDialogShow = false"
+        >{{ $t('general.cancel') }}</mdui-button
+      >
+      <mdui-button slot="action" @click="confirmUpd">{{
+        $t('general.update')
+      }}</mdui-button>
+    </mdui-dialog>
   </mdui-layout>
 </template>
 
@@ -218,6 +324,12 @@ span {
     list-style: disc inside;
     margin-bottom: 0.5rem;
   }
+}
+
+.scroll-wrapper-app-vue {
+  scrollbar-color: rgba(var(--mdui-color-outline-variant), 0.8) transparent;
+  scrollbar-width: thin;
+  scrollbar-arrow-color: transparent;
 }
 
 .drag {

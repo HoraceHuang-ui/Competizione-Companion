@@ -14,7 +14,8 @@
     "newVerDetected": "New Version Detected!",
     "updVer": "Version: ",
     "updSize": "Size: ",
-    "update": "Update"
+    "update": "Update",
+    "checkUpdFail": "Failed to Check for Updates"
   },
   "status": {
     "goodNews": "Good News",
@@ -328,7 +329,8 @@
     "version": "Version",
     "checkUpdate": "Check Update",
     "upToDate": "Already Up to Date",
-    "credits": "Many Thanks to"
+    "credits": "Many Thanks to",
+    "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
   },
   "cars": {
     "amr_v8_vantage_gt3": "AMR V8",
@@ -336,6 +338,7 @@
     "bentley_continental_gt3_2018": "Bentley 2018",
     "bmw_m4_gt3": "BMW M4",
     "ferrari_296_gt3": "Ferrari 296",
+    "ford_mustang_gt3": "Mustang",
     "honda_nsx_gt3_evo": "NSX Evo",
     "lamborghini_huracan_gt3_evo2": "Lambo Evo2",
     "lexus_rc_f_gt3": "Lexus RC F",

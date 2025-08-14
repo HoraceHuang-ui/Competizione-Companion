@@ -96,7 +96,7 @@ fetch('../../package.json')
   })
 
 const needsUpdate = (latestStr: string) => {
-  return verCompare(latestStr, appVer.value) > 0
+  return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
 }
 
 const updChecking = ref(false)
@@ -121,7 +121,7 @@ const checkUpdate = () => {
     })
     .catch((err: Error) => {
       snackbar({
-        message: '检查更新失败',
+        message: translate('general.updCheckFail'),
         autoCloseDelay: 3000,
       })
       updChecking.value = false
@@ -340,14 +340,12 @@ const confirmUpd = () => {
               <mdui-divider class="my-4 opacity-60"></mdui-divider>
               <div class="item-in">
                 <div
-                  class="title w-full text-center text-[rgb(var(--mdui-color-outline))]"
+                  class="w-full text-center text-[rgb(var(--mdui-color-outline))]"
                 >
+                  <p class="title">Made with ❤️ by horacehuang17</p>
                   <p class="text-sm mb-1">
-                    {{
-                      '感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，为本项目提出各种宝贵建议'
-                    }}
+                    {{ $t('settings.thanksMsg') }}
                   </p>
-                  <p>Made with ❤️ by horacehuang17</p>
                 </div>
               </div>
             </div>

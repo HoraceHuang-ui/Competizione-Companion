@@ -329,7 +329,17 @@
     "version": "Version",
     "checkUpdate": "Check Update",
     "upToDate": "Already Up to Date",
-    "credits": "Many Thanks to",
+    "donate": "If You Like This App...",
+    "donateButton": "Consider a Donation!",
+    "donation1Title": "Thanks for Your Support!",
+    "donation1Msg": "It’s the thought that counts, no need to donate too much! ",
+    "donation1Cancel": "No, thanks",
+    "donation1Confirm": "Donated!",
+    "donation2Title": "Damn Bro, You Mean for Real?!",
+    "donation2Msg": "Many many many thanks for your support! All your donated money will be used for my playing Maimai DX!",
+    "donation2Confirm": "It's MaiGO!!!!！",
+    "hipoleTooltip": " · ACC QQ Group: 799836434",
+    "hmrTooltip": "HerMess Racing · QQ Group: 826527145",
     "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
   },
   "cars": {

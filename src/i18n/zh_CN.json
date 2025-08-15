@@ -329,7 +329,17 @@
     "version": "版本",
     "checkUpdate": "检查更新",
     "upToDate": "当前已是最新版本",
-    "credits": "鸣谢",
+    "donate": "喜欢小助手的话……",
+    "donateButton": "捐赠一下吧！",
+    "donation1Title": "感谢支持！",
+    "donation1Msg": "礼轻情意重，不用捐太多哦~",
+    "donation1Cancel": "再想想",
+    "donation1Confirm": "已捐！",
+    "donation2Title": "卧槽你来真的啊？！",
+    "donation2Msg": "谢谢金主爸爸！！！您的所有捐赠将全额用于开发者的舞萌事业！",
+    "donation2Confirm": "机厅 GOGOGO！",
+    "hipoleTooltip": " · ACC QQ群号：799836434",
+    "hmrTooltip": "HerMess Racing · QQ群号：826527145",
     "thanksMsg": "感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，是你们的支持让这个项目越来越好"
   },
   "cars": {

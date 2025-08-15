@@ -6,7 +6,7 @@ import '@mdui/icons/light-mode--rounded.js'
 import '@mdui/icons/brightness-auto--rounded.js'
 import '@mdui/icons/dark-mode--outlined.js'
 import '@mdui/icons/update--rounded.js'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getTheme, setTheme, snackbar } from 'mdui'
 import { themeMap } from '@/utils/enums'
 import { marked } from 'marked'
@@ -21,6 +21,21 @@ import {
 } from '@/i18n'
 
 const store = useStore()
+const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
+const isDark = ref(
+  store.settings.general.darkMode === '2'
+    ? darkModePreference.matches
+    : store.settings.general.darkMode !== '1',
+)
+darkModePreference.addEventListener('change', e => {
+  isDark.value =
+    store.settings.general.darkMode === '2'
+      ? e.matches
+      : store.settings.general.darkMode !== '1'
+})
+
+const donationOpen1 = ref(false)
+const donationOpen2 = ref(false)
 
 if (!localStorage.lang) {
   localStorage.lang = 'en_US'
@@ -50,6 +65,10 @@ const darkModeChange = (event: Event) => {
   const mode = event.target.value
   store.settings.general.darkMode = mode
   setTheme(themeMap[mode])
+  isDark.value =
+    store.settings.general.darkMode === '2'
+      ? darkModePreference.matches
+      : store.settings.general.darkMode !== '1'
 }
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
@@ -310,33 +329,159 @@ const confirmUpd = () => {
                 </div>
               </div>
             </div>
-            <div class="item larger">
-              <div class="item-in larger">
-                <span>{{ $t('settings.credits') }}</span>
-                <div class="flex flex-col items-end">
-                  <div class="flex flex-row items-center">
-                    <div class="mr-4">Dynamic Esports Academy</div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('settings.donate') }}</div>
+                <mdui-button variant="tonal" @click="donationOpen1 = true">
+                  {{ $t('settings.donateButton') }}
+                </mdui-button>
+
+                <mdui-dialog
+                  :headline="$t('settings.donation1Title')"
+                  :open="donationOpen1"
+                  @close="donationOpen1 = false"
+                >
+                  <div>{{ $t('settings.donation1Msg') }}</div>
+                  <div class="flex flex-row mt-2">
                     <img
-                      src="@/assets/DEA_light.png"
-                      class="inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"
-                      width="70"
+                      src="@/assets/wechat.jpg"
+                      width="250"
+                      class="mr-2 donation-pic"
+                    />
+                    <img
+                      src="@/assets/alipay.jpg"
+                      width="250"
+                      class="donation-pic"
                     />
                   </div>
-                  <div class="flex flex-row items-center mt-2">
-                    <div class="mr-4">acc-status.jonatan.net</div>
-                    <img
-                      src="https://acc-status.jonatan.net/favicon.ico"
-                      class="inline px-2 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"
-                      width="44"
-                    />
+                  <mdui-button
+                    slot="action"
+                    variant="text"
+                    @click="donationOpen1 = false"
+                    >{{ $t('settings.donation1Cancel') }}</mdui-button
+                  >
+                  <mdui-button
+                    slot="action"
+                    @click="
+                      () => {
+                        donationOpen1 = false
+                        donationOpen2 = true
+                      }
+                    "
+                    >{{ $t('settings.donation1Confirm') }}</mdui-button
+                  >
+                </mdui-dialog>
+
+                <mdui-dialog
+                  :headline="$t('settings.donation2Title')"
+                  :open="donationOpen2"
+                  @close="donationOpen2 = false"
+                >
+                  <div>
+                    {{ $t('settings.donation2Msg') }}
                   </div>
-                  <div class="mt-2">
-                    lonemeow/acc-setup-diff; lonemeow/acc-connector
-                  </div>
-                </div>
+                  <mdui-button
+                    slot="action"
+                    @click="donationOpen2 = false"
+                    class="title font-bold"
+                    >{{ $t('settings.donation2Confirm') }}</mdui-button
+                  >
+                </mdui-dialog>
               </div>
             </div>
-            <div class="larger pointer-events-none">
+            <div class="larger mt-4">
+              <div
+                class="w-full text-center text-[rgb(var(--mdui-color-outline))] flex flex-row justify-center items-center"
+              >
+                <mdui-tooltip placement="top">
+                  <div slot="content">Dynamic Esports Academy</div>
+                  <img
+                    src="@/assets/DEA_light.png"
+                    class="mx-4 transition-all inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))] opacity-55 hover:opacity-100"
+                    width="80"
+                  />
+                </mdui-tooltip>
+
+                <mdui-tooltip placement="top">
+                  <div slot="content" class="select-text cursor-text">
+                    <a
+                      href="https://www.hipole.com/"
+                      style="
+                        color: rgb(var(--mdui-color-inverse-primary));
+                        text-decoration: underline;
+                      "
+                      >HiPole</a
+                    >{{ $t('settings.hipoleTooltip') }}
+                  </div>
+                  <img
+                    :src="`src/assets/hipole/${$t('langCode')}_${isDark ? 'dark' : 'light'}.png`"
+                    class="inline mx-4 opacity-55 hover:opacity-100 transition-all"
+                    width="130"
+                  />
+                </mdui-tooltip>
+
+                <mdui-tooltip placement="top">
+                  <div slot="content">{{ $t('settings.hmrTooltip') }}</div>
+                  <div
+                    class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
+                  >
+                    <img src="@/assets/HerMess.png" width="40" />
+                    <img src="@/assets/HerMess_text.png" width="90" />
+                  </div>
+                </mdui-tooltip>
+
+                <mdui-tooltip placement="top">
+                  <div slot="content">
+                    <a
+                      href="https://acc-status.jonatan.net/"
+                      style="
+                        color: rgb(var(--mdui-color-inverse-primary));
+                        text-decoration: underline;
+                      "
+                      >acc-status.jonatan.net</a
+                    >
+                  </div>
+                  <img
+                    src="https://acc-status.jonatan.net/favicon.ico"
+                    class="transition-all mx-4 inline px-2 py-1.5 mb-0.5 rounded-full opacity-55 hover:opacity-100 bg-[rgb(var(--mdui-color-primary-dark))]"
+                    width="40"
+                  />
+                </mdui-tooltip>
+
+                <mdui-tooltip placement="top">
+                  <div slot="content">
+                    <a
+                      href="https://lonemeow.github.io/acc-setup-diff/"
+                      style="
+                        color: rgb(var(--mdui-color-inverse-primary));
+                        text-decoration: underline;
+                      "
+                      >acc-setup-diff</a
+                    >
+                    |
+                    <a
+                      href="https://github.com/lonemeow/acc-connector"
+                      style="
+                        color: rgb(var(--mdui-color-inverse-primary));
+                        text-decoration: underline;
+                      "
+                      >acc-connector</a
+                    >
+                  </div>
+                  <div
+                    class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
+                  >
+                    <img
+                      src="@/assets/lonemeow.png"
+                      class="inline mr-1 rounded-full transition-all"
+                      width="30"
+                    />
+                    <div class="ml-1 text-[rgb(var(--mdui-color-on-surface))]">
+                      lonemeow
+                    </div>
+                  </div>
+                </mdui-tooltip>
+              </div>
               <mdui-divider class="my-4 opacity-60"></mdui-divider>
               <div class="item-in">
                 <div
@@ -458,9 +603,22 @@ const confirmUpd = () => {
   scrollbar-arrow-color: transparent;
 }
 
+.donation-pic {
+  border-radius: var(--mdui-shape-corner-large);
+}
+
 @media (prefers-color-scheme: dark) {
   .github-icon {
     filter: invert(1);
   }
+}
+
+::part(popup) {
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+}
+::part(content) {
+  font-size: 1rem;
+  line-height: 1.2;
 }
 </style>

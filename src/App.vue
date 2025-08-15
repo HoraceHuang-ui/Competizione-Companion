@@ -82,32 +82,28 @@ const needsUpdate = (latestStr: string) => {
   return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
 }
 
-const updChecking = ref(false)
-const latest = ref(false)
 const updDialogShow = ref(false)
 const updInfo = ref<any>({})
+const skipVersion = ref(false)
 const checkUpdate = () => {
-  updChecking.value = true
   window.axios
     .get(
       'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
     )
     .then((resp: any) => {
-      console.log(resp)
       if (needsUpdate(resp.version)) {
-        updInfo.value = resp
-        updDialogShow.value = true
-      } else {
-        latest.value = true
+        const target = store.general.targetVersion
+        if (!target || verCompare(resp.version, target) > 0) {
+          updInfo.value = resp
+          updDialogShow.value = true
+        }
       }
-      updChecking.value = false
     })
     .catch((err: Error) => {
       snackbar({
         message: translate('general.updCheckFail'),
         autoCloseDelay: 3000,
       })
-      updChecking.value = false
       console.error(err)
     })
 }
@@ -115,6 +111,12 @@ const confirmUpd = () => {
   updDialogShow.value = false
   window.electron.openExtLink(updInfo.value.dlUrl)
   window.win.close(true)
+}
+const onCancelUpd = () => {
+  updDialogShow.value = false
+  if (skipVersion.value) {
+    store.general.targetVersion = updInfo.value.version
+  }
 }
 
 onMounted(() => {
@@ -277,15 +279,27 @@ onMounted(() => {
         {{ $t('general.updSize')
         }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
       </div>
-      <mdui-button
+      <div
+        class="w-full flex flex-row justify-between items-center"
         slot="action"
-        variant="text"
-        @click="updDialogShow = false"
-        >{{ $t('general.cancel') }}</mdui-button
       >
-      <mdui-button slot="action" @click="confirmUpd">{{
-        $t('general.update')
-      }}</mdui-button>
+        <mdui-checkbox
+          :checked="skipVersion"
+          @change="skipVersion = !skipVersion"
+          >跳过此版本</mdui-checkbox
+        >
+        <div class="flex flex-row">
+          <mdui-button slot="action" variant="text" @click="onCancelUpd">{{
+            $t('general.cancel')
+          }}</mdui-button>
+          <mdui-button
+            slot="action"
+            @click="confirmUpd"
+            :disabled="skipVersion"
+            >{{ $t('general.update') }}</mdui-button
+          >
+        </div>
+      </div>
     </mdui-dialog>
   </mdui-layout>
 </template>

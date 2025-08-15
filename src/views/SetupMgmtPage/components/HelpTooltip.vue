@@ -17,9 +17,12 @@ const props = defineProps({
       ></mdui-icon-help-outline--rounded>
     </div>
 
-    <div slot="content" class="text-base">
+    <div
+      slot="content"
+      class="text-base text-[rgb(var(--mdui-color-surface-dim-light))]"
+    >
       <div
-        class="p-3 w-[400px] bg-[rgb(var(--mdui-color-on-surface-variant))] rounded-2xl"
+        class="p-3 w-[400px] bg-[rgb(var(--mdui-color-on-surface-variant-light))] rounded-2xl"
       >
         <!--      <mdui-tabs value="adjust">-->
         <!--        <mdui-tab value="adjust">{{ $t('setup.adjust') }}</mdui-tab>-->
@@ -31,7 +34,7 @@ const props = defineProps({
 
           <div
             v-if="$t(`setup.params.${props.paramKey}.inc`) !== ''"
-            class="bg-[rgb(var(--mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"
+            class="bg-[rgb(var(--mdui-color-primary-dark))] text-[rgb(var(--mdui-color-primary-container-dark))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"
           >
             {{ $t(`setup.increase`) }}
           </div>
@@ -41,7 +44,7 @@ const props = defineProps({
 
           <div
             v-if="$t(`setup.params.${props.paramKey}.dec`) !== ''"
-            class="bg-[rgb(var(--mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"
+            class="bg-[rgb(var(--mdui-color-primary-dark))] text-[rgb(var(--mdui-color-primary-container-dark))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"
           >
             {{ $t('setup.decrease') }}
           </div>
@@ -51,7 +54,7 @@ const props = defineProps({
 
           <div
             v-if="$t(`setup.params.${props.paramKey}.notes`) !== ''"
-            class="bg-[rgb(var(--mdui-color-primary))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"
+            class="bg-[rgb(var(--mdui-color-primary-dark))] text-[rgb(var(--mdui-color-primary-container-dark))] rounded-full px-2 py-1 w-max font-bold mt-2 mb-1 title"
           >
             {{ $t('setup.notes') }}
           </div>

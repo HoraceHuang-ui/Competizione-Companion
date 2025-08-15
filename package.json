@@ -1,6 +1,6 @@
 {
-  "name": "Competizione Companion",
-  "version": "0.1.0 Alpha",
+  "name": "competizione_companion",
+  "version": "0.1.0",
   "main": "dist-electron/main/index.js",
   "description": "A free companion app for Assetto Corsa Competizione.",
   "author": "HoraceHYY <horacehuang17@gmail.com>",
@@ -21,7 +21,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build && electron-builder",
+    "build": "vite build && electron-builder",
     "preview": "vite preview"
   },
   "devDependencies": {

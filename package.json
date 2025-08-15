@@ -1,6 +1,6 @@
 {
   "name": "Competizione Companion",
-  "version": "0.0.1 Dev",
+  "version": "0.1.0 Alpha",
   "main": "dist-electron/main/index.js",
   "description": "A free companion app for Assetto Corsa Competizione.",
   "author": "HoraceHYY <horacehuang17@gmail.com>",

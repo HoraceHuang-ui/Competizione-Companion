@@ -1,5 +1,7 @@
 <img width="2554" height="1000" alt="banner" src="https://github.com/user-attachments/assets/eeb25fb2-9da1-4b40-8f48-9d69119a9e20" />
 
+[简体中文文档](/README_CN.md)
+
 # Competizione Companion
 A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to break the barriers between new simracers and simracing. Commonly used tools are now accessible in just a few clicks.
 
@@ -10,6 +12,7 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 - ☑️ Built-in with a comprehensive tutorial for ACC Connector.
 - ☑️ Car setup management: import a setup file by \[selecting the file; dragging and dropping the file; pasting a Setup Code; directly reading game Documents after choosing car and track\].
 - ☑️ Compares two setups with clear indications on differences.
+- ☑️ Supports sharing a setup via a Setup Code.
 - ☑️ Offers comprehensive summay, effects on increase/decrease, and general suggestions for each setup parameter, helping those who want to improves further to step forward. Technical support from DEA @AlvinW52610.
 - ☑️ Chinese / English supported.
 - ☑️ Light/dark mode & following system supported.

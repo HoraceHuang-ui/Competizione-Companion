@@ -108,7 +108,7 @@ const verCompare = (a: string, b: string) => {
 const appVer = ref('')
 // BUILD: '../../app.asar/package.json'
 // DEV: '../../package.json'
-fetch('../../package.json')
+fetch('../../app.asar/package.json')
   .then(response => response.json())
   .then(resp => {
     appVer.value = resp.version
@@ -421,7 +421,9 @@ const confirmUpd = () => {
                 </mdui-tooltip>
 
                 <mdui-tooltip placement="top">
-                  <div slot="content">{{ $t('settings.hmrTooltip') }}</div>
+                  <div slot="content" class="select-text cursor-text">
+                    {{ $t('settings.hmrTooltip') }}
+                  </div>
                   <div
                     class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
                   >

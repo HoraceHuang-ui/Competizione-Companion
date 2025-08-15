@@ -15,7 +15,8 @@
     "updVer": "版本：",
     "updSize": "大小：",
     "update": "更新",
-    "checkUpdFail": "检查更新失败"
+    "checkUpdFail": "检查更新失败",
+    "unknownFail": "出错了！请按Ctrl+Shift+i，在顶部切换到“控制台”，然后截图并在GitHub仓库创建一个 Issue 或联系开发者QQ：3214442497 反映情况，感谢理解！"
   },
   "status": {
     "goodNews": "喜报",
@@ -53,7 +54,7 @@
       "3_2": "ACC Connector 将被自动唤起并配置。",
       "3_3": "选择刚才的服务器，点击右下角 “Install hook”，并启动ACC。",
       "4_1": "在 ACC 中进入多人模式。",
-      "4_2": "Lobby 炸服时，需等待 “PINGING SERVERS” 半分钟超时后才可进行下一步操作。",
+      "4_2": "Lobby 炸服时，需等待 “FETCHING SERVER LIST” 半分钟超时后才可进行下一步操作。",
       "4_3": "待 “LAN SERVERS” 亮起时点击，即可看到刚才选择的服务器。",
       "4_4": "正常进入服务器即可。Good luck & have fun!",
       "5_1": "比赛结束后，退出 ACC。",
@@ -84,6 +85,8 @@
     "carFromCode": "车型：",
     "saveAndView": "保存并查看",
     "viewOnly": "仅查看",
+    "codeCopySuccess": "调校码已复制到剪贴板",
+    "codeCopyMsg": "打开「争锋小助手」，在调校管理页粘贴即可快速读取并载入游戏",
     "techSupport": "调校技术支持来自",
     "adjust": "调节",
     "theory": "原理",
@@ -337,7 +340,7 @@
     "donation1Confirm": "已捐！",
     "donation2Title": "卧槽你来真的啊？！",
     "donation2Msg": "谢谢金主爸爸！！！您的所有捐赠将全额用于开发者的舞萌事业！",
-    "donation2Confirm": "机厅 GOGOGO！",
+    "donation2Confirm": "一次mai够！",
     "hipoleTooltip": " · ACC QQ群号：799836434",
     "hmrTooltip": "HerMess Racing · QQ群号：826527145",
     "thanksMsg": "感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，是你们的支持让这个项目越来越好"

@@ -119,9 +119,9 @@ const onCancelUpd = () => {
   }
 }
 
-onMounted(() => {
-  checkUpdate()
-})
+// onMounted(() => {
+//   checkUpdate()
+// })
 </script>
 <template>
   <mdui-layout class="size-full">

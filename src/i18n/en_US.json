@@ -15,7 +15,8 @@
     "updVer": "Version: ",
     "updSize": "Size: ",
     "update": "Update",
-    "checkUpdFail": "Failed to Check for Updates"
+    "checkUpdFail": "Failed to Check for Updates",
+    "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
   },
   "status": {
     "goodNews": "Good News",
@@ -53,7 +54,7 @@
       "3_2": "ACC Connector will be automatically launched and configured.",
       "3_3": "Select the server you just chose, click 'Install hook' at the bottom right, and launch ACC.",
       "4_1": "Enter Multiplayer mode in ACC.",
-      "4_2": "If the Lobby servers are down, wait for 'PINGING SERVERS' to time out (about 30 seconds) before proceeding.",
+      "4_2": "If the Lobby servers are down, wait for 'FETCHING SERVER LIST' to time out (about 30 seconds) before proceeding.",
       "4_3": "When 'LAN SERVERS' becomes available, click it to see the server you selected.",
       "4_4": "Join the server as usual. Good luck & have fun!",
       "5_1": "After the race, exit ACC.",
@@ -84,6 +85,8 @@
     "carFromCode": "Car: ",
     "saveAndView": "Save and View",
     "viewOnly": "View Only",
+    "codeCopySuccess": "Setup code copied to clipboard",
+    "codeCopyMsg": "Open the 「Competizione Companion」 app, turn to Setup Management page and paste this message to load and save the setup in one click.",
     "techSupport": "Technical support from",
     "adjust": "Adjust",
     "theory": "Theory",

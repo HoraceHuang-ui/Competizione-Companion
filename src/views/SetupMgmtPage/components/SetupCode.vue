@@ -6,6 +6,7 @@ import { useStore } from '@/store'
 import ChipSelect from '@/components/ChipSelect.vue'
 import tracks from '@/utils/trackData'
 import '@mdui/icons/location-on--rounded.js'
+import { translate } from '@/i18n'
 
 const props = defineProps({
   extractedSetup: {
@@ -32,26 +33,25 @@ const store = useStore()
 const name = ref(props.alias.replace('.json', ''))
 
 const copyCode = async () => {
-  const code = await window.brotli.compress(
-    `${props.car},${props.extractedSetup}`,
-  )
-  if (name.value !== '') {
+  const code = await window.brotli
+    .compress(`${props.car},${props.extractedSetup}`)
+    .catch(e => {
+      console.error(e)
+      snackbar({
+        message: translate('general.unknownFail'),
+        autoCloseDelay: 6000,
+      })
+      return ''
+    })
+  if (name.value !== '' && code) {
     navigator.clipboard
-      .writeText(
-        `${name.value}\n#打开「争锋小助手」，在调校管理页粘贴即可快速读取并载入游戏\n#${code}`,
-      )
+      .writeText(`${name.value}\n#${translate('setup.codeCopyMsg')}\n#${code}`)
       .then(() => {
         snackbar({
-          message: '调校码已复制到剪贴板',
+          message: translate('setup.codeCopySuccess'),
           autoCloseDelay: 3000,
         })
         emits('closeDialog')
-      })
-      .catch(() => {
-        snackbar({
-          message: '复制失败，请手动复制',
-          autoCloseDelay: 3000,
-        })
       })
   }
 }
@@ -160,7 +160,7 @@ const viewSetup = async (save: boolean) => {
     )
   }
   emits('importSetup', res, name.value)
-  emits('closeDialog')
+  closeDialog()
 }
 
 const closeDialog = () => {

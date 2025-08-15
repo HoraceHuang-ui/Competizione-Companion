@@ -174,6 +174,15 @@ const triggerFileInput = (side: 'left' | 'right') => {
   }
 }
 
+const getCarSeries = (carName: string) => {
+  for (const group of groups) {
+    if (Object.keys(carData[group]).includes(carName)) {
+      return group
+    }
+  }
+  return undefined
+}
+
 const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
@@ -186,17 +195,33 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
       })
       return
     }
-    if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
+    if (!files.value[counterSide(side)]) {
+      const carSeries = getCarSeries(jsonContent.carName)
+      if (carSeries) {
+        curGroup.value = carSeries
+        curCar.value[side] = {
+          value: jsonContent.carName,
+          label:
+            jsonContent.carName in carData[curGroup.value]
+              ? carData[curGroup.value][jsonContent.carName].name
+              : jsonContent.carName,
+        }
+        fileSearch.value[side] = file.name
+        files.value[side] = jsonContent
+      }
+    } else if (
+      !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
+    ) {
       snackbar({
         message: translate('setup.invalidSeries', {
           series: curGroup.value,
         }),
         autoCloseDelay: 3000,
       })
-      return
+    } else {
+      fileSearch.value[side] = file.name
+      files.value[side] = jsonContent
     }
-    fileSearch.value[side] = file.name
-    files.value[side] = jsonContent
   }
 }
 
@@ -214,7 +239,23 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
       })
       return
     }
-    if (!Object.keys(carData[curGroup.value]).includes(jsonContent.carName)) {
+    if (!files.value[counterSide(side)]) {
+      const carSeries = getCarSeries(jsonContent.carName)
+      if (carSeries) {
+        curGroup.value = carSeries
+        curCar.value[side] = {
+          value: jsonContent.carName,
+          label:
+            jsonContent.carName in carData[curGroup.value]
+              ? carData[curGroup.value][jsonContent.carName].name
+              : jsonContent.carName,
+        }
+        fileSearch.value[side] = file.name
+        files.value[side] = jsonContent
+      }
+    } else if (
+      !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
+    ) {
       snackbar({
         message: translate('setup.invalidSeries', { series: curGroup.value }),
         autoCloseDelay: 3000,
@@ -242,6 +283,19 @@ const handleDragLeave = (side: 'left' | 'right') => {
 const codeShareOpen = ref<String | undefined>(undefined)
 const importSetup = (setup: any, fileName: string) => {
   if (codeShareOpen.value) {
+    if (!getCarSeries(setup.carName)) {
+      snackbar({
+        message: translate('setup.invalidJSON'),
+        autoCloseDelay: 3000,
+      })
+      return
+    }
+    if (!files.value[counterSide(codeShareOpen.value)]) {
+      const carSeries = getCarSeries(setup.carName)
+      if (carSeries) {
+        curGroup.value = carSeries
+      }
+    }
     files.value[codeShareOpen.value] = setup
     fileSearch.value[codeShareOpen.value] = fileName
   }

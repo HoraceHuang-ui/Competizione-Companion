@@ -25,7 +25,11 @@ const winMin = () => {
 }
 
 const winClose = () => {
-  window.win.close()
+  if (store.settings.general.minToTray) {
+    window.win.tray()
+  } else {
+    window.win.close()
+  }
 }
 
 const mode = ref(0) // 0: Server Status
@@ -110,7 +114,7 @@ const checkUpdate = () => {
 const confirmUpd = () => {
   updDialogShow.value = false
   window.electron.openExtLink(updInfo.value.dlUrl)
-  window.win.close(true)
+  window.win.close()
 }
 const onCancelUpd = () => {
   updDialogShow.value = false

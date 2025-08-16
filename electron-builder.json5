@@ -39,5 +39,8 @@
       "AppImage"
     ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
-  }
+  },
+  extraResources: [
+    "src/assets/hipole/*"
+  ]
 }

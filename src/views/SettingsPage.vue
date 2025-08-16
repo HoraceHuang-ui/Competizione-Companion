@@ -150,7 +150,7 @@ const checkUpdate = () => {
 const confirmUpd = () => {
   updDialogShow.value = false
   window.electron.openExtLink(updInfo.value.dlUrl)
-  window.win.close(true)
+  window.win.close()
 }
 </script>
 
@@ -306,10 +306,7 @@ const confirmUpd = () => {
                 <div class="flex flex-row justify-end items-center">
                   <mdui-button-icon
                     class="mr-2"
-                    :class="{
-                      'github-icon':
-                        getTheme() === 'dark' || getTheme() === 'auto',
-                    }"
+                    :class="{ invert: isDark }"
                     @click="
                       openLink(
                         'https://github.com/HoraceHuang-ui/Competizione-Companion',
@@ -405,7 +402,8 @@ const confirmUpd = () => {
                 <mdui-tooltip placement="top">
                   <div slot="content" class="select-text cursor-text">
                     <a
-                      href="https://www.hipole.com/"
+                      class="cursor-pointer"
+                      @click="openLink('https://www.hipole.com/')"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -414,7 +412,7 @@ const confirmUpd = () => {
                     >{{ $t('settings.hipoleTooltip') }}
                   </div>
                   <img
-                    :src="`src/assets/hipole/${$t('langCode')}_${isDark ? 'dark' : 'light'}.png`"
+                    :src="`../../src/assets/hipole/${$t('langCode')}_${isDark ? 'dark' : 'light'}.png`"
                     class="inline mx-4 opacity-55 hover:opacity-100 transition-all"
                     width="130"
                   />
@@ -435,7 +433,8 @@ const confirmUpd = () => {
                 <mdui-tooltip placement="top">
                   <div slot="content">
                     <a
-                      href="https://acc-status.jonatan.net/"
+                      class="cursor-pointer"
+                      @click="openLink('https://acc-status.jonatan.net/')"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -453,7 +452,10 @@ const confirmUpd = () => {
                 <mdui-tooltip placement="top">
                   <div slot="content">
                     <a
-                      href="https://lonemeow.github.io/acc-setup-diff/"
+                      class="cursor-pointer"
+                      @click="
+                        openLink('https://lonemeow.github.io/acc-setup-diff/')
+                      "
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -462,7 +464,10 @@ const confirmUpd = () => {
                     >
                     |
                     <a
-                      href="https://github.com/lonemeow/acc-connector"
+                      @click="
+                        openLink('https://github.com/lonemeow/acc-connector')
+                      "
+                      class="cursor-pointer"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -607,12 +612,6 @@ const confirmUpd = () => {
 
 .donation-pic {
   border-radius: var(--mdui-shape-corner-large);
-}
-
-@media (prefers-color-scheme: dark) {
-  .github-icon {
-    filter: invert(1);
-  }
 }
 
 ::part(popup) {

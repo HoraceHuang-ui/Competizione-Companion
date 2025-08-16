@@ -3,18 +3,17 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
-import Store from 'electron-store'
 import brotli from 'brotli-compress'
 import axios from 'axios'
 
-const store = new Store({
-  defaults: {
-    w: 1200,
-    h: 700,
-    max: false,
-    tray: false,
-  },
-})
+// const store = new Store({
+//   defaults: {
+//     w: 1200,
+//     h: 700,
+//     max: false,
+//     tray: false,
+//   },
+// })
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -62,8 +61,8 @@ async function createWindow() {
     icon: iconPath,
     minWidth: 1200,
     minHeight: 700,
-    width: store.get('w') || 1200,
-    height: store.get('h') || 700,
+    width: 1200,
+    height: 700,
     frame: false,
     webPreferences: {
       preload,
@@ -75,24 +74,24 @@ async function createWindow() {
       // contextIsolation: false,
     },
   })
-  if (store.get('max')) {
-    win.maximize()
-  }
+  // if (store.get('max')) {
+  //   win.maximize()
+  // }
 
-  win.on('resized', () => {
-    if (win.isMinimized()) {
-      return
-    }
-    const [width, height] = win.getSize()
-    store.set('w', width)
-    store.set('h', height)
-  })
-  win.on('maximize', () => {
-    store.set('max', true)
-  })
-  win.on('unmaximize', () => {
-    store.set('max', false)
-  })
+  // win.on('resized', () => {
+  //   if (win.isMinimized()) {
+  //     return
+  //   }
+  //   const [width, height] = win.getSize()
+  //   store.set('w', width)
+  //   store.set('h', height)
+  // })
+  // win.on('maximize', () => {
+  //   store.set('max', true)
+  // })
+  // win.on('unmaximize', () => {
+  //   store.set('max', false)
+  // })
 
   if (VITE_DEV_SERVER_URL) {
     // #298
@@ -116,13 +115,8 @@ async function createWindow() {
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 
   // ---------- Window actions ----------
-  ipcMain.on('win:close', (_event, force: boolean) => {
-    if (force || !store.get('tray')) {
-      win.close()
-    } else {
-      win.hide()
-      win.setSkipTaskbar(true)
-    }
+  ipcMain.on('win:close', _event => {
+    win.close()
   })
   ipcMain.on('win:min', () => {
     win.minimize()
@@ -160,9 +154,9 @@ async function createWindow() {
     shell.openExternal(url)
   })
 
-  ipcMain.on('elec:storeSet', (_event, key, value) => {
-    store.set(key, value)
-  })
+  // ipcMain.on('elec:storeSet', (_event, key, value) => {
+  //   store.set(key, value)
+  // })
 
   ipcMain.handle('axios:post', async (_event, url, body) => {
     const result = await axios.post(url, body)

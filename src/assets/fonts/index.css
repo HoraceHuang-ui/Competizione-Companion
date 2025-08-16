@@ -18,7 +18,7 @@
 @font-face {
     font-family: 'Google Sans';
     src: url('./GoogleSans-Bold.ttf') format('truetype');
-    font-weight: bold;
+    font-weight: 700;
     font-style: normal;
 }
 
@@ -26,7 +26,7 @@
 @font-face {
     font-family: 'Google Sans';
     src: url('./GoogleSans-BoldItalic.ttf') format('truetype');
-    font-weight: bold;
+    font-weight: 700;
     font-style: italic;
 }
 
@@ -47,21 +47,21 @@
 @font-face {
     font-family: 'Google Sans Text';
     src: url('./GoogleSansText-Bold.ttf') format('truetype');
-    font-weight: bold;
+    font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Google Sans Text';
     src: url('./GoogleSansText-BoldItalic.ttf') format('truetype');
-    font-weight: bold;
+    font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Harmony OS Sans SC';
     src: url('./HarmonyOS_Sans_SC_Light.ttf') format('truetype');
-    font-weight: 200;
+    font-weight: 300;
     font-style: normal;
 }
 

@@ -4,9 +4,24 @@ const router = VueRouter.createRouter({
   history: VueRouter.createWebHashHistory(),
   routes: [
     {
-      name: 'mainpage',
+      name: 'status',
       path: '/',
       component: MainPage,
+    },
+    {
+      name: 'list',
+      path: '/list',
+      component: () => import('../views/ServerListPage/index.vue'),
+    },
+    {
+      name: 'setup',
+      path: '/setup',
+      component: () => import('../views/SetupMgmtPage/index.vue'),
+    },
+    {
+      name: 'settings',
+      path: '/settings',
+      component: () => import('../views/SettingsPage.vue'),
     },
   ],
 })

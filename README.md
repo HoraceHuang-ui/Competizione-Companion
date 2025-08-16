@@ -1,79 +1,67 @@
-# electron-vite-vue
+<img width="2554" height="1000" alt="banner" src="https://github.com/user-attachments/assets/eeb25fb2-9da1-4b40-8f48-9d69119a9e20" />
 
-🥳 Really simple `Electron` + `Vue` + `Vite` boilerplate.
+[简体中文文档](/README_CN.md)
 
-<!-- [![awesome-vite](https://awesome.re/mentioned-badge.svg)](https://github.com/vitejs/awesome-vite) -->
-<!-- [![Netlify Status](https://api.netlify.com/api/v1/badges/ae3863e3-1aec-4eb1-8f9f-1890af56929d/deploy-status)](https://app.netlify.com/sites/electron-vite/deploys) -->
-<!-- [![GitHub license](https://img.shields.io/github/license/caoxiemeihao/electron-vite-vue)](https://github.com/electron-vite/electron-vite-vue/blob/main/LICENSE) -->
-<!-- [![GitHub stars](https://img.shields.io/github/stars/caoxiemeihao/electron-vite-vue?color=fa6470)](https://github.com/electron-vite/electron-vite-vue) -->
-<!-- [![GitHub forks](https://img.shields.io/github/forks/caoxiemeihao/electron-vite-vue)](https://github.com/electron-vite/electron-vite-vue) -->
-[![GitHub Build](https://github.com/electron-vite/electron-vite-vue/actions/workflows/build.yml/badge.svg)](https://github.com/electron-vite/electron-vite-vue/actions/workflows/build.yml)
-[![GitHub Discord](https://img.shields.io/badge/chat-discord-blue?logo=discord)](https://discord.gg/sRqjYpEAUK)
+# Competizione Companion
+A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to break the barriers between new simracers and simracing. Commonly used tools are now accessible in just a few clicks.
 
-## Features
+## Features & Plans
+- ☑️ Retrieves Steam and launches ACC in one click.
+- ☑️ Checks whether ACC Lobby servers are down.
+- ☑️ Queries multiplayer server list, automatically retrieves and configures ACC Connector to help you connect to the multiplayer server directly when Lobby servers are down.
+- ☑️ Built-in with a comprehensive tutorial for ACC Connector.
+- ☑️ Car setup management: import a setup file by \[selecting the file; dragging and dropping the file; pasting a Setup Code; directly reading game Documents after choosing car and track\].
+- ☑️ Compares two setups with clear indications on differences.
+- ☑️ Supports sharing a setup via a Setup Code.
+- ☑️ Offers comprehensive summay, effects on increase/decrease, and general suggestions for each setup parameter, helping those who want to improves further to step forward. Technical support from DEA @AlvinW52610.
+- ☑️ Chinese / English supported.
+- ☑️ Light/dark mode & following system supported.
+- ☑️ Available to set car display preferences between full name & short name, e.g. `Lamborghini Huracán GT3 EVO2`/`Lambo Evo2`.
+- ☑️ Available to set track display preferences between full name & short name, e.g. `Autodromo Enzo e Dino Ferrari`/`Imola`。
+- 🔳 To implement theme color personalization, with support for extracting colors from a custom background image.
+- 🔳 To support setting up executable paths to retrieve along with launching ACC (telemetry, accelerator, etc.).
+- 🔳 To optimize UI transition effects.
+- 🔳 (Too difficult to implement in a short period) To support editing & saving of the setups.
+- 🔳 (No plans in a short period) To support management of liveries.
+- 🔳 (No plans in a long period) To implement in-game overlays.
 
-📦 Out of the box  
-🎯 Based on the official [template-vue-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vue-ts), less invasive  
-🌱 Extensible, really simple directory structure  
-💪 Support using Node.js API in Electron-Renderer  
-🔩 Support C/C++ native addons  
-🖥 It's easy to implement multiple windows  
+## Screenshots
+<details>
+  <summary>Click to expand</summary>
 
-## Quick Setup
+  <img width="1500" height="920" alt="QQ_1755274810942" src="https://github.com/user-attachments/assets/e03a3131-b553-4e9f-9277-8696ca5ce425" />
 
-```sh
-# clone the project
-git clone https://github.com/electron-vite/electron-vite-vue.git
+  <img width="1500" height="920" alt="QQ_1755274874514" src="https://github.com/user-attachments/assets/2bcf1b5b-30c2-4f39-83a1-176ac260f3d2" />
 
-# enter the project directory
-cd electron-vite-vue
+  <img width="1500" height="920" alt="QQ_1755274929362" src="https://github.com/user-attachments/assets/aa3cf3d2-6631-4e37-a4b2-91171b29c0a7" />
 
-# install dependency
-npm install
+  <img width="1500" height="920" alt="QQ_1755274974066" src="https://github.com/user-attachments/assets/f34b6b01-fd3f-475c-905e-2acb98215a9e" />
 
-# develop
-npm run dev
+  <img width="1500" height="920" alt="QQ_1755274995661" src="https://github.com/user-attachments/assets/e400884a-0d41-4d98-9ca7-49032ea01ce2" />
+
+  <img width="1500" height="920" alt="QQ_1755275005081" src="https://github.com/user-attachments/assets/08b8b737-36ee-4a62-9400-5e144b56d714" />
+
+</details>
+
+## Development
+### Dependencies
+```shell
+pnpm i
+```
+### Debugging
+```shell
+pnpm dev
+```
+### Building
+```shell
+pnpm build
 ```
 
-## Debug
-
-![electron-vite-react-debug.gif](https://github.com/electron-vite/electron-vite-react/blob/main/electron-vite-react-debug.gif?raw=true)
-
-## Directory
-
-```diff
-+ ├─┬ electron
-+ │ ├─┬ main
-+ │ │ └── index.ts    entry of Electron-Main
-+ │ └─┬ preload
-+ │   └── index.ts    entry of Preload-Scripts
-  ├─┬ src
-  │ └── main.ts       entry of Electron-Renderer
-  ├── index.html
-  ├── package.json
-  └── vite.config.ts
-```
-
-<!--
-## Be aware
-
-🚨 By default, this template integrates Node.js in the Renderer process. If you don't need it, you just remove the option below. [Because it will modify the default config of Vite](https://github.com/electron-vite/vite-plugin-electron-renderer#config-presets-opinionated).
-
-```diff
-# vite.config.ts
-
-export default {
-  plugins: [
--   // Use Node.js API in the Renderer-process
--   renderer({
--     nodeIntegration: true,
--   }),
-  ],
-}
-```
--->
-
-## FAQ
-
-- [C/C++ addons, Node.js modules - Pre-Bundling](https://github.com/electron-vite/vite-plugin-electron-renderer#dependency-pre-bundling)
-- [dependencies vs devDependencies](https://github.com/electron-vite/vite-plugin-electron-renderer#dependencies-vs-devdependencies)
+## Credits
+- [electron-vite/electron-vite-vue](https://github.com/electron-vite/electron-vite-vue)
+- [lonemeow/acc-setup-diff](https://lonemeow.github.io/acc-setup-diff/)
+- [lonemeow/acc-connector](https://github.com/lonemeow/acc-connector)
+- [acc-status.jonatan.net](https://acc-status.jonatan.net/)
+- [HiPole](https://www.hipole.com/)
+- Dynamic Esports Academy, DEA
+- HerMess Racing, HMR

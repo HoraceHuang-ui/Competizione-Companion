@@ -1,8 +1,19 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
+import brotli from 'brotli-compress'
+import axios from 'axios'
+
+// const store = new Store({
+//   defaults: {
+//     w: 1200,
+//     h: 700,
+//     max: false,
+//     tray: false,
+//   },
+// })
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -41,15 +52,18 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null
 const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
+let tray = null
+const iconPath = path.join(process.env.VITE_PUBLIC, 'favicon.ico')
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    title: 'Competizione Companion',
+    icon: iconPath,
     minWidth: 1200,
     minHeight: 700,
     width: 1200,
     height: 700,
+    frame: false,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -60,8 +74,27 @@ async function createWindow() {
       // contextIsolation: false,
     },
   })
+  // if (store.get('max')) {
+  //   win.maximize()
+  // }
 
-  if (VITE_DEV_SERVER_URL) { // #298
+  // win.on('resized', () => {
+  //   if (win.isMinimized()) {
+  //     return
+  //   }
+  //   const [width, height] = win.getSize()
+  //   store.set('w', width)
+  //   store.set('h', height)
+  // })
+  // win.on('maximize', () => {
+  //   store.set('max', true)
+  // })
+  // win.on('unmaximize', () => {
+  //   store.set('max', false)
+  // })
+
+  if (VITE_DEV_SERVER_URL) {
+    // #298
     win.loadURL(VITE_DEV_SERVER_URL)
     // Open devTool if the app is not packaged
     win.webContents.openDevTools()
@@ -80,6 +113,156 @@ async function createWindow() {
     return { action: 'deny' }
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+
+  // ---------- Window actions ----------
+  ipcMain.on('win:close', _event => {
+    win.close()
+  })
+  ipcMain.on('win:min', () => {
+    win.minimize()
+  })
+  ipcMain.on('win:tray', () => {
+    win.hide()
+    win.setSkipTaskbar(true)
+  })
+  ipcMain.on('win:max', (_event, toMax: boolean) => {
+    if (win.isMaximized()) {
+      win.unmaximize()
+    } else {
+      win.maximize()
+    }
+  })
+  ipcMain.on('win:relaunch', () => {
+    app.relaunch()
+    app.quit()
+  })
+
+  // ---------- Steam actions ----------
+  const { shell } = require('electron')
+  ipcMain.on('steam:launch', (_event, id: string) => {
+    // const steamPath = require('steam-path')
+    // const steamExecutable = path.join(steamPath, 'steam.exe')
+    if (os.platform() === 'win32') {
+      // shell.openPath(steamExecutable)
+      shell.openExternal(`steam://rungameid/${id}`)
+    } else {
+      console.warn('Steam launch is only supported on Windows.')
+    }
+  })
+
+  ipcMain.on('elec:openExtLink', (_event, url) => {
+    shell.openExternal(url)
+  })
+
+  // ipcMain.on('elec:storeSet', (_event, key, value) => {
+  //   store.set(key, value)
+  // })
+
+  ipcMain.handle('axios:post', async (_event, url, body) => {
+    const result = await axios.post(url, body)
+    return result.data
+  })
+  ipcMain.handle('axios:get', async (_event, url) => {
+    const result = await axios.get(url)
+    return result.data
+  })
+
+  /**
+   * 在一个目录中查找与目标名称大小写不敏感相等的真实文件夹名
+   */
+  const fs = require('fs')
+  function findCaseInsensitiveName(parentDir, targetName) {
+    const items = fs.readdirSync(parentDir, { withFileTypes: true })
+    const lowerTarget = targetName.toLowerCase()
+
+    for (const item of items) {
+      if (item.isDirectory() && item.name.toLowerCase() === lowerTarget) {
+        return item.name // 返回真实名字
+      }
+    }
+
+    return null // 找不到
+  }
+  ipcMain.handle('fs:setupList', async (_event, car, track) => {
+    const setupsDir = path.join(
+      os.homedir(),
+      'Documents',
+      'Assetto Corsa Competizione',
+      'Setups',
+    )
+    if (!fs.existsSync(setupsDir)) {
+      return []
+    }
+
+    const realCar = findCaseInsensitiveName(setupsDir, car)
+    if (!realCar) {
+      fs.mkdirSync(path.join(setupsDir, car), { recursive: true })
+    }
+    const realTrack = findCaseInsensitiveName(
+      path.join(setupsDir, realCar || car),
+      track,
+    )
+    if (!realTrack) {
+      fs.mkdirSync(path.join(setupsDir, realCar || car, track), {
+        recursive: true,
+      })
+    }
+
+    const setupsPath = path.join(setupsDir, realCar, realTrack)
+    return fs.readdirSync(setupsPath).filter(file => file.endsWith('.json'))
+  })
+
+  ipcMain.handle(
+    'fs:setupFile',
+    async (_event, car, track, fileName, writeVal) => {
+      const setupsDir = path.join(
+        os.homedir(),
+        'Documents',
+        'Assetto Corsa Competizione',
+        'Setups',
+      )
+      const realCar = findCaseInsensitiveName(setupsDir, car)
+      const realTrack = findCaseInsensitiveName(
+        path.join(setupsDir, realCar || car),
+        track,
+      )
+      const setupPath = path.join(setupsDir, realCar, realTrack, fileName)
+      if (fs.existsSync(setupPath)) {
+        return fs.readFileSync(setupPath, 'utf-8')
+      } else {
+        fs.writeFileSync(setupPath, writeVal, 'utf-8')
+        return writeVal
+      }
+    },
+  )
+
+  ipcMain.handle('brotli:compress', async (_event, input) => {
+    const buf = Buffer.from(input, 'utf-8')
+    const compressed = await brotli.compress(buf, { quality: 5 })
+    return Buffer.from(compressed).toString('base64')
+  })
+
+  ipcMain.handle('brotli:decompress', async (_event, input) => {
+    const buf = Buffer.from(input, 'base64')
+    const decompressed = await brotli.decompress(buf)
+    return Buffer.from(decompressed).toString('utf-8')
+  })
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Quit',
+      click: () => {
+        win.destroy()
+      },
+    },
+  ])
+  tray = new Tray(iconPath)
+  tray.setToolTip('Competizione Companion')
+  tray.setContextMenu(contextMenu)
+  tray.on('click', () => {
+    win.isVisible() ? win.hide() : win.show()
+    win.isVisible() ? win.setSkipTaskbar(false) : win.setSkipTaskbar(true)
+  })
 }
 
 app.whenReady().then(createWindow)
@@ -111,8 +294,8 @@ ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       preload,
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   })
 

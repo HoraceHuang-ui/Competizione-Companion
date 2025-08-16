@@ -1,0 +1,403 @@
+{
+  "langCode": "en_US",
+  "general": {
+    "appName": "Competizione Companion",
+    "status": "Lobby Server Status",
+    "servers": "Server List",
+    "setup": "Setup Management",
+    "settings": "Settings",
+    "launchACC": "Launch ACC",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "share": "Share",
+    "newVerDetected": "New Version Detected!",
+    "updVer": "Version: ",
+    "updSize": "Size: ",
+    "update": "Update",
+    "checkUpdFail": "Failed to Check for Updates",
+    "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
+  },
+  "status": {
+    "goodNews": "Good News",
+    "badNews": "Bad News",
+    "serverDown": "SERVERS ARE DOWN!",
+    "serverUp": "SERVERS ARE UP",
+    "apiDown": "API Service is down",
+    "apiFrom": "API service by"
+  },
+  "servers": {
+    "total": "Total:",
+    "noData": "No Data",
+    "noHotJoin": "No mid-session join",
+    "filter": "Filter Servers",
+    "resetFilter": "Reset",
+    "serverName": "Name",
+    "serverNamePlaceholder": "Search server name...",
+    "saMin": "Min",
+    "saMax": "Max",
+    "track": "Track",
+    "trackPlaceholder": "Select track",
+    "series": "Series",
+    "seriesPlaceholder": "Select Series",
+    "private": "Private",
+    "helpTitle": "ACC Connector Tutorial",
+    "help": {
+      "1_1": "Make sure ACC Connector is installed and ACC is closed.",
+      "1_2": "Download ACC Connector",
+      "2_1": "Open ACC Connector and click the 'Settings' button at the bottom right.",
+      "2_2": "Enter your ACC installation directory in 'ActualPath'.",
+      "2_3": "You can open the installation directory as shown above, then click the address bar at the top of the Explorer window and copy it.",
+      "2_4": "Paste the full address, then click 'Save'.",
+      "2_5": "If you have already configured this before, you can skip this step.",
+      "3_1": "With ACC not running, select a server in Competizione Companion and click '>>'.",
+      "3_2": "ACC Connector will be automatically launched and configured.",
+      "3_3": "Select the server you just chose, click 'Install hook' at the bottom right, and launch ACC.",
+      "4_1": "Enter Multiplayer mode in ACC.",
+      "4_2": "If the Lobby servers are down, wait for 'FETCHING SERVER LIST' to time out (about 30 seconds) before proceeding.",
+      "4_3": "When 'LAN SERVERS' becomes available, click it to see the server you selected.",
+      "4_4": "Join the server as usual. Good luck & have fun!",
+      "5_1": "After the race, exit ACC.",
+      "5_2": "If you will not race on this server again, click 'Remove' on the right to remove it.",
+      "5_3": "Click 'Remove hook' at the bottom right and exit ACC Connector."
+    }
+  },
+  "setup": {
+    "chooseFile": "Select a Setup File",
+    "dragFile": "or drag and drop a file here",
+    "releaseToLoad": "Release to load setup",
+    "emptyFileName": "Please enter or select a setup file.",
+    "invalidJSON": "Invalid JSON format, please check the file content.",
+    "invalidSeries": "Please load a {series} car.",
+    "invalidFile": "Failed to read file, please drag a JSON-formatted ACC setup file.",
+    "loadDocs": "Or read game documents",
+    "carPlaceholder": "Select Car",
+    "trackPlaceholder": "Select Track",
+    "inputPlaceholder": "Enter or select a setup file...",
+    "shareCode": "Share Setup",
+    "setupNameLabel": "Setup Name",
+    "setupNamePlaceholder": "Enter a name for the setup",
+    "copyCode": "Copy Setup Code",
+    "importFromCode": "Import via Setup Code",
+    "importSetup": "Import Setup",
+    "codeLabel": "Setup Code",
+    "codePlaceholder": "Paste the setup code here",
+    "carFromCode": "Car: ",
+    "saveAndView": "Save and View",
+    "viewOnly": "View Only",
+    "codeCopySuccess": "Setup code copied to clipboard",
+    "codeCopyMsg": "Open the 「Competizione Companion」 app, turn to Setup Management page and paste this message to load and save the setup in one click.",
+    "techSupport": "Technical support from",
+    "adjust": "Adjust",
+    "theory": "Theory",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "notes": "Notes",
+    "LF": "LF",
+    "RF": "RF",
+    "LR": "LR",
+    "RR": "RR",
+    "L": "L",
+    "Rh": "R",
+    "F": "F",
+    "Rv": "R",
+    "tyreCompoundDry": "DRY",
+    "tyreCompoundWet": "WET",
+    "categories": {
+      "tyres": "Tyres",
+      "electronics": "Electronics",
+      "strategy": "Strategy",
+      "mechanical": "Mechanical",
+      "dampers": "Dampers",
+      "air": "Aero"
+    },
+    "params": {
+      "tyreCompound": {
+        "name": "Compound",
+        "sum": "Divided into WET and DRY tyres. It is recommended to use WET tyres when track conditions are FLOODED, WET, or DAMP; use dry tyres when GREASY, GREEN, FAST, or OPTIMUM.",
+        "inc": "",
+        "dec": "",
+        "notes": ""
+      },
+      "tyrePressure": {
+        "name": "Pressure",
+        "sum": "Adjusts the cold tyre pressure.",
+        "inc": "Provides more lateral support, quicker initial response, increased steering precision, and suppresses tyre temperature rise; but reduces tyre contact patch, making it easier to overload and slide.",
+        "dec": "Allows the tyre to deform more, increasing the contact patch and grip limit, and tyre temperature rises faster; but reduces steering precision and initial response, and makes dynamics less linear.",
+        "notes": "Generally, dry tyres should stabilize at 26.7-27.2psi after warming up, and 27.1-27.3psi in high temperatures; wet tyres should stabilize at 29.5-31.0psi."
+      },
+      "camber": {
+        "name": "Camber",
+        "sum": "Adjusts the angle between the tyre and the ground in the vertical direction; top inward is negative camber.",
+        "inc": "Reducing negative camber increases the contact patch when driving straight, improving braking efficiency and traction; but may reduce cornering grip and tyre heating efficiency, and cause the tyre's outer edge to overheat.",
+        "dec": "Increasing negative camber increases the contact patch during cornering, improving lateral grip and heating efficiency; but reduces braking efficiency and straight-line traction, and may cause the tyre's inner edge to overheat.",
+        "notes": "Generally, the temperature difference between the inner and outer tyre should be about 15 degrees, but in ACC it's usually set to the minimum."
+      },
+      "toe": {
+        "name": "Toe",
+        "sum": "Looking from above, toe-out is negative, toe-in is positive.",
+        "inc": "Increasing front toe makes the outer tyre steer more than the inner, improving front-end response; but reduces mid-corner grip and can cause understeer.",
+        "dec": "Decreasing front toe makes the inner tyre steer more than the outer, improving initial steering response and weight transfer reaction, but reduces initial response and sensitivity.",
+        "notes": "Generally, rear toe is not adjusted."
+      },
+      "caster": {
+        "name": "Caster",
+        "sum": "From the side, the angle between the steering axis and the horizontal plane is the caster angle.",
+        "inc": "Increases steering load on the front wheels, improves steering and self-centering response, but makes the steering wheel heavier; may slightly reduce braking response and steering consistency.",
+        "dec": "Reduces steering load on the front wheels, making overall response more linear and the steering wheel lighter; but reduces the upper limit of front-end steering response.",
+        "notes": "ACC tyres are very elastic, so you can maximize front-end steering ability with minimal side effects. Just max it out."
+      },
+      "steerRatio": {
+        "name": "Steer Ratio",
+        "sum": "The angle the steering wheel turns for each degree the wheels turn.",
+        "inc": "Makes steering more sensitive.",
+        "dec": "Requires turning the wheel more to make a corner.",
+        "notes": "Purely personal preference, set to what feels comfortable."
+      },
+      "fuel": {
+        "name": "Fuel",
+        "sum": "Adjusts how much fuel to start with.",
+        "inc": "More fuel allows for more laps, but makes the car heavier, affecting balance and lap times.",
+        "dec": "Less fuel reduces weight, but be careful not to run out.",
+        "notes": "For qualifying, bring enough for 3-4 laps; after pushing, the tyres will be worn. For races, bring the calculated amount plus 2 laps. For N24 qualifying, bring only one lap of Nordschleife plus 1-2 laps of the full circuit."
+      },
+      "brakePadCompound": {
+        "name": "Brake Pad Compound",
+        "sum": "Adjusts the type number of the front brake pads.",
+        "inc": "",
+        "dec": "",
+        "notes": "Use compound 1 for sprints under 90 minutes; compound 2 for endurance over 90 minutes; compound 3 for endurance with large temperature differences. Some cars can use compound 4 for qualifying, but it's rarely used as it wears out very quickly and performs similarly to compound 1."
+      },
+      "tC1": {
+        "name": "TC1",
+        "sum": "Adjusts the intervention threshold of the traction control system, i.e., how much slip before it activates.",
+        "inc": "Reduces wheel slip under acceleration, making dynamics more stable; but limits corner exit power.",
+        "dec": "Allows more slip under acceleration, helping to establish rotation; but may cause loss of control. For low-speed corners, consider upshifting early.",
+        "notes": "Recommended: Ferrari 296 GT3 at 4-7, Ford Mustang GT3 at 4-6, BMW M4 GT3 at 2-3, AMR V8 GT3/AMG GT3 at 1-3, others at 1-2."
+      },
+      "tC2": {
+        "name": "TC2",
+        "sum": "Adjusts the strength of traction control intervention, i.e., how much power is cut when TC is triggered.",
+        "inc": "Reduces wheel slip under acceleration, making dynamics more stable; but limits corner exit power.",
+        "dec": "Allows more slip under acceleration, helping to establish rotation; but may cause loss of control. For low-speed corners, consider upshifting early.",
+        "notes": "Generally recommended to keep off, or increase as needed."
+      },
+      "abs": {
+        "name": "ABS",
+        "sum": "Adjusts the intervention threshold of the anti-lock braking system.",
+        "inc": "Reduces the chance of wheel lockup; but too high reduces braking efficiency.",
+        "dec": "Improves braking efficiency to some extent; but too low makes the brakes overly sensitive.",
+        "notes": "Generally, Ferrari 296 GT3: 1-2 in dry, others 2-3; 1-2 in wet."
+      },
+      "eCUMap": {
+        "name": "ECU Map",
+        "sum": "Adjusts the car's power output and fuel consumption presets.",
+        "inc": "",
+        "dec": "",
+        "notes": "Different cars have different maps. Just copy a finished setup for your car."
+      },
+      "telemetryLaps": {
+        "name": "Telemetry Laps",
+        "sum": "Adjusts how many laps of telemetry data are automatically saved for analysis in MoTeC.",
+        "inc": "Stores more laps, making it less likely to lose your best lap; but telemetry files will be larger and take up more space.",
+        "dec": "Stores fewer laps, saving storage space.",
+        "notes": "If you can't reach 102% of the world record lap time, it's recommended to turn this off. Understanding the track is more important than nitpicking details."
+      },
+      "aRB": {
+        "name": "Anti-Roll Bar",
+        "sum": "Adjusts the stiffness of the anti-roll bar.",
+        "inc": "Stiffening the front ARB makes initial turn-in more responsive and improves stability on corner exit; but reduces elasticity and can cause mid-corner understeer. Stiffening the rear ARB makes the rear more responsive and increases lateral grip mid-corner; but reduces traction, makes rotation less linear, and can cause extreme slides when overloaded.",
+        "dec": "Softening the front ARB increases mid-corner elasticity and reduces understeer; but weakens initial response and can cause instability on corner exit. Softening the rear ARB makes the rear more linear and improves traction; but increases pendulum effect and reduces lateral grip.",
+        "notes": ""
+      },
+      "wheelRate": {
+        "name": "Wheel Rate",
+        "sum": "Adjusts the force required to fully compress the suspension springs.",
+        "inc": "Stiffening the springs increases front-end support, making responses quicker and more linear; but reduces overall grip and limits pitch.",
+        "dec": "Softening the springs increases overall grip and allows more weight transfer; but weakens body response and can cause instability in corners due to insufficient support.",
+        "notes": "Different cars have different ideal spring rates due to design. Generally, lower rates have higher theoretical limits, but fine-tune as needed based on finished setups."
+      },
+      "bumpStopRateUp": {
+        "name": "Bump Stop",
+        "sum": "Adjusts the stiffness of the bump stops, affecting feedback when the springs bottom out.",
+        "inc": "Increases consistency during suspension compression, making dynamics from turn-in to mid-corner more linear; but limits grip when compressed and makes it easier to lose traction.",
+        "dec": "Increases pitch travel, improving grip response under compression; but increases dynamic drop from turn-in to mid-corner, reducing consistency and possibly causing bottoming out.",
+        "notes": ""
+      },
+      "bumpStopWindow": {
+        "name": "Bump Stop Range",
+        "sum": "Adjusts the travel of the bump stops, affecting feedback when the springs bottom out.",
+        "inc": "Increases overall pitch travel and grip limit, and improves response under compression; but also increases inertia and tyre load, which can reduce dynamic consistency.",
+        "dec": "Reduces pitch travel, effectively suppressing body inertia and tyre load to improve consistency; but reduces the range for weight transfer and grip limit.",
+        "notes": ""
+      },
+      "brakeTorque": {
+        "name": "Brake Torque",
+        "sum": "Adjusts the maximum braking force.",
+        "inc": "",
+        "dec": "",
+        "notes": "ACC has magic ABS with very high efficiency, so just max it out. For cars with less effective ABS, reduce as needed."
+      },
+      "brakeBias": {
+        "name": "Brake Bias",
+        "sum": "Adjusts the distribution of braking force between front and rear wheels; the value represents the front.",
+        "inc": "More braking force to the front wheels, improving stability on turn-in; but increases risk of front overload and understeer.",
+        "dec": "More braking force to the rear wheels, making dynamics more aggressive on turn-in; but increases risk of rear overload and oversteer.",
+        "notes": "Generally, lower bias for dry conditions, but adjust to suit setup and driving style; for wet, lower bias to avoid front lockup and improve rotation."
+      },
+      "bumpSlow": {
+        "name": "Bump",
+        "sum": "Adjusts the compression rate of the springs during weight transfer under acceleration and braking.",
+        "inc": "Helps reduce body dive, reduces added response during pedal operation, and increases consistency; but also reduces pitch limit.",
+        "dec": "Helps increase body dive, amplifies response during pedal operation; but increases body dynamic changes and reduces consistency.",
+        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+      },
+      "bumpFast": {
+        "name": "Fast Bump",
+        "sum": "Adjusts the compression rate of the springs when encountering small bumps or kerbs.",
+        "inc": "Suppresses initial body dive, increases body support, and can slightly reduce bouncing from bumps; but reduces grip limit and makes overloading easier.",
+        "dec": "Increases initial body dive, raises overall pitch limit; but makes the body more relaxed and increases inertia.",
+        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+      },
+      "reboundSlow": {
+        "name": "Rebound",
+        "sum": "Adjusts the rebound rate of the springs during weight transfer under acceleration and braking.",
+        "inc": "Helps reduce body lift, reduces added response during pedal operation, and increases consistency; but also reduces pitch limit.",
+        "dec": "Helps increase body lift, amplifies response during pedal operation; but increases body dynamic changes and reduces consistency.",
+        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+      },
+      "reboundFast": {
+        "name": "Fast Rebound",
+        "sum": "Adjusts the rebound rate of the springs after encountering small bumps or kerbs.",
+        "inc": "Suppresses initial body lift, improves dynamic consistency, and increases body contact with the ground; but can cause the tyres to bounce if over-suppressed on bumpy surfaces.",
+        "dec": "Increases initial body lift, weakens the dynamic binding between tyres and body, improving ground contact and slightly reducing bouncing from bumps; but makes the body more relaxed and increases inertia.",
+        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+      },
+      "rideHeight": {
+        "name": "Ride Height",
+        "sum": "Adjusts the height of the car's chassis.",
+        "inc": "Less likely to scrape over bumps or kerbs; but raises the center of gravity, increases inertia, and reduces aerodynamic performance and overall grip.",
+        "dec": "Reduces drag for better performance; but more likely to scrape over bumps or kerbs.",
+        "notes": ""
+      },
+      "splitter": {
+        "name": "Splitter",
+        "sum": "Adjusts the angle of the front splitter.",
+        "inc": "Increases front downforce, providing more grip in corners; but affects acceleration and top speed.",
+        "dec": "Reduces front downforce and available grip; but reduces drag, improving acceleration and top speed.",
+        "notes": "Aero adjustments have different effects depending on the car. Unless necessary, keeping maximum downforce usually yields the best results."
+      },
+      "wing": {
+        "name": "Rear Wing",
+        "sum": "Adjusts the angle of the rear wing.",
+        "inc": "Increases downforce, providing more grip and a wider grip window in corners; but affects acceleration and top speed. Suitable for tracks with many high-speed corners.",
+        "dec": "Reduces downforce and available grip, and narrows the optimal grip window at the rear; but reduces drag, improving acceleration and top speed. Suitable for tracks with many low-speed corners.",
+        "notes": "Aero adjustments have different effects depending on the car. Unless necessary, keeping maximum downforce usually yields the best results."
+      },
+      "brakeDuct": {
+        "name": "Brake Duct",
+        "sum": "Adjusts the opening of the brake ducts.",
+        "inc": "Improves brake cooling; but may cause brakes and tyres to run too cool, and increases drag.",
+        "dec": "Reduces brake cooling and drag; but increases risk of overheating. Generally used for cold races or high-speed tracks.",
+        "notes": "If the brake discs are green after each corner and before heavy braking, and the tyres stay within the working temperature range, the setting is appropriate."
+      },
+      "preload": {
+        "name": "Differential Preload",
+        "sum": "Adjusts the torque difference setting between the two sides of the axle.",
+        "inc": "Tighter rear axle, less dynamic change when lifting off, more pronounced rotation response at initial throttle, and improved consistency; but can overload the rear tyres.",
+        "dec": "Looser rear axle, more dynamic change when lifting off, weaker rotation response at initial throttle, and smoother dynamics; but can cause under-rotation on throttle, leading to understeer then snap oversteer on corner exit.",
+        "notes": ""
+      }
+    }
+  },
+  "settings": {
+    "general": "General",
+    "language": "Language",
+    "languageChangeTitle": "Switch Language",
+    "languageChangeMsg": "You are about to switch to English (en_US), the app will reload. Continue?",
+    "darkMode": "Theme Mode",
+    "minToTray": "Minimize to Tray",
+    "reset": "Reset All Settings",
+    "resetConfirm": "Reset All Settings?",
+    "serverDownMsg": "Server Down Message",
+    "serverDownMsgPlaceholder": "Enter some text...",
+    "serverDownMsgDefault": "Time for maimai DX!",
+    "carDisp": "Car Display Preferences",
+    "trackDisp": "Track Display Preferences",
+    "dispEnFull": "Full Name",
+    "dispEnShort": "Short Name",
+    "dispLocalShort": "Localized Short Name",
+    "paramsEn": "Show Parameters in English",
+    "about": "About",
+    "version": "Version",
+    "checkUpdate": "Check Update",
+    "upToDate": "Already Up to Date",
+    "donate": "If You Like This App...",
+    "donateButton": "Consider a Donation!",
+    "donation1Title": "Thanks for Your Support!",
+    "donation1Msg": "It’s the thought that counts, no need to donate too much! ",
+    "donation1Cancel": "No, thanks",
+    "donation1Confirm": "Donated!",
+    "donation2Title": "Damn Bro, You Mean for Real?!",
+    "donation2Msg": "Many many many thanks for your support! All your donated money will be used for my playing Maimai DX!",
+    "donation2Confirm": "It's MaiGO!!!!！",
+    "hipoleTooltip": " · ACC QQ Group: 799836434",
+    "hmrTooltip": "HerMess Racing · QQ Group: 826527145",
+    "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
+  },
+  "cars": {
+    "amr_v8_vantage_gt3": "AMR V8",
+    "audi_r8_lms_evo_ii": "R8 Evo2",
+    "bentley_continental_gt3_2018": "Bentley 2018",
+    "bmw_m4_gt3": "BMW M4",
+    "ferrari_296_gt3": "Ferrari 296",
+    "ford_mustang_gt3": "Mustang",
+    "honda_nsx_gt3_evo": "NSX Evo",
+    "lamborghini_huracan_gt3_evo2": "Lambo Evo2",
+    "lexus_rc_f_gt3": "Lexus RC F",
+    "mclaren_720s_gt3_evo": "McLaren 720S Evo",
+    "mercedes_amg_gt3_evo": "AMG 2020",
+    "nissan_gt_r_gt3_2018": "Nissan GT-R",
+    "porsche_992_gt3_r": "992 R",
+    "alpine_a110_gt4": "Alpine A110",
+    "amr_v8_vantage_gt4": "AMR V8",
+    "audi_r8_gt4": "Audi R8",
+    "chevrolet_camaro_gt4r": "Camaro",
+    "ginetta_g55_gt4": "Ginetta G55",
+    "maserati_mc_gt4": "Maserati GT MC",
+    "mclaren_570s_gt4": "McLaren 570S",
+    "mercedes_amg_gt4": "AMG",
+    "porsche_718_cayman_gt4_mr": "718 Cayman",
+    "ferrari_488_challenge_evo": "488 Challenge Evo",
+    "lamborghini_huracan_st_evo2": "Lambo ST Evo2",
+    "porsche_992_gt3_cup": "992 Cup",
+    "bmw_m2_cs_racing": "BMW M2 CS"
+  },
+  "tracks": {
+    "barcelona": "Barcelona",
+    "brands_hatch": "Brands Hatch",
+    "hungaroring": "Hungaroring",
+    "misano": "Misano",
+    "monza": "Monza",
+    "nurburgring": "Nürburgring",
+    "paul_ricard": "Paul Ricard",
+    "silverstone": "Silverstone",
+    "spa": "Spa-Francorchamps",
+    "valencia": "Valencia",
+    "zandvoort": "Zandvoort",
+    "zolder": "Zolder",
+    "nurburgring_24h": "24h Nürb",
+    "imola": "Imola",
+    "red_bull_ring": "Red Bull Ring",
+    "oulton_park": "Oulton Park",
+    "snetterton": "Snetterton",
+    "donington": "Donington Park",
+    "cota": "COTA",
+    "indianapolis": "Indianapolis",
+    "watkins_glen": "Watkins Glen",
+    "mount_panorama": "Mount Panorama",
+    "laguna_seca": "Laguna Seca",
+    "suzuka": "Suzuka",
+    "kyalami": "Kyalami"
+  }
+}

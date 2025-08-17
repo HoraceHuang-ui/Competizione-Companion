@@ -48,18 +48,29 @@ const obj2Param = (obj: Record<string, any>) => {
     .join('&')
 }
 
-const reqData = () => {
+const reqData = async () => {
+  let offline = sessionStorage.serverDown
+  if (!offline) {
+    loading.value = true
+    let resp = await fetch('https://acc-status.jonatan.net/api/v2/acc/status', {
+      method: 'GET',
+    })
+    resp = resp.json()
+    sessionStorage.serverDown = resp.status
+    offline = resp.status ? false : undefined
+  }
+  loading.value = true
   const params = obj2Param({
     search: filters.value.name,
     'safety_rating[min]': filters.value.sa.min,
     'safety_rating[max]': filters.value.sa.max,
     mode: filters.value.private ? 'private' : 'public',
+    offline,
     limit: filters.value.pageSize,
     skip: (curPage.value - 1) * filters.value.pageSize,
     series: filters.value.group,
     track: filters.value.track?.value,
   })
-  loading.value = true
   fetch(`https://acc-status.jonatan.net/api/v2/acc/servers?${params}`, {
     method: 'GET',
   })

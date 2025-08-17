@@ -301,6 +301,10 @@ const importSetup = (setup: any, fileName: string) => {
   }
   codeShareOpen.value = undefined
 }
+
+const openExtUrl = (url: string) => {
+  window.electron.openExtLink(url)
+}
 </script>
 
 <template>
@@ -562,9 +566,35 @@ const importSetup = (setup: any, fileName: string) => {
       {{ $t('setup.techSupport') }}
       <img
         src="@/assets/DEA_light.png"
-        class="inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"
+        class="inline px-1 py-0.5 mr-2 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"
         width="45"
       />
+      |
+      <mdui-tooltip>
+        <ul slot="content" class="list-disc list-outside text-left pl-4">
+          <li class="mb-2">{{ $t('setup.generalTip1') }}</li>
+          <li class="mb-2">{{ $t('setup.generalTip2') }}</li>
+          <li class="mb-2">{{ $t('setup.generalTip3') }}</li>
+          <li class="mb-2">{{ $t('setup.generalTip4') }}</li>
+          <li>
+            {{ $t('setup.generalTip5')
+            }}<a
+              style="
+                color: rgb(var(--mdui-color-inverse-primary));
+                text-decoration: underline;
+                cursor: pointer;
+              "
+              @click="openExtUrl($t('setup.generalTipLink'))"
+              >{{ $t('setup.generalTipLink') }}</a
+            >
+          </li>
+        </ul>
+        <div
+          class="general-tip inline transition-all ml-2 py-1 px-2 border rounded-full text-xs"
+        >
+          {{ $t('setup.hoverForGeneralTip') }}
+        </div>
+      </mdui-tooltip>
     </div>
   </div>
 </template>
@@ -578,5 +608,13 @@ const importSetup = (setup: any, fileName: string) => {
 }
 ::part(indicator) {
   background: rgb(var(--mdui-color-inverse-primary));
+}
+::part(content) {
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.general-tip:hover {
+  background: rgba(var(--mdui-color-secondary), 0.2);
 }
 </style>

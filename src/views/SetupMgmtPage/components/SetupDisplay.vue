@@ -23,6 +23,7 @@ import { translate } from '@/i18n'
 import HelpTooltip from '@/views/SetupMgmtPage/components/HelpTooltip.vue'
 import { ref } from 'vue'
 import SetupCode from '@/views/SetupMgmtPage/components/SetupCode.vue'
+import carData from '@/utils/carData'
 
 const store = useStore()
 const enLabel = store.settings.setup.setupLabelEn
@@ -331,6 +332,15 @@ const extractNumbers = (obj: any, inPitStrategy = false) => {
   }
   return nums
 }
+
+const findCar = (carName: string) => {
+  for (const series in carData) {
+    if (carName in carData[series]) {
+      return carData[series][carName].name
+    }
+  }
+  return carName
+}
 </script>
 
 <template>
@@ -371,7 +381,6 @@ const extractNumbers = (obj: any, inPitStrategy = false) => {
     </div>
     <ScrollWrapper v-model="scrollValue" class="rounded-2xl">
       <mdui-collapse
-        class="pb-20"
         :class="{
           'mr-4': props.side === 'left',
           'ml-4': props.side === 'right',
@@ -520,6 +529,9 @@ const extractNumbers = (obj: any, inPitStrategy = false) => {
         </mdui-collapse-item>
       </mdui-collapse>
     </ScrollWrapper>
+    <div class="w-full text-center text-sm py-2 opacity-60">
+      {{ findCar(props.setup.carName) }}
+    </div>
 
     <mdui-dialog
       :headline="$t('setup.shareCode')"

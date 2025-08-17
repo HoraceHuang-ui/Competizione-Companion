@@ -48,18 +48,29 @@ const obj2Param = (obj: Record<string, any>) => {
     .join('&')
 }
 
-const reqData = () => {
+const reqData = async () => {
+  let offline = sessionStorage.serverDown ? false : undefined
+  if (offline === undefined) {
+    loading.value = true
+    let resp = await fetch('https://acc-status.jonatan.net/api/v2/acc/status', {
+      method: 'GET',
+    })
+    resp = resp.json()
+    sessionStorage.serverDown = resp.status
+    offline = resp.status ? false : undefined
+  }
+  loading.value = true
   const params = obj2Param({
     search: filters.value.name,
     'safety_rating[min]': filters.value.sa.min,
     'safety_rating[max]': filters.value.sa.max,
     mode: filters.value.private ? 'private' : 'public',
+    offline,
     limit: filters.value.pageSize,
     skip: (curPage.value - 1) * filters.value.pageSize,
     series: filters.value.group,
     track: filters.value.track?.value,
   })
-  loading.value = true
   fetch(`https://acc-status.jonatan.net/api/v2/acc/servers?${params}`, {
     method: 'GET',
   })
@@ -94,12 +105,12 @@ const openExtUrl = (url: string) => {
 
 <template>
   <div
-    class="h-full pb-5 flex flex-col justify-center items-center relative"
-    style="width: calc(100% - 1rem)"
+    class="h-full pb-5 flex flex-col justify-center items-center relative w-full"
   >
     <mdui-card
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-4 flex flex-row justify-center relative"
+      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
       <div
         v-if="loading || total == 0"

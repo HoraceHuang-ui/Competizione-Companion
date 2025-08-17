@@ -6,8 +6,16 @@ import '@mdui/icons/light-mode--rounded.js'
 import '@mdui/icons/brightness-auto--rounded.js'
 import '@mdui/icons/dark-mode--outlined.js'
 import '@mdui/icons/update--rounded.js'
-import { computed, onMounted, ref } from 'vue'
-import { getTheme, setTheme, snackbar } from 'mdui'
+import '@mdui/icons/image--rounded.js'
+import '@mdui/icons/undo--rounded.js'
+import { computed, onMounted, ref, watch } from 'vue'
+import {
+  getColorFromImage,
+  getTheme,
+  setColorScheme,
+  setTheme,
+  snackbar,
+} from 'mdui'
 import { themeMap } from '@/utils/enums'
 import { marked } from 'marked'
 import {
@@ -19,6 +27,7 @@ import {
   translateWithLocale,
   langMap,
 } from '@/i18n'
+import { ChromePicker } from 'vue-color'
 
 const store = useStore()
 const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
@@ -152,16 +161,65 @@ const confirmUpd = () => {
   window.electron.openExtLink(updInfo.value.dlUrl)
   window.win.close()
 }
+
+let throttleTimeout: ReturnType<typeof setTimeout> | null = null
+let lastThemeColor: string | null = null
+
+watch(
+  () => store.settings.general.themeColor,
+  newColor => {
+    if (throttleTimeout) {
+      clearTimeout(throttleTimeout)
+    }
+    throttleTimeout = setTimeout(() => {
+      if (lastThemeColor !== newColor) {
+        setColorScheme(newColor)
+        lastThemeColor = newColor
+      }
+    }, 100)
+  },
+)
+
+const bgButtonLoading = ref(false)
+const setBgImage = () => {
+  window.dialog
+    .showAndCopy({
+      title: translate('settings.bgSelectTitle'),
+      properties: ['openFile'],
+      filters: [
+        {
+          name: translate('settings.bgSelectFileType'),
+          extensions: ['jpg', 'png', 'webp'],
+        },
+      ],
+    })
+    .then(resp => {
+      if (resp) {
+        bgButtonLoading.value = true
+        store.settings.general.bgImg = resp
+        const img = new Image()
+        img.src = resp
+        getColorFromImage(img).then(color => {
+          if (color) {
+            store.settings.general.themeColor = color
+            setColorScheme(color)
+          }
+          bgButtonLoading.value = false
+        })
+      }
+    })
+    .catch(error => {
+      console.error('Error in showing dialog:', error)
+    })
+}
 </script>
 
 <template>
-  <div
-    class="h-full flex flex-col justify-center items-center relative"
-    style="width: calc(100% - 1rem)"
-  >
+  <div class="h-full flex flex-col justify-center items-center relative w-full">
     <mdui-card
       variant="outlined"
-      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-4 flex"
+      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex"
+      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
       <ScrollWrapper class="pl-2 pr-1">
         <div class="pl-6 pt-6 pr-5">
@@ -209,6 +267,60 @@ const confirmUpd = () => {
                     <mdui-icon-dark-mode--outlined></mdui-icon-dark-mode--outlined>
                   </mdui-segmented-button>
                 </mdui-segmented-button-group>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('settings.colorScheme') }}</div>
+                <div class="flex flex-row items-center">
+                  <div v-if="bgButtonLoading">
+                    {{ $t('settings.extracting') }}
+                  </div>
+                  <mdui-tooltip
+                    :content="$t('settings.deleteBg')"
+                    placement="bottom"
+                    v-if="!bgButtonLoading && store.settings.general.bgImg"
+                  >
+                    <mdui-button-icon
+                      class="mr-2"
+                      @click="
+                        () => {
+                          store.settings.general.bgImg = ''
+                        }
+                      "
+                    >
+                      <mdui-icon-undo--rounded></mdui-icon-undo--rounded>
+                    </mdui-button-icon>
+                  </mdui-tooltip>
+                  <mdui-tooltip
+                    :content="$t('settings.setBg')"
+                    placement="bottom"
+                  >
+                    <mdui-button-icon class="mr-2" @click="setBgImage">
+                      <mdui-icon-image--rounded></mdui-icon-image--rounded>
+                    </mdui-button-icon>
+                  </mdui-tooltip>
+
+                  <mdui-tooltip placement="bottom-end" class="picker">
+                    <ChromePicker
+                      slot="content"
+                      v-model="store.settings.general.themeColor"
+                    />
+                    <div
+                      class="flex flex-row items-center rounded-full h-10 p-1 bg-[rgb(var(--mdui-color-inverse-on-surface))]"
+                    >
+                      <div
+                        class="rounded-full w-8 h-8"
+                        :style="{
+                          background: store.settings.general.themeColor,
+                        }"
+                      />
+                      <div class="p-3" style="font-family: Consolas">
+                        {{ store.settings.general.themeColor.toUpperCase() }}
+                      </div>
+                    </div>
+                  </mdui-tooltip>
+                </div>
               </div>
             </div>
             <div class="item">
@@ -390,7 +502,7 @@ const confirmUpd = () => {
               <div
                 class="w-full text-center text-[rgb(var(--mdui-color-outline))] flex flex-row justify-center items-center"
               >
-                <mdui-tooltip placement="top">
+                <mdui-tooltip placement="top" class="credits">
                   <div slot="content">Dynamic Esports Academy</div>
                   <img
                     src="@/assets/DEA_light.png"
@@ -399,7 +511,7 @@ const confirmUpd = () => {
                   />
                 </mdui-tooltip>
 
-                <mdui-tooltip placement="top">
+                <mdui-tooltip placement="top" class="credits">
                   <div slot="content" class="select-text cursor-text">
                     <a
                       class="cursor-pointer"
@@ -418,7 +530,7 @@ const confirmUpd = () => {
                   />
                 </mdui-tooltip>
 
-                <mdui-tooltip placement="top">
+                <mdui-tooltip placement="top" class="credits">
                   <div slot="content" class="select-text cursor-text">
                     {{ $t('settings.hmrTooltip') }}
                   </div>
@@ -430,7 +542,7 @@ const confirmUpd = () => {
                   </div>
                 </mdui-tooltip>
 
-                <mdui-tooltip placement="top">
+                <mdui-tooltip placement="top" class="credits">
                   <div slot="content">
                     <a
                       class="cursor-pointer"
@@ -449,7 +561,7 @@ const confirmUpd = () => {
                   />
                 </mdui-tooltip>
 
-                <mdui-tooltip placement="top">
+                <mdui-tooltip placement="top" class="credits">
                   <div slot="content">
                     <a
                       class="cursor-pointer"
@@ -614,12 +726,16 @@ const confirmUpd = () => {
   border-radius: var(--mdui-shape-corner-large);
 }
 
-::part(popup) {
+.credits::part(popup) {
   border-radius: 999px;
   padding: 0.5rem 1rem;
 }
-::part(content) {
+.credits::part(content) {
   font-size: 1rem;
   line-height: 1.2;
+}
+.picker::part(popup) {
+  padding: 1rem;
+  background: none;
 }
 </style>

@@ -15,7 +15,8 @@ export const useStore = defineStore('userStore', {
         lang: 'zh_CN',
         darkMode: '2',
         minToTray: false,
-        themeColor: '',
+        themeColor: '#785abf',
+        bgImg: '',
       },
       status: {
         serverDownMsg: '舞萌DX启动！',

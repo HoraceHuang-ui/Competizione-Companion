@@ -301,12 +301,15 @@ const importSetup = (setup: any, fileName: string) => {
   }
   codeShareOpen.value = undefined
 }
+
+const openExtUrl = (url: string) => {
+  window.electron.openExtLink(url)
+}
 </script>
 
 <template>
   <div
-    class="h-full flex flex-col justify-center items-center pb-8 relative"
-    style="width: calc(100% - 1rem)"
+    class="h-full flex flex-col justify-center items-center pb-8 relative w-full"
   >
     <input
       type="file"
@@ -324,7 +327,8 @@ const importSetup = (setup: any, fileName: string) => {
     />
     <mdui-card
       variant="outlined"
-      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-2 flex"
+      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-2 flex"
+      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
       <div
         v-for="side in ['left', 'right']"
@@ -345,6 +349,12 @@ const importSetup = (setup: any, fileName: string) => {
           :class="{
             'bg-[rgb(var(--mdui-color-primary-container))] rounded-lg':
               isDragging[side as Side],
+          }"
+          :style="{
+            background: isDragging[side as Side]
+              ? 'rgba(var(--mdui-color-primary-container), 0.5)'
+              : 'transparent',
+            borderRadius: isDragging[side as Side] ? '0.5rem' : '0',
           }"
           @dragenter.prevent="handleDragEnter(side as Side)"
           @dragleave.prevent="handleDragLeave(side as Side)"
@@ -556,9 +566,35 @@ const importSetup = (setup: any, fileName: string) => {
       {{ $t('setup.techSupport') }}
       <img
         src="@/assets/DEA_light.png"
-        class="inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"
+        class="inline px-1 py-0.5 mr-2 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))]"
         width="45"
       />
+      |
+      <mdui-tooltip>
+        <ul slot="content" class="list-disc list-outside text-left pl-4">
+          <li class="mb-2">{{ $t('setup.generalTip1') }}</li>
+          <li class="mb-2">{{ $t('setup.generalTip2') }}</li>
+          <li class="mb-2">{{ $t('setup.generalTip3') }}</li>
+          <li class="mb-2">{{ $t('setup.generalTip4') }}</li>
+          <li>
+            {{ $t('setup.generalTip5')
+            }}<a
+              style="
+                color: rgb(var(--mdui-color-inverse-primary));
+                text-decoration: underline;
+                cursor: pointer;
+              "
+              @click="openExtUrl($t('setup.generalTipLink'))"
+              >{{ $t('setup.generalTipLink') }}</a
+            >
+          </li>
+        </ul>
+        <div
+          class="general-tip inline transition-all ml-2 py-1 px-2 border rounded-full text-xs"
+        >
+          {{ $t('setup.hoverForGeneralTip') }}
+        </div>
+      </mdui-tooltip>
     </div>
   </div>
 </template>
@@ -572,5 +608,13 @@ const importSetup = (setup: any, fileName: string) => {
 }
 ::part(indicator) {
   background: rgb(var(--mdui-color-inverse-primary));
+}
+::part(content) {
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.general-tip:hover {
+  background: rgba(var(--mdui-color-secondary), 0.2);
 }
 </style>

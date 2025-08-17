@@ -6,6 +6,7 @@ import ScrollWrapper from '@/components/ScrollWrapper.vue'
 const store = useStore()
 import '@mdui/icons/person-add-disabled--rounded.js'
 import { translate } from '@/i18n'
+import '@mdui/icons/directions-car-filled--rounded.js'
 
 const props = defineProps({
   server: {
@@ -32,7 +33,9 @@ const trackDisp = (trackId: string) => {
 </script>
 
 <template>
-  <mdui-card class="w-full p-3">
+  <mdui-card
+    class="w-full p-3 border border-[rgb(var(--mdui-color-outline-variant))]"
+  >
     <mdui-tooltip :content="props.server.name" placement="bottom">
       <div class="flex flex-row justify-between items-center">
         <div class="title truncate w-5/6 font-bold text-xl">
@@ -83,8 +86,8 @@ const trackDisp = (trackId: string) => {
       </ScrollWrapper>
     </div>
 
-    <div class="flex flex-row justify-between items-center mt-2">
-      <div class="flex flex-row items-center">
+    <div class="flex flex-row justify-between items-center mt-1">
+      <div class="flex flex-row items-center mt-1">
         <mdui-chip
           class="mr-2 pointer-events-none"
           :class="{
@@ -103,14 +106,14 @@ const trackDisp = (trackId: string) => {
           style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
         >
           {{ props.server.requirements.safety_rating }}
-          <div slot="icon" class="font-bold text-base">SA</div>
+          <div slot="icon" class="font-bold text-base pt-0.5">SA</div>
         </mdui-chip>
         <mdui-chip
           class="mr-2 pointer-events-none"
           style="--mdui-state-layer-hover: 0; --mdui-state-layer-pressed: 0"
         >
           {{ props.server.requirements.track_medals }}
-          <div slot="icon" class="font-bold text-base">TM</div>
+          <div slot="icon" class="font-bold text-base pt-0.5">TM</div>
         </mdui-chip>
       </div>
 

@@ -1,10 +1,19 @@
-import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  Menu,
+  shell,
+  Tray,
+} from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
 import brotli from 'brotli-compress'
 import axios from 'axios'
+import { promises as fsPromises } from 'fs'
 
 // const store = new Store({
 //   defaults: {
@@ -246,6 +255,32 @@ async function createWindow() {
     const buf = Buffer.from(input, 'base64')
     const decompressed = await brotli.decompress(buf)
     return Buffer.from(decompressed).toString('utf-8')
+  })
+
+  ipcMain.handle('dialog:show', async (_event, options) => {
+    const result = await dialog.showOpenDialog(win, options)
+    if (!result.canceled) {
+      return result.filePaths
+    } else {
+      return []
+    }
+  })
+
+  ipcMain.handle('dialog:showAndCopy', async (_event, options) => {
+    try {
+      const result = await dialog.showOpenDialog(win, options)
+      if (!result.canceled && result.filePaths.length > 0) {
+        const sourcePath = result.filePaths[0]
+        return await fsPromises
+          .readFile(sourcePath, 'base64')
+          .then(data => `data:image/png;base64,${data}`)
+      } else {
+        return ''
+      }
+    } catch (err) {
+      console.error('Error copying image:', err)
+      throw err
+    }
   })
 
   const contextMenu = Menu.buildFromTemplate([

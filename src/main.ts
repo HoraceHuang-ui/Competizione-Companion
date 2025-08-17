@@ -32,4 +32,6 @@ createApp(App)
 
 const store = useStore()
 setTheme('auto')
+store.settings.general.themeColor =
+  store.settings.general.themeColor || '#785abf'
 setColorScheme(store.settings.general.themeColor)

@@ -49,8 +49,8 @@ const obj2Param = (obj: Record<string, any>) => {
 }
 
 const reqData = async () => {
-  let offline = sessionStorage.serverDown
-  if (!offline) {
+  let offline = sessionStorage.serverDown ? false : undefined
+  if (offline === undefined) {
     loading.value = true
     let resp = await fetch('https://acc-status.jonatan.net/api/v2/acc/status', {
       method: 'GET',

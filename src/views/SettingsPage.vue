@@ -184,11 +184,11 @@ const bgButtonLoading = ref(false)
 const setBgImage = () => {
   window.dialog
     .showAndCopy({
-      title: translate('settings.bgImageDialogTitle'),
+      title: translate('settings.bgSelectTitle'),
       properties: ['openFile'],
       filters: [
         {
-          name: translate('settings.bgImageDialogFilter'),
+          name: translate('settings.bgSelectFileType'),
           extensions: ['jpg', 'png', 'webp'],
         },
       ],
@@ -271,12 +271,17 @@ const setBgImage = () => {
             </div>
             <div class="item">
               <div class="item-in">
-                <div>{{ '主题色' }}</div>
+                <div>{{ $t('settings.colorScheme') }}</div>
                 <div class="flex flex-row items-center">
-                  <div v-if="bgButtonLoading">{{ '正在提取…' }}</div>
-                  <mdui-tooltip :content="'删除背景图片'" placement="bottom">
+                  <div v-if="bgButtonLoading">
+                    {{ $t('settings.extracting') }}
+                  </div>
+                  <mdui-tooltip
+                    :content="$t('settings.deleteBg')"
+                    placement="bottom"
+                    v-if="!bgButtonLoading && store.settings.general.bgImg"
+                  >
                     <mdui-button-icon
-                      v-if="!bgButtonLoading && store.settings.general.bgImg"
                       class="mr-2"
                       @click="
                         () => {
@@ -288,7 +293,7 @@ const setBgImage = () => {
                     </mdui-button-icon>
                   </mdui-tooltip>
                   <mdui-tooltip
-                    :content="'设置背景图并提取主题色'"
+                    :content="$t('settings.setBg')"
                     placement="bottom"
                   >
                     <mdui-button-icon class="mr-2" @click="setBgImage">

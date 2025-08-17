@@ -107,7 +107,7 @@ const changePage = (page: number) => {
     <div class="w-10 text-center">{{ props.total }}</div>
 
     <mdui-button-icon
-      class="bg-[rgb(var(--mdui-color-primary-container))]"
+      class="bg-[rgb(var(--mdui-color-secondary-container))]"
       :disabled="curPage >= totalPages"
       @click="changePage(curPage + 1)"
     >

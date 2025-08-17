@@ -33,7 +33,9 @@ const trackDisp = (trackId: string) => {
 </script>
 
 <template>
-  <mdui-card class="w-full p-3">
+  <mdui-card
+    class="w-full p-3 border border-[rgb(var(--mdui-color-outline-variant))]"
+  >
     <mdui-tooltip :content="props.server.name" placement="bottom">
       <div class="flex flex-row justify-between items-center">
         <div class="title truncate w-5/6 font-bold text-xl">

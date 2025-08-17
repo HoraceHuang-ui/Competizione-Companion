@@ -85,6 +85,15 @@ contextBridge.exposeInMainWorld('brotli', {
   },
 })
 
+contextBridge.exposeInMainWorld('dialog', {
+  show: async options => {
+    return await ipcRenderer.invoke('dialog:show', options)
+  },
+  showAndCopy: async options => {
+    return await ipcRenderer.invoke('dialog:showAndCopy', options)
+  },
+})
+
 // --------- Preload scripts loading ---------
 function domReady(
   condition: DocumentReadyState[] = ['complete', 'interactive'],

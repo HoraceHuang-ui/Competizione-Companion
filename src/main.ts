@@ -12,12 +12,11 @@ import i18n from './i18n'
 
 import './assets/fonts/index.css'
 import './assets/traffic.scss'
+import 'vue-color/style.css'
 
 import './demos/ipc'
 import { setColorScheme, setTheme } from 'mdui'
-
-setTheme('auto')
-// setColorScheme('#17073b')
+import { useStore } from '@/store'
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
@@ -30,3 +29,7 @@ createApp(App)
   .$nextTick(() => {
     postMessage({ payload: 'removeLoading' }, '*')
   })
+
+const store = useStore()
+setTheme('auto')
+setColorScheme(store.settings.general.themeColor)

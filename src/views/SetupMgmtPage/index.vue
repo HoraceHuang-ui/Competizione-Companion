@@ -305,8 +305,7 @@ const importSetup = (setup: any, fileName: string) => {
 
 <template>
   <div
-    class="h-full flex flex-col justify-center items-center pb-8 relative"
-    style="width: calc(100% - 1rem)"
+    class="h-full flex flex-col justify-center items-center pb-8 relative w-full"
   >
     <input
       type="file"
@@ -324,7 +323,8 @@ const importSetup = (setup: any, fileName: string) => {
     />
     <mdui-card
       variant="outlined"
-      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-2 flex"
+      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-2 flex"
+      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
       <div
         v-for="side in ['left', 'right']"
@@ -345,6 +345,12 @@ const importSetup = (setup: any, fileName: string) => {
           :class="{
             'bg-[rgb(var(--mdui-color-primary-container))] rounded-lg':
               isDragging[side as Side],
+          }"
+          :style="{
+            background: isDragging[side as Side]
+              ? 'rgba(var(--mdui-color-primary-container), 0.5)'
+              : 'transparent',
+            borderRadius: isDragging[side as Side] ? '0.5rem' : '0',
           }"
           @dragenter.prevent="handleDragEnter(side as Side)"
           @dragleave.prevent="handleDragLeave(side as Side)"

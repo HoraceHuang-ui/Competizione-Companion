@@ -128,11 +128,17 @@ const onCancelUpd = () => {
 // })
 </script>
 <template>
+  <img
+    class="w-[100vw] h-[100vh] absolute object-cover"
+    v-if="store.settings.general.bgImg"
+    :src="store.settings.general.bgImg"
+  />
   <mdui-layout class="size-full">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
       class="py-1 pl-5 pr-4 drag"
+      :class="{ 'opacity-85': store.settings.general.bgImg }"
     >
       <div class="absolute right-0 top-0 z-[9999] focus">
         <div class="traffic-lights focus no-drag py-3 px-2">
@@ -166,7 +172,13 @@ const onCancelUpd = () => {
       </mdui-top-app-bar-title>
     </mdui-top-app-bar>
 
-    <mdui-navigation-rail value="status" divider class="pb-4" contained>
+    <mdui-navigation-rail
+      value="status"
+      divider
+      class="pb-4"
+      :class="{ ' opacity-85': store.settings.general.bgImg }"
+      contained
+    >
       <mdui-tooltip :content="translate('general.status')" placement="right">
         <mdui-button-icon
           class="mb-2"
@@ -356,5 +368,10 @@ span {
 
 .no-drag {
   -webkit-app-region: no-drag;
+}
+
+#mainRouterView {
+  background: rgba(var(--mdui-color-surface), 0.85);
+  padding-right: 1rem;
 }
 </style>

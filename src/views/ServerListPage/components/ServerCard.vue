@@ -6,6 +6,7 @@ import ScrollWrapper from '@/components/ScrollWrapper.vue'
 const store = useStore()
 import '@mdui/icons/person-add-disabled--rounded.js'
 import { translate } from '@/i18n'
+import '@mdui/icons/directions-car-filled--rounded.js'
 
 const props = defineProps({
   server: {

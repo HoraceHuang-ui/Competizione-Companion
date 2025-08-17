@@ -94,12 +94,12 @@ const openExtUrl = (url: string) => {
 
 <template>
   <div
-    class="h-full pb-5 flex flex-col justify-center items-center relative"
-    style="width: calc(100% - 1rem)"
+    class="h-full pb-5 flex flex-col justify-center items-center relative w-full"
   >
     <mdui-card
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-4 flex flex-row justify-center relative"
+      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
       <div
         v-if="loading || total == 0"

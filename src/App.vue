@@ -133,12 +133,11 @@ onMounted(() => {
     v-if="store.settings.general.bgImg"
     :src="store.settings.general.bgImg"
   />
-  <mdui-layout class="size-full">
+  <mdui-layout class="size-full overflow-hidden">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
-      class="py-1 pl-5 pr-4 drag"
-      :class="{ 'opacity-85': store.settings.general.bgImg }"
+      class="py-1 pl-5 pr-4 drag bg-transparent"
     >
       <div class="absolute right-0 top-0 z-[9999] focus">
         <div class="traffic-lights focus no-drag py-3 px-2">
@@ -175,8 +174,7 @@ onMounted(() => {
     <mdui-navigation-rail
       value="status"
       divider
-      class="pb-4"
-      :class="{ ' opacity-85': store.settings.general.bgImg }"
+      class="pb-4 bg-transparent"
       contained
     >
       <mdui-tooltip :content="translate('general.status')" placement="right">
@@ -228,10 +226,10 @@ onMounted(() => {
         :content="translate('general.launchACC')"
         placement="right"
         slot="bottom"
-        v-if="mode !== 0"
       >
         <mdui-button-icon
           class="mb-2"
+          v-if="mode !== 0"
           :style="{
             background:
               mode == 3
@@ -241,11 +239,13 @@ onMounted(() => {
           @click="launchACC"
           :disabled="launching"
         >
-          <mdui-circular-progress
-            v-if="launching"
-            class="p-2"
-          ></mdui-circular-progress>
-          <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+          <Transition name="fade" mode="out-in">
+            <mdui-circular-progress
+              v-if="launching"
+              class="p-2"
+            ></mdui-circular-progress>
+            <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+          </Transition>
         </mdui-button-icon>
       </mdui-tooltip>
       <mdui-tooltip
@@ -267,8 +267,15 @@ onMounted(() => {
       </mdui-tooltip>
     </mdui-navigation-rail>
 
-    <mdui-layout-main>
-      <router-view id="mainRouterView"></router-view>
+    <mdui-layout-main
+      class="overflow-hidden"
+      style="background: rgba(var(--mdui-color-surface), 0.85)"
+    >
+      <router-view id="mainRouterView" v-slot="{ Component }">
+        <transition name="swipe-up" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </mdui-layout-main>
 
     <mdui-dialog
@@ -321,6 +328,24 @@ onMounted(() => {
 </template>
 
 <style>
+.swipe-up-enter-from {
+  transform: translateY(12vh);
+  opacity: 0;
+}
+.swipe-up-leave-to {
+  opacity: 0;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.swipe-up-enter-active,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 400ms var(--mdui-motion-easing-standard);
+}
+
 h1,
 h2,
 h3,
@@ -371,7 +396,6 @@ span {
 }
 
 #mainRouterView {
-  background: rgba(var(--mdui-color-surface), 0.85);
   padding-right: 1rem;
 }
 </style>

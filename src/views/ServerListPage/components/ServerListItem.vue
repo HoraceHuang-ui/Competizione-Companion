@@ -36,16 +36,16 @@ const trackDisp = (trackId: string) => {
   <mdui-card
     class="w-full pl-2 pr-1 py-1 border border-[rgb(var(--mdui-color-outline-variant))]"
   >
-    <mdui-tooltip :content="props.server.name" placement="bottom-start">
-      <div class="flex flex-row justify-between items-end pr-2">
+    <div class="flex flex-row justify-between items-end pr-2">
+      <mdui-tooltip :content="props.server.name" placement="bottom-start">
         <div class="title truncate w-full text-xl">
           {{ props.server.name }}
         </div>
-        <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right">
-          {{ trackDisp(props.server.track.id) }}
-        </div>
+      </mdui-tooltip>
+      <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right">
+        {{ trackDisp(props.server.track.id) }}
       </div>
-    </mdui-tooltip>
+    </div>
     <div class="flex flex-row justify-between items-center w-full">
       <div class="flex flex-row flex-1 justify-between items-center">
         <div class="flex flex-row items-center">

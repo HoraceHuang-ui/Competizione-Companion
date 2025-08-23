@@ -115,37 +115,53 @@ const openExtUrl = (url: string) => {
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-4 flex flex-row justify-center relative"
       style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
-      <div
-        v-if="loading || total == 0"
-        class="size-full flex flex-row justify-center items-center"
-      >
-        <mdui-circular-progress v-if="loading"></mdui-circular-progress>
-        <div v-else-if="total == 0">{{ $t('servers.noData') }}</div>
-      </div>
-      <ScrollWrapper width="98%" v-else>
-        <div v-if="store.servers.listView" class="flex flex-col py-3 px-[9%]">
-          <div
-            class="w-full px-2 py-0.5"
-            v-for="server in servers"
-            :key="server.id"
-          >
-            <ServerListItem :server="server" />
-          </div>
-        </div>
+      <Transition name="fade" mode="out-in">
         <div
-          v-else
-          class="flex flex-row justify-center py-2 px-[9%]"
-          style="flex-wrap: wrap"
+          v-if="loading || total == 0"
+          class="size-full flex flex-row justify-center items-center absolute"
         >
-          <div
-            class="w-1/2 px-2 py-1"
-            v-for="server in servers"
-            :key="server.id"
+          <Transition name="fade" mode="out-in">
+            <mdui-circular-progress v-if="loading"></mdui-circular-progress>
+            <div v-else-if="total == 0">
+              {{ $t('servers.noData') }}
+            </div></Transition
           >
-            <ServerCard :server="server" />
-          </div>
         </div>
-      </ScrollWrapper>
+      </Transition>
+      <Transition name="swipe" mode="out-in">
+        <ScrollWrapper
+          width="98%"
+          v-if="!loading && total != 0"
+          class="absolute"
+        >
+          <Transition name="swipe" mode="out-in">
+            <div
+              v-if="store.servers.listView"
+              class="flex flex-col py-3 px-[9%]"
+            >
+              <div
+                class="w-full px-2 py-0.5"
+                v-for="server in servers"
+                :key="server.id"
+              >
+                <ServerListItem :server="server" />
+              </div>
+            </div>
+            <div
+              v-else
+              class="flex flex-row justify-center py-2 px-[9%]"
+              style="flex-wrap: wrap"
+            >
+              <div
+                class="w-1/2 px-2 py-1"
+                v-for="server in servers"
+                :key="server.id"
+              >
+                <ServerCard :server="server" />
+              </div></div
+          ></Transition>
+        </ScrollWrapper>
+      </Transition>
 
       <div class="absolute top-4 left-4">
         <div class="text-sm opacity-70">{{ $t('servers.total') }}</div>
@@ -173,22 +189,30 @@ const openExtUrl = (url: string) => {
             class="mb-4"
             @click="store.servers.listView = !store.servers.listView"
           >
-            <mdui-icon-table-rows--rounded
-              v-if="store.servers.listView"
-              slot="icon"
-            ></mdui-icon-table-rows--rounded>
-            <mdui-icon-grid-view--rounded
-              v-else
-              slot="icon"
-            ></mdui-icon-grid-view--rounded>
+            <Transition name="fade" mode="out-in">
+              <mdui-icon-table-rows--rounded
+                v-if="store.servers.listView"
+                slot="icon"
+              ></mdui-icon-table-rows--rounded>
+              <mdui-icon-grid-view--rounded
+                v-else
+                slot="icon"
+              ></mdui-icon-grid-view--rounded
+            ></Transition>
           </mdui-fab>
         </mdui-tooltip>
 
-        <mdui-fab variant="surface" class="mb-4" @click="helpDialogOpen = true">
-          <mdui-icon-help-outline--rounded
-            slot="icon"
-          ></mdui-icon-help-outline--rounded>
-        </mdui-fab>
+        <mdui-tooltip :content="$t('servers.helpTitle')" placement="right">
+          <mdui-fab
+            variant="surface"
+            class="mb-4"
+            @click="helpDialogOpen = true"
+          >
+            <mdui-icon-help-outline--rounded
+              slot="icon"
+            ></mdui-icon-help-outline--rounded>
+          </mdui-fab>
+        </mdui-tooltip>
 
         <mdui-tooltip placement="right-end" class="filter">
           <div class="relative">
@@ -198,10 +222,12 @@ const openExtUrl = (url: string) => {
                 slot="icon"
               ></mdui-icon-search--rounded>
             </mdui-fab>
-            <mdui-badge
-              v-if="filtersCount > 0"
-              class="absolute right-0 top-0 text-base font-bold w-7 h-7 translate-x-2 -translate-y-2"
-              >{{ filtersCount }}</mdui-badge
+            <Transition name="fade" mode="out-in">
+              <mdui-badge
+                v-if="filtersCount > 0"
+                class="absolute right-0 top-0 text-base font-bold w-7 h-7 translate-x-2 -translate-y-2"
+                >{{ filtersCount }}</mdui-badge
+              ></Transition
             >
           </div>
           <div
@@ -464,6 +490,27 @@ const openExtUrl = (url: string) => {
 </template>
 
 <style scoped>
+.fade-enter-from,
+.swipe-leave-to,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.swipe-enter-from {
+  opacity: 0;
+  transform: translateY(10vh);
+}
+
+.fade-enter-active,
+.fade-leave-active,
+.swipe-leave-active {
+  transition: all 250ms var(--mdui-motion-easing-standard);
+}
+
+.swipe-enter-active {
+  transition: all 400ms var(--mdui-motion-easing-standard);
+}
+
 ::part(header) {
   font-family:
     Google Sans,

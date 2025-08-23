@@ -6,6 +6,8 @@ import '@mdui/icons/nightlight--outlined.js'
 import '@mdui/icons/keyboard-double-arrow-right--rounded.js'
 import '@mdui/icons/help-outline--rounded.js'
 import '@mdui/icons/location-on--rounded.js'
+import '@mdui/icons/grid-view--rounded.js'
+import '@mdui/icons/table-rows--rounded.js'
 import { computed, onMounted, ref } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { seriesColorMap } from '@/utils/enums'
@@ -147,6 +149,26 @@ const openExtUrl = (url: string) => {
       ></Pagination>
 
       <div class="absolute bottom-2 left-4 flex flex-col">
+        <mdui-tooltip
+          :content="store.servers.listView ? '列表视图' : '卡片视图'"
+          placement="right"
+        >
+          <mdui-fab
+            variant="surface"
+            class="mb-4"
+            @click="store.servers.listView = !store.servers.listView"
+          >
+            <mdui-icon-table-rows--rounded
+              v-if="store.servers.listView"
+              slot="icon"
+            ></mdui-icon-table-rows--rounded>
+            <mdui-icon-grid-view--rounded
+              v-else
+              slot="icon"
+            ></mdui-icon-grid-view--rounded>
+          </mdui-fab>
+        </mdui-tooltip>
+
         <mdui-fab variant="surface" class="mb-4" @click="helpDialogOpen = true">
           <mdui-icon-help-outline--rounded
             slot="icon"

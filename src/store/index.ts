@@ -10,6 +10,9 @@ export const useStore = defineStore('userStore', {
         isMax: false,
       },
     },
+    servers: {
+      listView: false,
+    },
     settings: {
       general: {
         lang: 'zh_CN',

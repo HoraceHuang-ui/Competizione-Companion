@@ -541,6 +541,15 @@ const openExtUrl = (url: string) => {
             () => {
               files[side as Side] = undefined
               fileSearch[side as Side] = ''
+              if (side === 'left') {
+                if (leftFileInput) {
+                  leftFileInput.value = ''
+                }
+              } else {
+                if (rightFileInput) {
+                  rightFileInput.value = ''
+                }
+              }
             }
           "
         />

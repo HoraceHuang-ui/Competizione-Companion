@@ -29,6 +29,8 @@
   "servers": {
     "total": "总数：",
     "noData": "暂无数据",
+    "listView": "列表视图",
+    "cardView": "卡片视图",
     "noHotJoin": "正赛期间不可加入",
     "filter": "筛选服务器",
     "resetFilter": "重置",

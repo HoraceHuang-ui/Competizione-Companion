@@ -17,6 +17,7 @@ import tracks from '@/utils/trackData'
 import { useStore } from '@/store'
 import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 import MyCarousel from '@/components/MyCarousel.vue'
+import ServerListItem from '@/views/ServerListPage/components/ServerListItem.vue'
 
 const curPage = ref(1)
 const servers = ref([])
@@ -122,7 +123,17 @@ const openExtUrl = (url: string) => {
         <div v-else-if="total == 0">{{ $t('servers.noData') }}</div>
       </div>
       <ScrollWrapper width="98%" v-else>
+        <div v-if="store.servers.listView" class="flex flex-col py-3 px-[9%]">
+          <div
+            class="w-full px-2 py-0.5"
+            v-for="server in servers"
+            :key="server.id"
+          >
+            <ServerListItem :server="server" />
+          </div>
+        </div>
         <div
+          v-else
           class="flex flex-row justify-center py-2 px-[9%]"
           style="flex-wrap: wrap"
         >
@@ -150,7 +161,11 @@ const openExtUrl = (url: string) => {
 
       <div class="absolute bottom-2 left-4 flex flex-col">
         <mdui-tooltip
-          :content="store.servers.listView ? '列表视图' : '卡片视图'"
+          :content="
+            store.servers.listView
+              ? $t('servers.listView')
+              : $t('servers.cardView')
+          "
           placement="right"
         >
           <mdui-fab

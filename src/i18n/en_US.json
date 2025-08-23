@@ -29,6 +29,8 @@
   "servers": {
     "total": "Total:",
     "noData": "No Data",
+    "listView": "List View",
+    "cardView": "Card View",
     "noHotJoin": "No mid-session join",
     "filter": "Filter Servers",
     "resetFilter": "Reset",

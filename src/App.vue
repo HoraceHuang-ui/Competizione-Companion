@@ -123,9 +123,9 @@ const onCancelUpd = () => {
   }
 }
 
-// onMounted(() => {
-//   checkUpdate()
-// })
+onMounted(() => {
+  checkUpdate()
+})
 </script>
 <template>
   <img

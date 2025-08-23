@@ -144,6 +144,10 @@ const checkUpdate = () => {
         updDialogShow.value = true
       } else {
         latest.value = true
+        snackbar({
+          message: translate('settings.upToDate'),
+          autoCloseDelay: 3000,
+        })
       }
       updChecking.value = false
     })

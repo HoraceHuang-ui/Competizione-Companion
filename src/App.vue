@@ -228,10 +228,10 @@ onMounted(() => {
         :content="translate('general.launchACC')"
         placement="right"
         slot="bottom"
+        v-if="mode !== 0"
       >
         <mdui-button-icon
           class="mb-2"
-          v-if="mode !== 0"
           :style="{
             background:
               mode == 3
@@ -241,13 +241,16 @@ onMounted(() => {
           @click="launchACC"
           :disabled="launching"
         >
-          <mdui-circular-progress
-            v-if="launching"
-            class="p-2"
-          ></mdui-circular-progress>
-          <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+          <Transition name="fade" mode="out-in">
+            <mdui-circular-progress
+              v-if="launching"
+              class="p-2"
+            ></mdui-circular-progress>
+            <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+          </Transition>
         </mdui-button-icon>
       </mdui-tooltip>
+
       <mdui-tooltip
         :content="translate('general.settings')"
         placement="right"

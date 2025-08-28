@@ -128,40 +128,45 @@ const openExtUrl = (url: string) => {
           >
         </div>
       </Transition>
-      <Transition name="swipe" mode="out-in">
-        <ScrollWrapper
-          width="98%"
-          v-if="!loading && total != 0"
-          class="absolute"
-        >
-          <Transition name="swipe" mode="out-in">
+      <ScrollWrapper width="98%" v-if="!loading && total != 0" class="absolute">
+        <Transition name="fade" mode="out-in">
+          <!-- 列表视图 -->
+          <TransitionGroup
+            v-if="store.servers.listView"
+            name="fade-up"
+            appear
+            tag="div"
+            class="flex flex-col py-3 px-[9%]"
+          >
             <div
-              v-if="store.servers.listView"
-              class="flex flex-col py-3 px-[9%]"
+              v-for="(server, index) in servers"
+              :key="server.id"
+              class="w-full px-2 py-0.5"
+              :style="{ transitionDelay: index * 30 + 'ms' }"
             >
-              <div
-                class="w-full px-2 py-0.5"
-                v-for="server in servers"
-                :key="server.id"
-              >
-                <ServerListItem :server="server" />
-              </div>
+              <ServerListItem :server="server" />
             </div>
+          </TransitionGroup>
+
+          <!-- 卡片视图 -->
+          <TransitionGroup
+            v-else
+            name="fade-up"
+            appear
+            tag="div"
+            class="flex flex-row justify-center py-2 px-[9%] flex-wrap"
+          >
             <div
-              v-else
-              class="flex flex-row justify-center py-2 px-[9%]"
-              style="flex-wrap: wrap"
+              v-for="(server, index) in servers"
+              :key="server.id"
+              class="w-1/2 px-2 py-1"
+              :style="{ transitionDelay: index * 30 + 'ms' }"
             >
-              <div
-                class="w-1/2 px-2 py-1"
-                v-for="server in servers"
-                :key="server.id"
-              >
-                <ServerCard :server="server" />
-              </div></div
-          ></Transition>
-        </ScrollWrapper>
-      </Transition>
+              <ServerCard :server="server" />
+            </div>
+          </TransitionGroup>
+        </Transition>
+      </ScrollWrapper>
 
       <div class="absolute top-4 left-4">
         <div class="text-sm opacity-70">{{ $t('servers.total') }}</div>
@@ -491,24 +496,45 @@ const openExtUrl = (url: string) => {
 
 <style scoped>
 .fade-enter-from,
-.swipe-leave-to,
 .fade-leave-to {
   opacity: 0;
 }
 
-.swipe-enter-from {
-  opacity: 0;
-  transform: translateY(10vh);
-}
-
-.fade-enter-active,
-.fade-leave-active,
-.swipe-leave-active {
+.fade-leave-active {
   transition: all 250ms var(--mdui-motion-easing-standard);
 }
 
-.swipe-enter-active {
-  transition: all 400ms var(--mdui-motion-easing-standard);
+.fade-up-enter-active,
+.fade-up-appear-active {
+  transition:
+    transform 0.3s var(--mdui-motion-easing-standard),
+    opacity 0.3s var(--mdui-motion-easing-standard);
+}
+.fade-up-leave-active {
+  transition:
+    transform 0.2s var(--mdui-motion-easing-standard),
+    opacity 0.2s var(--mdui-motion-easing-standard);
+  position: absolute; /* 防止离场时塌陷 */
+}
+
+.fade-up-enter-from,
+.fade-up-appear-from {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+}
+.fade-up-enter-to,
+.fade-up-appear-to {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.fade-up-leave-from {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
 }
 
 ::part(header) {

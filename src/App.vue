@@ -74,13 +74,6 @@ const verCompare = (a: string, b: string) => {
 }
 
 const appVer = ref('')
-// BUILD: '../../app.asar/package.json'
-// DEV: '../../package.json'
-fetch('../package.json')
-  .then(response => response.json())
-  .then(resp => {
-    appVer.value = resp.version
-  })
 
 const needsUpdate = (latestStr: string) => {
   return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
@@ -100,12 +93,6 @@ const checkUpdate = () => {
         if (needsUpdate(resp.version)) {
           updInfo.value = resp
           updDialogShow.value = true
-        } else {
-          latest.value = true
-          snackbar({
-            message: translate('settings.upToDate'),
-            autoCloseDelay: 3000,
-          })
         }
       }
     })
@@ -130,7 +117,12 @@ const onCancelUpd = () => {
 }
 
 onMounted(() => {
-  checkUpdate()
+  fetch('../package.json')
+    .then(response => response.json())
+    .then(resp => {
+      appVer.value = resp.version
+      checkUpdate()
+    })
 })
 </script>
 <template>
@@ -249,13 +241,11 @@ onMounted(() => {
           @click="launchACC"
           :disabled="launching"
         >
-          <Transition name="fade" mode="out-in">
-            <mdui-circular-progress
-              v-if="launching"
-              class="p-2"
-            ></mdui-circular-progress>
-            <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
-          </Transition>
+          <mdui-circular-progress
+            v-if="launching"
+            class="p-2"
+          ></mdui-circular-progress>
+          <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
         </mdui-button-icon>
       </mdui-tooltip>
       <mdui-tooltip

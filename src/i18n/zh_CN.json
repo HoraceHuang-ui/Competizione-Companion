@@ -15,6 +15,7 @@
     "updVer": "版本：",
     "updSize": "大小：",
     "update": "更新",
+    "skipCurVersion": "跳过此版本",
     "checkUpdFail": "检查更新失败",
     "unknownFail": "出错了！请按Ctrl+Shift+i，在顶部切换到“控制台”，然后截图并在GitHub仓库创建一个 Issue 或联系开发者QQ：3214442497 反映情况，感谢理解！"
   },

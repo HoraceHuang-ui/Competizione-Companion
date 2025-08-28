@@ -15,6 +15,7 @@
     "updVer": "Version: ",
     "updSize": "Size: ",
     "update": "Update",
+    "skipCurVersion": "Skip this version",
     "checkUpdFail": "Failed to Check for Updates",
     "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
   },

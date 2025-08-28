@@ -91,21 +91,27 @@ const updInfo = ref<any>({})
 const skipVersion = ref(false)
 const checkUpdate = () => {
   window.axios
-    .get(
-      'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
-    )
-    .then((resp: any) => {
-      if (needsUpdate(resp.version)) {
-        const target = store.general.targetVersion
-        if (!target || verCompare(resp.version, target) > 0) {
+    // .get('http://0.0.0.0:5005/competizione')
+    .get('http://120.55.52.240:5005/competizione')
+    .then((res: any) => {
+      console.log(res)
+      if (res.success) {
+        const resp = res.updInfo
+        if (needsUpdate(resp.version)) {
           updInfo.value = resp
           updDialogShow.value = true
+        } else {
+          latest.value = true
+          snackbar({
+            message: translate('settings.upToDate'),
+            autoCloseDelay: 3000,
+          })
         }
       }
     })
     .catch((err: Error) => {
       snackbar({
-        message: translate('general.updCheckFail'),
+        message: translate('general.checkUpdFail'),
         autoCloseDelay: 3000,
       })
       console.error(err)
@@ -128,11 +134,13 @@ onMounted(() => {
 })
 </script>
 <template>
-  <img
-    class="w-[100vw] h-[100vh] absolute object-cover"
-    v-if="store.settings.general.bgImg"
-    :src="store.settings.general.bgImg"
-  />
+  <Transition name="fade">
+    <img
+      class="w-[100vw] h-[100vh] absolute object-cover"
+      v-if="store.settings.general.bgImg"
+      :src="store.settings.general.bgImg"
+    />
+  </Transition>
   <mdui-layout class="size-full overflow-hidden">
     <mdui-top-app-bar
       variant="center-aligned"
@@ -159,13 +167,15 @@ onMounted(() => {
         <img src="../build/icon.ico" />
       </mdui-button-icon>
       <mdui-top-app-bar-title class="text-xl mt-2">
-        <span class="title">{{ translate('general.appName') }}</span>
+        <span class="title w-1/2 text-right">{{
+          translate('general.appName')
+        }}</span>
         <span
           class="mx-4 opacity-60"
           style="font-family: 'Harmony OS Sans SC'; font-weight: 200"
           >|</span
         >
-        <span style="color: rgb(var(--mdui-color-primary))">{{
+        <span class="w-1/2" style="color: rgb(var(--mdui-color-primary))">{{
           $t(modes[mode])
         }}</span>
       </mdui-top-app-bar-title>
@@ -309,7 +319,7 @@ onMounted(() => {
         <mdui-checkbox
           :checked="skipVersion"
           @change="skipVersion = !skipVersion"
-          >跳过此版本</mdui-checkbox
+          >{{ $t('general.skipCurVersion') }}</mdui-checkbox
         >
         <div class="flex flex-row">
           <mdui-button slot="action" variant="text" @click="onCancelUpd">{{

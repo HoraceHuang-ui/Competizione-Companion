@@ -134,26 +134,28 @@ const updInfo = ref<any>({})
 const checkUpdate = () => {
   updChecking.value = true
   window.axios
-    .get(
-      'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
-    )
-    .then((resp: any) => {
-      console.log(resp)
-      if (needsUpdate(resp.version)) {
-        updInfo.value = resp
-        updDialogShow.value = true
-      } else {
-        latest.value = true
-        snackbar({
-          message: translate('settings.upToDate'),
-          autoCloseDelay: 3000,
-        })
+    // .get('http://0.0.0.0:5005/competizione')
+    .get('http://120.55.52.240:5005/competizione')
+    .then((res: any) => {
+      console.log(res)
+      if (res.success) {
+        const resp = res.updInfo
+        if (needsUpdate(resp.version)) {
+          updInfo.value = resp
+          updDialogShow.value = true
+        } else {
+          latest.value = true
+          snackbar({
+            message: translate('settings.upToDate'),
+            autoCloseDelay: 3000,
+          })
+        }
       }
       updChecking.value = false
     })
     .catch((err: Error) => {
       snackbar({
-        message: translate('general.updCheckFail'),
+        message: translate('general.checkUpdFail'),
         autoCloseDelay: 3000,
       })
       updChecking.value = false

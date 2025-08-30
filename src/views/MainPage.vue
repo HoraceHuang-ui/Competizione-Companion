@@ -7,7 +7,6 @@ import { useStore } from '@/store'
 
 const store = useStore()
 
-const dialogOpen = ref(false)
 const loading = ref(false)
 const status = ref({})
 const launching = ref(false)
@@ -116,6 +115,7 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
 <style scoped>
 .fade-enter-from,
 .fade-leave-to {

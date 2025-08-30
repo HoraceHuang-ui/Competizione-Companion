@@ -421,7 +421,7 @@ const findCar = (carName: string) => {
                 {{ enLabel ? items[1] : $t(`setup.params.${items[0]}.name`) }}
               </div>
               <div class="opacity-70">
-                {{ items.length >= 4 && items[3] ? ` [${items[3]}]` : '' }}
+                {{ items.length >= 4 && items[3] ? `&nbsp;[${items[3]}]` : '' }}
               </div>
               <HelpTooltip :param-key="items[0]" class="ml-2" />
             </div>

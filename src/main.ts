@@ -8,7 +8,7 @@ import 'mdui/components/icon.js'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import router from './router'
-import i18n from './i18n'
+import i18n, { translate } from './i18n'
 
 import './assets/fonts/index.css'
 import './assets/traffic.scss'
@@ -40,3 +40,13 @@ setTheme(
 store.settings.general.themeColor =
   store.settings.general.themeColor || '#785abf'
 setColorScheme(store.settings.general.themeColor)
+
+if (
+  ['舞萌DX启动！', 'Time for maimai DX!'].includes(
+    store.settings.status.serverDownMsg,
+  )
+) {
+  store.settings.status.serverDownMsg = translate(
+    'settings.serverDownMsgDefault',
+  )
+}

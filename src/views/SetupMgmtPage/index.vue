@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import '@mdui/icons/file-upload--rounded.js'
+import '@mdui/icons/insert-drive-file--rounded.js'
 
 import { computed, ref, watch } from 'vue'
 import { snackbar } from 'mdui'
@@ -183,6 +184,8 @@ const getCarSeries = (carName: string) => {
   return undefined
 }
 
+const fileImportOpen = ref<String | undefined>(undefined)
+const curSaveTrack = ref(undefined)
 const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
@@ -208,6 +211,9 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
         }
         fileSearch.value[side] = file.name
         files.value[side] = jsonContent
+        if (!store.settings.setup.alwaysViewOnly) {
+          fileImportOpen.value = side
+        }
       }
     } else if (
       !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
@@ -221,6 +227,9 @@ const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
     } else {
       fileSearch.value[side] = file.name
       files.value[side] = jsonContent
+      if (!store.settings.setup.alwaysViewOnly) {
+        fileImportOpen.value = side
+      }
     }
   }
 }
@@ -252,6 +261,9 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
         }
         fileSearch.value[side] = file.name
         files.value[side] = jsonContent
+        if (!store.settings.setup.alwaysViewOnly) {
+          fileImportOpen.value = side
+        }
       }
     } else if (
       !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
@@ -264,12 +276,30 @@ const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
     }
     fileSearch.value[side] = file.name
     files.value[side] = jsonContent
+    if (!store.settings.setup.alwaysViewOnly) {
+      fileImportOpen.value = side
+    }
   } else {
     snackbar({
       message: translate('setup.invalidFile'),
       autoCloseDelay: 3000,
     })
   }
+}
+
+const closeFileSaveDialog = () => {
+  fileImportOpen.value = undefined
+  curSaveTrack.value = undefined
+}
+
+const saveSetup = async () => {
+  await window.fs.setupFile(
+    files.value[fileImportOpen.value]?.carName,
+    curSaveTrack.value?.value,
+    fileSearch.value[fileImportOpen.value],
+    JSON.stringify(files.value[fileImportOpen.value]),
+  )
+  closeFileSaveDialog()
 }
 
 const handleDragEnter = (side: 'left' | 'right') => {
@@ -574,6 +604,81 @@ const openExtUrl = (url: string) => {
         class="w-[350px]"
         @closeDialog="codeShareOpen = undefined"
       />
+    </mdui-dialog>
+
+    <mdui-dialog
+      :headline="$t('setup.importSetup')"
+      :open="fileImportOpen"
+      @close="() => {}"
+    >
+      <div class="flex flex-col w-[300px]">
+        <div class="flex flex-row">
+          <mdui-icon-insert-drive-file--rounded
+            class="h-[1.125rem] ml-2 text-[rgb(var(--mdui-color-primary))]"
+          ></mdui-icon-insert-drive-file--rounded>
+          <div class="ml-1 wrap-anywhere">
+            {{ fileSearch[fileImportOpen] }}
+          </div>
+        </div>
+        <div class="flex flex-row mt-2">
+          <mdui-icon-directions-car--rounded
+            class="h-[1.125rem] ml-2 text-[rgb(var(--mdui-color-primary))]"
+          ></mdui-icon-directions-car--rounded>
+          <div class="ml-1 truncate">
+            {{ files[fileImportOpen]?.carName }}
+          </div>
+        </div>
+        <ChipSelect
+          v-model="curSaveTrack"
+          :placeholder="$t('servers.trackPlaceholder')"
+          dropdown-placement="right"
+          :items="tracks"
+          chip-class="mt-2 w-max"
+          :for-key="(track: [string, string, string]) => track?.[0]"
+          :for-value="(track: [string, string, string]) => track?.[0]"
+          :item-label="
+            (track: [string, string, string]) => {
+              if (store.settings.setup.trackDisplay == 3) {
+                return $t(`tracks.${track?.[0]}`)
+              }
+              return track?.[[2, 1][store.settings.setup.trackDisplay - 1]]
+            }
+          "
+          :chip-label="(track: any) => track?.label"
+          @select="
+            item => {
+              let trackLabel
+              if (store.settings.setup.trackDisplay == 3) {
+                trackLabel = $t(`tracks.${item?.[0]}`)
+              } else {
+                trackLabel =
+                  item?.[[2, 1][store.settings.setup.trackDisplay - 1]]
+              }
+              curSaveTrack = {
+                value: item[0],
+                label: trackLabel,
+              }
+            }
+          "
+        >
+          <template #icon>
+            <mdui-icon-location-on--rounded
+              class="h-[1.125rem]"
+            ></mdui-icon-location-on--rounded>
+          </template>
+        </ChipSelect>
+
+        <mdui-button
+          variant="filled"
+          class="mt-6 mb-2"
+          :disabled="!curSaveTrack"
+          @click="saveSetup"
+          >{{ $t('setup.saveAndView') }}</mdui-button
+        >
+        <mdui-button variant="text" @click="closeFileSaveDialog">{{
+          $t('setup.viewOnly')
+        }}</mdui-button>
+      </div>
     </mdui-dialog>
 
     <div

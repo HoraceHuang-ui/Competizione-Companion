@@ -68,6 +68,15 @@ const resetDialogOpen = ref(false)
 const resetSettings = () => {
   resetDialogOpen.value = false
   store.clear()
+  if (
+    ['舞萌DX启动！', 'Time for maimai DX!'].includes(
+      store.settings.status.serverDownMsg,
+    )
+  ) {
+    store.settings.status.serverDownMsg = translate(
+      'settings.serverDownMsgDefault',
+    )
+  }
 }
 
 const darkModeChange = (event: Event) => {
@@ -85,6 +94,16 @@ const openLink = (url: string) => {
 
 const onLangSelect = (item: Lang) => {
   switchLang(lang.value)
+  if (
+    ['舞萌DX启动！', 'Time for maimai DX!'].includes(
+      store.settings.status.serverDownMsg,
+    )
+  ) {
+    store.settings.status.serverDownMsg = translate(
+      'settings.serverDownMsgDefault',
+    )
+  }
+
   if (lang.value === 'en_US') {
     store.settings.setup.carDisplay = 2
     store.settings.setup.trackDisplay = 2
@@ -401,6 +420,17 @@ const setBgImage = () => {
                   :checked="store.settings.setup.setupLabelEn"
                   @change="
                     store.settings.setup.setupLabelEn = $event.target.checked
+                  "
+                ></mdui-switch>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('settings.alwaysViewOnly') }}</div>
+                <mdui-switch
+                  :checked="store.settings.setup.alwaysViewOnly"
+                  @change="
+                    store.settings.setup.alwaysViewOnly = $event.target.checked
                   "
                 ></mdui-switch>
               </div>

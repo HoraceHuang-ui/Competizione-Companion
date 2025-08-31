@@ -27,7 +27,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
     "electron": "^29.1.1",
-    "electron-builder": "^24.13.3",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.32.0",
     "pinia-plugin-persistedstate": "^3.2.1",
     "prettier": "^3.6.2",

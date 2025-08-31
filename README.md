@@ -18,9 +18,9 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 - ☑️ Light/dark mode & following system supported.
 - ☑️ Available to set car display preferences between full name & short name, e.g. `Lamborghini Huracán GT3 EVO2`/`Lambo Evo2`.
 - ☑️ Available to set track display preferences between full name & short name, e.g. `Autodromo Enzo e Dino Ferrari`/`Imola`。
-- 🔳 To implement theme color personalization, with support for extracting colors from a custom background image.
+- ☑️ Available to set the theme color, with support for extracting colors from a custom background image.
 - 🔳 To support setting up executable paths to retrieve along with launching ACC (telemetry, accelerator, etc.).
-- 🔳 To optimize UI transition effects.
+- 🔳 To support importing a folder or a zip file and batch loading setups.
 - 🔳 (Too difficult to implement in a short period) To support editing & saving of the setups.
 - 🔳 (No plans in a short period) To support management of liveries.
 - 🔳 (No plans in a long period) To implement in-game overlays.

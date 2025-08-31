@@ -68,6 +68,15 @@ const resetDialogOpen = ref(false)
 const resetSettings = () => {
   resetDialogOpen.value = false
   store.clear()
+  if (
+    ['舞萌DX启动！', 'Time for maimai DX!'].includes(
+      store.settings.status.serverDownMsg,
+    )
+  ) {
+    store.settings.status.serverDownMsg = translate(
+      'settings.serverDownMsgDefault',
+    )
+  }
 }
 
 const darkModeChange = (event: Event) => {
@@ -85,6 +94,16 @@ const openLink = (url: string) => {
 
 const onLangSelect = (item: Lang) => {
   switchLang(lang.value)
+  if (
+    ['舞萌DX启动！', 'Time for maimai DX!'].includes(
+      store.settings.status.serverDownMsg,
+    )
+  ) {
+    store.settings.status.serverDownMsg = translate(
+      'settings.serverDownMsgDefault',
+    )
+  }
+
   if (lang.value === 'en_US') {
     store.settings.setup.carDisplay = 2
     store.settings.setup.trackDisplay = 2
@@ -93,7 +112,7 @@ const onLangSelect = (item: Lang) => {
 
 const changeTray = (checked: boolean) => {
   store.settings.general.minToTray = checked
-  window.electron.storeSet('tray', checked)
+  // window.electron.storeSet('tray', checked)
 }
 
 const verCompare = (a: string, b: string) => {
@@ -134,22 +153,28 @@ const updInfo = ref<any>({})
 const checkUpdate = () => {
   updChecking.value = true
   window.axios
-    .get(
-      'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
-    )
-    .then((resp: any) => {
-      console.log(resp)
-      if (needsUpdate(resp.version)) {
-        updInfo.value = resp
-        updDialogShow.value = true
-      } else {
-        latest.value = true
+    // .get('http://0.0.0.0:5005/competizione')
+    .get('http://120.55.52.240:5005/competizione')
+    .then((res: any) => {
+      console.log(res)
+      if (res.success) {
+        const resp = res.updInfo
+        if (needsUpdate(resp.version)) {
+          updInfo.value = resp
+          updDialogShow.value = true
+        } else {
+          latest.value = true
+          snackbar({
+            message: translate('settings.upToDate'),
+            autoCloseDelay: 3000,
+          })
+        }
       }
       updChecking.value = false
     })
     .catch((err: Error) => {
       snackbar({
-        message: translate('general.updCheckFail'),
+        message: translate('general.checkUpdFail'),
         autoCloseDelay: 3000,
       })
       updChecking.value = false
@@ -395,6 +420,17 @@ const setBgImage = () => {
                   :checked="store.settings.setup.setupLabelEn"
                   @change="
                     store.settings.setup.setupLabelEn = $event.target.checked
+                  "
+                ></mdui-switch>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('settings.alwaysViewOnly') }}</div>
+                <mdui-switch
+                  :checked="store.settings.setup.alwaysViewOnly"
+                  @change="
+                    store.settings.setup.alwaysViewOnly = $event.target.checked
                   "
                 ></mdui-switch>
               </div>

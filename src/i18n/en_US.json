@@ -15,6 +15,7 @@
     "updVer": "Version: ",
     "updSize": "Size: ",
     "update": "Update",
+    "skipCurVersion": "Skip this version",
     "checkUpdFail": "Failed to Check for Updates",
     "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
   },
@@ -29,6 +30,8 @@
   "servers": {
     "total": "Total:",
     "noData": "No Data",
+    "listView": "List View",
+    "cardView": "Card View",
     "noHotJoin": "No mid-session join",
     "filter": "Filter Servers",
     "resetFilter": "Reset",
@@ -82,6 +85,7 @@
     "importSetup": "Import Setup",
     "codeLabel": "Setup Code",
     "codePlaceholder": "Paste the setup code here",
+    "fileName": "File: ",
     "carFromCode": "Car: ",
     "saveAndView": "Save and View",
     "viewOnly": "View Only",
@@ -341,6 +345,7 @@
     "dispEnShort": "Short Name",
     "dispLocalShort": "Localized Short Name",
     "paramsEn": "Show Parameters in English",
+    "alwaysViewOnly": "Always Open Setups in View Only Mode",
     "about": "About",
     "version": "Version",
     "checkUpdate": "Check Update",

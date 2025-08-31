@@ -74,13 +74,6 @@ const verCompare = (a: string, b: string) => {
 }
 
 const appVer = ref('')
-// BUILD: '../../app.asar/package.json'
-// DEV: '../../package.json'
-fetch('../package.json')
-  .then(response => response.json())
-  .then(resp => {
-    appVer.value = resp.version
-  })
 
 const needsUpdate = (latestStr: string) => {
   return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
@@ -91,13 +84,13 @@ const updInfo = ref<any>({})
 const skipVersion = ref(false)
 const checkUpdate = () => {
   window.axios
-    .get(
-      'https://gitee.com/HoraceHuang-ui/competizione-companion-info-repo/raw/master/latestUpd.json',
-    )
-    .then((resp: any) => {
-      if (needsUpdate(resp.version)) {
-        const target = store.general.targetVersion
-        if (!target || verCompare(resp.version, target) > 0) {
+    // .get('http://0.0.0.0:5005/competizione')
+    .get('http://120.55.52.240:5005/competizione')
+    .then((res: any) => {
+      console.log(res)
+      if (res.success) {
+        const resp = res.updInfo
+        if (needsUpdate(resp.version)) {
           updInfo.value = resp
           updDialogShow.value = true
         }
@@ -105,7 +98,7 @@ const checkUpdate = () => {
     })
     .catch((err: Error) => {
       snackbar({
-        message: translate('general.updCheckFail'),
+        message: translate('general.checkUpdFail'),
         autoCloseDelay: 3000,
       })
       console.error(err)
@@ -123,22 +116,28 @@ const onCancelUpd = () => {
   }
 }
 
-// onMounted(() => {
-//   checkUpdate()
-// })
+onMounted(() => {
+  fetch('../package.json')
+    .then(response => response.json())
+    .then(resp => {
+      appVer.value = resp.version
+      checkUpdate()
+    })
+})
 </script>
 <template>
-  <img
-    class="w-[100vw] h-[100vh] absolute object-cover"
-    v-if="store.settings.general.bgImg"
-    :src="store.settings.general.bgImg"
-  />
-  <mdui-layout class="size-full">
+  <Transition name="fade">
+    <img
+      class="w-[100vw] h-[100vh] absolute object-cover"
+      v-if="store.settings.general.bgImg"
+      :src="store.settings.general.bgImg"
+    />
+  </Transition>
+  <mdui-layout class="size-full overflow-hidden">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
-      class="py-1 pl-5 pr-4 drag"
-      :class="{ 'opacity-85': store.settings.general.bgImg }"
+      class="py-1 pl-5 pr-4 drag bg-transparent"
     >
       <div class="absolute right-0 top-0 z-[9999] focus">
         <div class="traffic-lights focus no-drag py-3 px-2">
@@ -160,13 +159,15 @@ const onCancelUpd = () => {
         <img src="../build/icon.ico" />
       </mdui-button-icon>
       <mdui-top-app-bar-title class="text-xl mt-2">
-        <span class="title">{{ translate('general.appName') }}</span>
+        <span class="title w-1/2 text-right">{{
+          translate('general.appName')
+        }}</span>
         <span
           class="mx-4 opacity-60"
           style="font-family: 'Harmony OS Sans SC'; font-weight: 200"
           >|</span
         >
-        <span style="color: rgb(var(--mdui-color-primary))">{{
+        <span class="w-1/2" style="color: rgb(var(--mdui-color-primary))">{{
           $t(modes[mode])
         }}</span>
       </mdui-top-app-bar-title>
@@ -175,8 +176,7 @@ const onCancelUpd = () => {
     <mdui-navigation-rail
       value="status"
       divider
-      class="pb-4"
-      :class="{ ' opacity-85': store.settings.general.bgImg }"
+      class="pb-4 bg-transparent"
       contained
     >
       <mdui-tooltip :content="translate('general.status')" placement="right">
@@ -241,13 +241,16 @@ const onCancelUpd = () => {
           @click="launchACC"
           :disabled="launching"
         >
-          <mdui-circular-progress
-            v-if="launching"
-            class="p-2"
-          ></mdui-circular-progress>
-          <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+          <Transition name="fade" mode="out-in">
+            <mdui-circular-progress
+              v-if="launching"
+              class="p-2"
+            ></mdui-circular-progress>
+            <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+          </Transition>
         </mdui-button-icon>
       </mdui-tooltip>
+
       <mdui-tooltip
         :content="translate('general.settings')"
         placement="right"
@@ -267,8 +270,15 @@ const onCancelUpd = () => {
       </mdui-tooltip>
     </mdui-navigation-rail>
 
-    <mdui-layout-main>
-      <router-view id="mainRouterView"></router-view>
+    <mdui-layout-main
+      class="overflow-hidden"
+      style="background: rgba(var(--mdui-color-surface), 0.85)"
+    >
+      <router-view id="mainRouterView" v-slot="{ Component }">
+        <transition name="swipe-up" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </mdui-layout-main>
 
     <mdui-dialog
@@ -302,7 +312,7 @@ const onCancelUpd = () => {
         <mdui-checkbox
           :checked="skipVersion"
           @change="skipVersion = !skipVersion"
-          >跳过此版本</mdui-checkbox
+          >{{ $t('general.skipCurVersion') }}</mdui-checkbox
         >
         <div class="flex flex-row">
           <mdui-button slot="action" variant="text" @click="onCancelUpd">{{
@@ -321,6 +331,24 @@ const onCancelUpd = () => {
 </template>
 
 <style>
+.swipe-up-enter-from {
+  transform: translateY(12vh);
+  opacity: 0;
+}
+.swipe-up-leave-to {
+  opacity: 0;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.swipe-up-enter-active,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 400ms var(--mdui-motion-easing-standard);
+}
+
 h1,
 h2,
 h3,
@@ -371,7 +399,6 @@ span {
 }
 
 #mainRouterView {
-  background: rgba(var(--mdui-color-surface), 0.85);
   padding-right: 1rem;
 }
 </style>

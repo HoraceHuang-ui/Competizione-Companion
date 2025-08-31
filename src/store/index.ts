@@ -10,6 +10,9 @@ export const useStore = defineStore('userStore', {
         isMax: false,
       },
     },
+    servers: {
+      listView: false,
+    },
     settings: {
       general: {
         lang: 'zh_CN',
@@ -19,12 +22,13 @@ export const useStore = defineStore('userStore', {
         bgImg: '',
       },
       status: {
-        serverDownMsg: '舞萌DX启动！',
+        serverDownMsg: 'Time for maimai DX!',
       },
       setup: {
         carDisplay: 2, // 1: 英文全写, 2: 英文缩写, 3: 中文缩写
         trackDisplay: 2, // 1: 英文全写, 2: 英文缩写, 3: 中文缩写
         setupLabelEn: false,
+        alwaysViewOnly: false,
       },
     },
   }),

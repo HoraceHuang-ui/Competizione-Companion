@@ -6,6 +6,8 @@ import '@mdui/icons/nightlight--outlined.js'
 import '@mdui/icons/keyboard-double-arrow-right--rounded.js'
 import '@mdui/icons/help-outline--rounded.js'
 import '@mdui/icons/location-on--rounded.js'
+import '@mdui/icons/grid-view--rounded.js'
+import '@mdui/icons/table-rows--rounded.js'
 import { computed, onMounted, ref } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { seriesColorMap } from '@/utils/enums'
@@ -15,6 +17,7 @@ import tracks from '@/utils/trackData'
 import { useStore } from '@/store'
 import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 import MyCarousel from '@/components/MyCarousel.vue'
+import ServerListItem from '@/views/ServerListPage/components/ServerListItem.vue'
 
 const curPage = ref(1)
 const servers = ref([])
@@ -112,26 +115,57 @@ const openExtUrl = (url: string) => {
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] bg-[rgb(var(--mdui-color-surface-container-lowest))] mx-4 mb-4 flex flex-row justify-center relative"
       style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
     >
-      <div
-        v-if="loading || total == 0"
-        class="size-full flex flex-row justify-center items-center"
-      >
-        <mdui-circular-progress v-if="loading"></mdui-circular-progress>
-        <div v-else-if="total == 0">{{ $t('servers.noData') }}</div>
-      </div>
-      <ScrollWrapper width="98%" v-else>
+      <Transition name="fade" mode="out-in">
         <div
-          class="flex flex-row justify-center py-2 px-[9%]"
-          style="flex-wrap: wrap"
+          v-if="loading || total == 0"
+          class="size-full flex flex-row justify-center items-center absolute"
         >
-          <div
-            class="w-1/2 px-2 py-1"
-            v-for="server in servers"
-            :key="server.id"
+          <Transition name="fade" mode="out-in">
+            <mdui-circular-progress v-if="loading"></mdui-circular-progress>
+            <div v-else-if="total == 0">
+              {{ $t('servers.noData') }}
+            </div></Transition
           >
-            <ServerCard :server="server" />
-          </div>
         </div>
+      </Transition>
+      <ScrollWrapper width="98%" v-if="!loading && total != 0" class="absolute">
+        <Transition name="fade" mode="out-in">
+          <!-- 列表视图 -->
+          <TransitionGroup
+            v-if="store.servers.listView"
+            name="fade-up"
+            appear
+            tag="div"
+            class="flex flex-col py-3 px-[9%]"
+          >
+            <div
+              v-for="(server, index) in servers"
+              :key="server.id"
+              class="w-full px-2 py-0.5"
+              :style="{ transitionDelay: index * 30 + 'ms' }"
+            >
+              <ServerListItem :server="server" />
+            </div>
+          </TransitionGroup>
+
+          <!-- 卡片视图 -->
+          <TransitionGroup
+            v-else
+            name="fade-up"
+            appear
+            tag="div"
+            class="flex flex-row justify-center py-2 px-[9%] flex-wrap"
+          >
+            <div
+              v-for="(server, index) in servers"
+              :key="server.id"
+              class="w-1/2 px-2 py-1"
+              :style="{ transitionDelay: index * 30 + 'ms' }"
+            >
+              <ServerCard :server="server" />
+            </div>
+          </TransitionGroup>
+        </Transition>
       </ScrollWrapper>
 
       <div class="absolute top-4 left-4">
@@ -147,11 +181,43 @@ const openExtUrl = (url: string) => {
       ></Pagination>
 
       <div class="absolute bottom-2 left-4 flex flex-col">
-        <mdui-fab variant="surface" class="mb-4" @click="helpDialogOpen = true">
-          <mdui-icon-help-outline--rounded
-            slot="icon"
-          ></mdui-icon-help-outline--rounded>
-        </mdui-fab>
+        <mdui-tooltip
+          :content="
+            store.servers.listView
+              ? $t('servers.listView')
+              : $t('servers.cardView')
+          "
+          placement="right"
+        >
+          <mdui-fab
+            variant="surface"
+            class="mb-4"
+            @click="store.servers.listView = !store.servers.listView"
+          >
+            <Transition name="fade" mode="out-in">
+              <mdui-icon-table-rows--rounded
+                v-if="store.servers.listView"
+                slot="icon"
+              ></mdui-icon-table-rows--rounded>
+              <mdui-icon-grid-view--rounded
+                v-else
+                slot="icon"
+              ></mdui-icon-grid-view--rounded
+            ></Transition>
+          </mdui-fab>
+        </mdui-tooltip>
+
+        <mdui-tooltip :content="$t('servers.helpTitle')" placement="right">
+          <mdui-fab
+            variant="surface"
+            class="mb-4"
+            @click="helpDialogOpen = true"
+          >
+            <mdui-icon-help-outline--rounded
+              slot="icon"
+            ></mdui-icon-help-outline--rounded>
+          </mdui-fab>
+        </mdui-tooltip>
 
         <mdui-tooltip placement="right-end" class="filter">
           <div class="relative">
@@ -161,10 +227,12 @@ const openExtUrl = (url: string) => {
                 slot="icon"
               ></mdui-icon-search--rounded>
             </mdui-fab>
-            <mdui-badge
-              v-if="filtersCount > 0"
-              class="absolute right-0 top-0 text-base font-bold w-7 h-7 translate-x-2 -translate-y-2"
-              >{{ filtersCount }}</mdui-badge
+            <Transition name="fade" mode="out-in">
+              <mdui-badge
+                v-if="filtersCount > 0"
+                class="absolute right-0 top-0 text-base font-bold w-7 h-7 translate-x-2 -translate-y-2"
+                >{{ filtersCount }}</mdui-badge
+              ></Transition
             >
           </div>
           <div
@@ -427,6 +495,48 @@ const openExtUrl = (url: string) => {
 </template>
 
 <style scoped>
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-leave-active {
+  transition: all 250ms var(--mdui-motion-easing-standard);
+}
+
+.fade-up-enter-active,
+.fade-up-appear-active {
+  transition:
+    transform 0.3s var(--mdui-motion-easing-standard),
+    opacity 0.3s var(--mdui-motion-easing-standard);
+}
+.fade-up-leave-active {
+  transition:
+    transform 0.2s var(--mdui-motion-easing-standard),
+    opacity 0.2s var(--mdui-motion-easing-standard);
+  position: absolute; /* 防止离场时塌陷 */
+}
+
+.fade-up-enter-from,
+.fade-up-appear-from {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+}
+.fade-up-enter-to,
+.fade-up-appear-to {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.fade-up-leave-from {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+}
+
 ::part(header) {
   font-family:
     Google Sans,

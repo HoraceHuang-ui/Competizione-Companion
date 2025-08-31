@@ -36,7 +36,7 @@ const trackDisp = (trackId: string) => {
   <mdui-card
     class="w-full p-3 border border-[rgb(var(--mdui-color-outline-variant))]"
   >
-    <mdui-tooltip :content="props.server.name" placement="bottom">
+    <mdui-tooltip :content="props.server.name" placement="bottom-start">
       <div class="flex flex-row justify-between items-center">
         <div class="title truncate w-5/6 font-bold text-xl">
           {{ props.server.name }}
@@ -62,7 +62,7 @@ const trackDisp = (trackId: string) => {
         v-if="!props.server.hot_join"
       >
         <mdui-icon-person-add-disabled--rounded
-          class="text-lg ml-2"
+          class="text-lg ml-2 mb-2"
         ></mdui-icon-person-add-disabled--rounded>
       </mdui-tooltip>
       <ScrollWrapper class="flex-1 mr-2">

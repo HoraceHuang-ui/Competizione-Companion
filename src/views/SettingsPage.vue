@@ -112,7 +112,7 @@ const onLangSelect = (item: Lang) => {
 
 const changeTray = (checked: boolean) => {
   store.settings.general.minToTray = checked
-  window.electron.storeSet('tray', checked)
+  // window.electron.storeSet('tray', checked)
 }
 
 const verCompare = (a: string, b: string) => {

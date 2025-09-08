@@ -4,6 +4,7 @@ import '@mdui/icons/view-list--rounded.js'
 import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
+import '@mdui/icons/balance--rounded.js'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
@@ -37,10 +38,11 @@ const modes = [
   'general.status',
   'general.servers',
   'general.setup',
+  'general.bop',
   'general.launchACC',
   'general.settings',
 ]
-const pages = ['status', 'list', 'setup', '', 'settings']
+const pages = ['status', 'list', 'setup', 'bop', '', 'settings']
 const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
@@ -224,6 +226,21 @@ onMounted(() => {
         </mdui-button-icon>
       </mdui-tooltip>
 
+      <mdui-tooltip :content="translate('general.bop')" placement="right">
+        <mdui-button-icon
+          class="mb-2"
+          :style="{
+            background:
+              mode == 3
+                ? 'rgb(var(--mdui-color-secondary-container))'
+                : 'transparent',
+          }"
+          @click="nav(3)"
+        >
+          <mdui-icon-balance--rounded></mdui-icon-balance--rounded>
+        </mdui-button-icon>
+      </mdui-tooltip>
+
       <mdui-tooltip
         :content="translate('general.launchACC')"
         placement="right"
@@ -234,7 +251,7 @@ onMounted(() => {
           class="mb-2"
           :style="{
             background:
-              mode == 3
+              mode == 4
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
@@ -259,11 +276,11 @@ onMounted(() => {
         <mdui-button-icon
           :style="{
             background:
-              mode == 4
+              mode == 5
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="nav(4)"
+          @click="nav(5)"
         >
           <mdui-icon-settings--rounded></mdui-icon-settings--rounded>
         </mdui-button-icon>

@@ -19,6 +19,11 @@ const router = VueRouter.createRouter({
       component: () => import('../views/SetupMgmtPage/index.vue'),
     },
     {
+      name: 'bop',
+      path: '/bop',
+      component: () => import('../views/BopPage/index.vue'),
+    },
+    {
       name: 'settings',
       path: '/settings',
       component: () => import('../views/SettingsPage.vue'),

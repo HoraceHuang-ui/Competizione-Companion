@@ -2,6 +2,7 @@ const data = {
   // GT3
   GT3: {
     amr_v8_vantage_gt3: {
+      id: 20,
       name: 'AMR V8 Vantage GT3',
       shortName: 'AMR V8',
       tirePressureMin: 20.3,
@@ -17,6 +18,7 @@ const data = {
       rideHeightMinRear: 53,
     },
     audi_r8_lms_evo_ii: {
+      id: 31,
       name: 'Audi R8 LMS evo II',
       shortName: 'R8 Evo2',
       tirePressureMin: 20.3,
@@ -32,6 +34,7 @@ const data = {
       rideHeightMinRear: 54,
     },
     bentley_continental_gt3_2018: {
+      id: 8,
       name: 'Bentley Continental GT3 2018',
       shortName: 'Bentley 2018',
       tirePressureMin: 20.3,
@@ -53,6 +56,7 @@ const data = {
       rideHeightMinRear: 54,
     },
     bmw_m4_gt3: {
+      id: 30,
       name: 'BMW M4 GT3',
       shortName: 'BMW M4',
       tirePressureMin: 20.3,
@@ -68,6 +72,7 @@ const data = {
       rideHeightMinRear: 50,
     },
     ferrari_296_gt3: {
+      id: 32,
       name: 'Ferrari 296 GT3',
       shortName: 'Ferrari 296',
       tirePressureMin: 20.3,
@@ -89,6 +94,7 @@ const data = {
       rideHeightMinRear: 50,
     },
     ford_mustang_gt3: {
+      id: 36,
       name: 'Ford Mustang GT3',
       shortName: 'Mustang',
       tirePressureMin: 20.3,
@@ -110,6 +116,7 @@ const data = {
       rideHeightMinRear: 50,
     },
     honda_nsx_gt3_evo: {
+      id: 21,
       name: 'Honda NSX GT3 Evo',
       shortName: 'NSX Evo',
       tirePressureMin: 20.3,
@@ -131,6 +138,7 @@ const data = {
       rideHeightMinRear: 54,
     },
     lamborghini_huracan_gt3_evo2: {
+      id: 33,
       name: 'Lamborghini Huracán GT3 EVO2',
       shortName: 'Lambo Evo2',
       tirePressureMin: 20.3,
@@ -146,6 +154,7 @@ const data = {
       rideHeightMinRear: 54,
     },
     lexus_rc_f_gt3: {
+      id: 1145,
       name: 'Lexus RC F GT3',
       shortName: 'Lexus RC F',
       tirePressureMin: 20.3,
@@ -161,6 +170,7 @@ const data = {
       rideHeightMinRear: 64,
     },
     mclaren_720s_gt3_evo: {
+      id: 35,
       name: 'McLaren 720S GT3 Evo',
       shortName: 'McLaren 720S Evo',
       tirePressureMin: 20.3,
@@ -176,6 +186,7 @@ const data = {
       rideHeightMinRear: 64,
     },
     mercedes_amg_gt3_evo: {
+      id: 25,
       name: 'Mercedes-AMG GT3 2020',
       shortName: 'AMG 2020',
       tirePressureMin: 20.3,
@@ -191,6 +202,7 @@ const data = {
       rideHeightMinRear: 67,
     },
     nissan_gt_r_gt3_2018: {
+      id: 6,
       name: 'Nissan GT-R Nismo GT3 2018',
       shortName: 'Nissan GT-R',
       tirePressureMin: 20.3,
@@ -206,6 +218,7 @@ const data = {
       rideHeightMinRear: 55,
     },
     porsche_992_gt3_r: {
+      id: 34,
       name: 'Porsche 992 GT3 R',
       shortName: '992 R',
       tirePressureMin: 20.3,
@@ -225,6 +238,7 @@ const data = {
   // GT4
   GT4: {
     alpine_a110_gt4: {
+      id: 50,
       name: 'Alpine A110 GT4',
       shortName: 'Alpine A110',
       tirePressureMin: 17,
@@ -240,6 +254,7 @@ const data = {
       rideHeightMinRear: 85,
     },
     amr_v8_vantage_gt4: {
+      id: 51,
       name: 'AMR V8 Vantage GT4',
       shortName: 'AMR V8',
       tirePressureMin: 17,
@@ -255,6 +270,7 @@ const data = {
       rideHeightMinRear: 102,
     },
     audi_r8_gt4: {
+      id: 52,
       name: 'Audi R8 LMS GT4',
       shortName: 'Audi R8',
       tirePressureMin: 17,
@@ -270,6 +286,7 @@ const data = {
       rideHeightMinRear: 107,
     },
     chevrolet_camaro_gt4r: {
+      id: 55,
       name: 'Chevrolet Camaro GT4.R',
       shortName: 'Camaro',
       tirePressureMin: 17,
@@ -285,6 +302,7 @@ const data = {
       rideHeightMinRear: 123,
     },
     ginetta_g55_gt4: {
+      id: 56,
       name: 'Ginetta G55 GT4',
       shortName: 'Ginetta G55',
       tirePressureMin: 17,
@@ -299,22 +317,8 @@ const data = {
       rideHeightMinFront: 75,
       rideHeightMinRear: 76,
     },
-    maserati_mc_gt4: {
-      name: 'Maserati GranTurismo MC GT4',
-      shortName: 'Maserati GT MC',
-      tirePressureMin: 17,
-      casterFunc: v => v * 0.22 + 3.4,
-      toeMins: [-0.4, -0.4],
-      wheelRates: [
-        [116, 151, 186],
-        [113, 138, 163],
-      ],
-      steeringRatioMin: 14,
-      brakeBiasMin: 49,
-      rideHeightMinFront: 80,
-      rideHeightMinRear: 105,
-    },
     mclaren_570s_gt4: {
+      id: 59,
       name: 'McLaren 570S GT4',
       shortName: 'McLaren 570S',
       tirePressureMin: 17,
@@ -330,6 +334,7 @@ const data = {
       rideHeightMinRear: 95,
     },
     mercedes_amg_gt4: {
+      id: 60,
       name: 'Mercedes-AMG GT4',
       shortName: 'AMG',
       tirePressureMin: 17,
@@ -342,6 +347,7 @@ const data = {
       rideHeightMinRear: 101,
     },
     porsche_718_cayman_gt4_mr: {
+      id: 61,
       name: 'Porsche 718 Cayman GT4 Clubsport',
       shortName: '718 Cayman',
       tirePressureMin: 17,

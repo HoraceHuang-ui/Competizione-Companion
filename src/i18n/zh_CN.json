@@ -5,6 +5,7 @@
     "status": "Lobby 服务器状态",
     "servers": "服务器列表",
     "setup": "调校管理",
+    "bop": "LFM BoP",
     "settings": "设置",
     "launchACC": "启动 ACC",
     "cancel": "取消",

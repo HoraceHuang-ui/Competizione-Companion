@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
-import tracks from '@/utils/trackData'
-import ChipSelect from '@/components/ChipSelect.vue'
 import '@mdui/icons/location-on--rounded.js'
-import { useStore } from '@/store'
-import { setTheme } from 'mdui'
-
-const store = useStore()
+import { trackIndex } from '@/utils/enums'
+import { getCarDisplayById } from '@/utils/utils'
 
 const bopData = ref<any>(null)
 const curTrack = ref<any>(null)
@@ -45,45 +41,12 @@ onMounted(() => {
     >
       <div class="flex flex-row justify-between items-center mx-6 mt-6 mb-4">
         <div class="flex flex-row justify-end items-center">
-          <ChipSelect
+          <TrackSelector
             v-model="curTrack"
-            :placeholder="$t('servers.trackPlaceholder')"
             dropdown-placement="bottom"
-            :items="tracks"
             chip-class="mt-2"
-            :for-key="(track: [string, string, string, string]) => track?.[3]"
-            :for-value="(track: [string, string, string, string]) => track?.[3]"
-            :item-label="
-              (track: [string, string, string, string]) => {
-                if (store.settings.setup.trackDisplay == 3) {
-                  return $t(`tracks.${track?.[0]}`)
-                }
-                return track?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-              }
-            "
-            :chip-label="(track: any) => track?.label"
-            @select="
-              item => {
-                let trackLabel
-                if (store.settings.setup.trackDisplay == 3) {
-                  trackLabel = $t(`tracks.${item?.[0]}`)
-                } else {
-                  trackLabel =
-                    item?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-                }
-                curTrack = {
-                  value: item[3],
-                  label: trackLabel,
-                }
-              }
-            "
-          >
-            <template #icon>
-              <mdui-icon-location-on--rounded
-                class="h-[1.125rem]"
-              ></mdui-icon-location-on--rounded>
-            </template>
-          </ChipSelect>
+            :key-idx="trackIndex.LFM"
+          />
         </div>
         <mdui-segmented-button-group
           :value="curSeries"
@@ -125,12 +88,12 @@ onMounted(() => {
             :key="bop.car_model"
             :style="{
               background:
-                index & (1 == 1)
+                index & 1
                   ? 'rgba(var(--mdui-color-secondary-container), 0.4)'
                   : 'none',
             }"
           >
-            <div class="w-[50%]">{{ bop.car_name }}</div>
+            <div class="w-[50%]">{{ getCarDisplayById(bop.car_model) }}</div>
             <div class="w-[20%]">{{ bop.car_year }}</div>
             <div
               class="w-[15%]"

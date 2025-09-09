@@ -8,10 +8,12 @@ import '@mdui/icons/balance--rounded.js'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { setTheme, snackbar } from 'mdui'
+import { setTheme } from 'mdui'
 import { themeMap } from '@/utils/enums'
 import { translate } from '@/i18n'
 import { marked } from 'marked'
+import { checkUpdate } from '@/utils/utils'
+import UpdateDialog from '@/components/UpdateDialog.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -57,74 +59,18 @@ const launchACC = () => {
   }, 3000)
 }
 
-const verCompare = (a: string, b: string) => {
-  const arr1 = a.split('.')
-  const arr2 = b.split('.')
-
-  if (arr1.length != arr2.length) {
-    return 114
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
-      return 1
-    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
-      return -1
-    }
-  }
-  return 0
-}
-
-const appVer = ref('')
-
-const needsUpdate = (latestStr: string) => {
-  return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
-}
-
 const updDialogShow = ref(false)
 const updInfo = ref<any>({})
-const skipVersion = ref(false)
-const checkUpdate = () => {
-  window.axios
-    // .get('http://0.0.0.0:5005/competizione')
-    .get('http://120.55.52.240:5005/competizione')
-    .then((res: any) => {
-      console.log(res)
-      if (res.success) {
-        const resp = res.updInfo
-        if (needsUpdate(resp.version)) {
-          updInfo.value = resp
-          updDialogShow.value = true
-        }
-      }
-    })
-    .catch((err: Error) => {
-      snackbar({
-        message: translate('general.checkUpdFail'),
-        autoCloseDelay: 3000,
-      })
-      console.error(err)
-    })
-}
-const confirmUpd = () => {
-  updDialogShow.value = false
-  window.electron.openExtLink(updInfo.value.dlUrl)
-  window.win.close()
-}
-const onCancelUpd = () => {
-  updDialogShow.value = false
-  if (skipVersion.value) {
-    store.general.targetVersion = updInfo.value.version
-  }
-}
 
 onMounted(() => {
-  fetch('../package.json')
-    .then(response => response.json())
-    .then(resp => {
-      appVer.value = resp.version
-      checkUpdate()
-    })
+  checkUpdate(
+    store.general.targetVersion || import.meta.env.VITE_APP_VERSION,
+  ).then(resp => {
+    updInfo.value = resp
+    if (resp) {
+      updDialogShow.value = true
+    }
+  })
 })
 </script>
 <template>
@@ -298,52 +244,7 @@ onMounted(() => {
       </router-view>
     </mdui-layout-main>
 
-    <mdui-dialog
-      :open="updDialogShow"
-      close-on-overlay-click
-      close-on-esc
-      :headline="$t('general.newVerDetected')"
-      @close="updDialogShow = false"
-    >
-      <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
-      <div
-        class="overflow-y-scroll max-h-[300px] w-[400px] scroll-wrapper-app-vue"
-      >
-        <div
-          class="marked"
-          v-html="marked(updInfo?.desc?.[$t('langCode')] || '')"
-        />
-      </div>
-      <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
-        {{ $t('general.updVer') }}{{ appVer }} 👉
-        {{ updInfo.version }}
-      </div>
-      <div class="text-red-600 dark:text-red-400">
-        {{ $t('general.updSize')
-        }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
-      </div>
-      <div
-        class="w-full flex flex-row justify-between items-center"
-        slot="action"
-      >
-        <mdui-checkbox
-          :checked="skipVersion"
-          @change="skipVersion = !skipVersion"
-          >{{ $t('general.skipCurVersion') }}</mdui-checkbox
-        >
-        <div class="flex flex-row">
-          <mdui-button slot="action" variant="text" @click="onCancelUpd">{{
-            $t('general.cancel')
-          }}</mdui-button>
-          <mdui-button
-            slot="action"
-            @click="confirmUpd"
-            :disabled="skipVersion"
-            >{{ $t('general.update') }}</mdui-button
-          >
-        </div>
-      </div>
-    </mdui-dialog>
+    <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" show-skip />
   </mdui-layout>
 </template>
 

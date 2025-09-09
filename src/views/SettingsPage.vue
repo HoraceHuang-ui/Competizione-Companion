@@ -8,39 +8,26 @@ import '@mdui/icons/dark-mode--outlined.js'
 import '@mdui/icons/update--rounded.js'
 import '@mdui/icons/image--rounded.js'
 import '@mdui/icons/undo--rounded.js'
-import { computed, onMounted, ref, watch } from 'vue'
-import {
-  getColorFromImage,
-  getTheme,
-  setColorScheme,
-  setTheme,
-  snackbar,
-} from 'mdui'
-import { themeMap } from '@/utils/enums'
-import { marked } from 'marked'
-import {
-  availableLangCodes,
-  availableLangNames,
-  Lang,
-  switchLang,
-  translate,
-  translateWithLocale,
-  langMap,
-} from '@/i18n'
+import { computed, ref, watch } from 'vue'
+import { getColorFromImage, setColorScheme, setTheme, snackbar } from 'mdui'
+import { themeMap, darkModeSettings, trackCarDispSettings } from '@/utils/enums'
+import { availableLangCodes, switchLang, translate, langMap } from '@/i18n'
 import { ChromePicker } from 'vue-color'
+import UpdateDialog from '@/components/UpdateDialog.vue'
+import { checkUpdate } from '@/utils/utils'
 
 const store = useStore()
 const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
 const isDark = ref(
-  store.settings.general.darkMode === '2'
+  store.settings.general.darkMode === darkModeSettings.AUTO
     ? darkModePreference.matches
-    : store.settings.general.darkMode !== '1',
+    : store.settings.general.darkMode !== darkModeSettings.LIGHT,
 )
 darkModePreference.addEventListener('change', e => {
   isDark.value =
-    store.settings.general.darkMode === '2'
+    store.settings.general.darkMode === darkModeSettings.AUTO
       ? e.matches
-      : store.settings.general.darkMode !== '1'
+      : store.settings.general.darkMode !== darkModeSettings.LIGHT
 })
 
 const donationOpen1 = ref(false)
@@ -50,10 +37,6 @@ if (!localStorage.lang) {
   localStorage.lang = 'en_US'
 }
 const lang = ref(localStorage.lang || 'en_US')
-const langMsg = computed(() => {
-  console.log(translateWithLocale('settings.languageChangeMsg', lang.value))
-  return translateWithLocale('settings.languageChangeMsg', lang.value)
-})
 const dispMap = ['dispEnFull', 'dispEnShort', 'dispLocalShort']
 const dispItems = computed(() => {
   if (lang.value === 'en_US') {
@@ -84,15 +67,15 @@ const darkModeChange = (event: Event) => {
   store.settings.general.darkMode = mode
   setTheme(themeMap[mode])
   isDark.value =
-    store.settings.general.darkMode === '2'
+    store.settings.general.darkMode === darkModeSettings.AUTO
       ? darkModePreference.matches
-      : store.settings.general.darkMode !== '1'
+      : store.settings.general.darkMode !== darkModeSettings.LIGHT
 }
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
 }
 
-const onLangSelect = (item: Lang) => {
+const onLangSelect = () => {
   switchLang(lang.value)
   if (
     ['舞萌DX启动！', 'Time for maimai DX!'].includes(
@@ -105,8 +88,8 @@ const onLangSelect = (item: Lang) => {
   }
 
   if (lang.value === 'en_US') {
-    store.settings.setup.carDisplay = 2
-    store.settings.setup.trackDisplay = 2
+    store.settings.setup.carDisplay = trackCarDispSettings.EN_SHORT
+    store.settings.setup.trackDisplay = trackCarDispSettings.EN_SHORT
   }
 }
 
@@ -115,76 +98,30 @@ const changeTray = (checked: boolean) => {
   // window.electron.storeSet('tray', checked)
 }
 
-const verCompare = (a: string, b: string) => {
-  const arr1 = a.split('.')
-  const arr2 = b.split('.')
-
-  if (arr1.length != arr2.length) {
-    return 114
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
-      return 1
-    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
-      return -1
-    }
-  }
-  return 0
-}
-
-const appVer = ref('')
-// BUILD: '../../app.asar/package.json'
-// DEV: '../../package.json'
-fetch('../../app.asar/package.json')
-  .then(response => response.json())
-  .then(resp => {
-    appVer.value = resp.version
-  })
-
-const needsUpdate = (latestStr: string) => {
-  return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
-}
-
+const appVer = import.meta.env.VITE_APP_VERSION
 const updChecking = ref(false)
-const latest = ref(false)
 const updDialogShow = ref(false)
 const updInfo = ref<any>({})
-const checkUpdate = () => {
+const latest = ref(false)
+const invokeUpdateCheck = () => {
   updChecking.value = true
-  window.axios
-    // .get('http://0.0.0.0:5005/competizione')
-    .get('http://120.55.52.240:5005/competizione')
-    .then((res: any) => {
-      console.log(res)
-      if (res.success) {
-        const resp = res.updInfo
-        if (needsUpdate(resp.version)) {
-          updInfo.value = resp
-          updDialogShow.value = true
-        } else {
-          latest.value = true
-          snackbar({
-            message: translate('settings.upToDate'),
-            autoCloseDelay: 3000,
-          })
-        }
+  checkUpdate()
+    .then((info: any) => {
+      if (info) {
+        updInfo.value = info
+        updDialogShow.value = true
+        latest.value = false
+      } else {
+        snackbar({
+          message: translate('settings.upToDate'),
+          autoCloseDelay: 3000,
+        })
+        latest.value = true
       }
+    })
+    .finally(() => {
       updChecking.value = false
     })
-    .catch((err: Error) => {
-      snackbar({
-        message: translate('general.checkUpdFail'),
-        autoCloseDelay: 3000,
-      })
-      updChecking.value = false
-      console.error(err)
-    })
-}
-const confirmUpd = () => {
-  updDialogShow.value = false
-  window.electron.openExtLink(updInfo.value.dlUrl)
-  window.win.close()
 }
 
 let throttleTimeout: ReturnType<typeof setTimeout> | null = null
@@ -465,7 +402,7 @@ const setBgImage = () => {
                   </mdui-button-icon>
                   <mdui-button
                     variant="tonal"
-                    @click="checkUpdate"
+                    @click="invokeUpdateCheck"
                     :disabled="updChecking || latest"
                     :loading="updChecking"
                   >
@@ -670,38 +607,8 @@ const setBgImage = () => {
         $t('general.confirm')
       }}</mdui-button>
     </mdui-dialog>
-    <mdui-dialog
-      :open="updDialogShow"
-      close-on-overlay-click
-      close-on-esc
-      :headline="$t('general.newVerDetected')"
-      @close="updDialogShow = false"
-    >
-      <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
-      <div class="overflow-y-scroll max-h-[300px] w-[400px] scroll-wrapper">
-        <div
-          class="marked"
-          v-html="marked(updInfo?.desc?.[$t('langCode')] || '')"
-        />
-      </div>
-      <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
-        {{ $t('general.updVer') }}{{ appVer }} 👉
-        {{ updInfo.version }}
-      </div>
-      <div class="text-red-600 dark:text-red-400">
-        {{ $t('general.updSize')
-        }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
-      </div>
-      <mdui-button
-        slot="action"
-        variant="text"
-        @click="updDialogShow = false"
-        >{{ $t('general.cancel') }}</mdui-button
-      >
-      <mdui-button slot="action" @click="confirmUpd">{{
-        $t('general.update')
-      }}</mdui-button>
-    </mdui-dialog>
+
+    <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" />
   </div>
 </template>
 
@@ -734,7 +641,7 @@ const setBgImage = () => {
     }
 
     &:hover {
-      background: rgb(var(--mdui-color-surface-container-low));
+      background: rgba(var(--mdui-color-secondary-container), 0.3);
     }
   }
 

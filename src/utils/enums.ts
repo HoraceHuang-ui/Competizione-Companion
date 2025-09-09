@@ -20,3 +20,22 @@ export const seriesColorMap = {
   GTC: 'bg-[#F57E00] text-white',
   TCX: 'bg-[#007CA8] text-white',
 }
+
+export const darkModeSettings = {
+  LIGHT: '1',
+  AUTO: '2',
+  DARK: '3',
+}
+
+export const trackCarDispSettings = {
+  EN_FULL: 1,
+  EN_SHORT: 2,
+  LOCAL: 3,
+}
+
+export const trackIndex = {
+  ID: 0,
+  SHORT: 1,
+  FULL: 2,
+  LFM: 3,
+}

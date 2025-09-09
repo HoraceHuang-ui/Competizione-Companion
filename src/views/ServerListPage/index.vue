@@ -13,11 +13,11 @@ import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { seriesColorMap } from '@/utils/enums'
 import Pagination from '@/components/Pagination.vue'
 import ChipSelect from '@/components/ChipSelect.vue'
-import tracks from '@/utils/trackData'
 import { useStore } from '@/store'
 import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 import MyCarousel from '@/components/MyCarousel.vue'
 import ServerListItem from '@/views/ServerListPage/components/ServerListItem.vue'
+import { obj2Param } from '@/utils/utils'
 
 const curPage = ref(1)
 const servers = ref([])
@@ -37,19 +37,6 @@ const defaultFilters = {
   private: false,
 }
 const filters = ref(JSON.parse(JSON.stringify(defaultFilters)))
-
-const obj2Param = (obj: Record<string, any>) => {
-  return Object.entries(obj)
-    .map(([key, value]) => {
-      if (value === undefined || value === null) return ''
-      if (typeof value === 'object') {
-        return `${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(value))}`
-      }
-      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    })
-    .filter(Boolean)
-    .join('&')
-}
 
 const reqData = async () => {
   let offline = sessionStorage.serverDown ? false : undefined
@@ -287,49 +274,7 @@ const openExtUrl = (url: string) => {
               <div class="form-item">
                 <div>{{ $t('servers.track') }}</div>
                 <div class="flex flex-row justify-end items-center">
-                  <ChipSelect
-                    v-model="filters.track"
-                    :placeholder="$t('servers.trackPlaceholder')"
-                    dropdown-placement="top"
-                    :items="tracks"
-                    chip-class="mt-2"
-                    :for-key="(track: [string, string, string]) => track?.[0]"
-                    :for-value="(track: [string, string, string]) => track?.[0]"
-                    :item-label="
-                      (track: [string, string, string]) => {
-                        if (store.settings.setup.trackDisplay == 3) {
-                          return $t(`tracks.${track?.[0]}`)
-                        }
-                        return track?.[
-                          [2, 1][store.settings.setup.trackDisplay - 1]
-                        ]
-                      }
-                    "
-                    :chip-label="(track: any) => track?.label"
-                    @select="
-                      item => {
-                        let trackLabel
-                        if (store.settings.setup.trackDisplay == 3) {
-                          trackLabel = $t(`tracks.${item?.[0]}`)
-                        } else {
-                          trackLabel =
-                            item?.[
-                              [2, 1][store.settings.setup.trackDisplay - 1]
-                            ]
-                        }
-                        filters.track = {
-                          value: item[0],
-                          label: trackLabel,
-                        }
-                      }
-                    "
-                  >
-                    <template #icon>
-                      <mdui-icon-location-on--rounded
-                        class="h-[1.125rem]"
-                      ></mdui-icon-location-on--rounded>
-                    </template>
-                  </ChipSelect>
+                  <TrackSelector v-model="filters.track" chip-class="mt-2" />
                 </div>
               </div>
 
@@ -372,108 +317,91 @@ const openExtUrl = (url: string) => {
         close-on-overlay-click
         :headline="$t('servers.helpTitle')"
       >
-        <div style="width: 500px; height: 500px">
-          <MyCarousel
-            class="size-full"
-            show-arrow="never"
-            show-indicator="never"
-            v-model="helpPage"
-            :autoplay="false"
-          >
-            <div class="help-item">
-              {{ $t('servers.help.1_1') }}
-              <mdui-button
-                class="mt-4 font-bold"
-                @click="
-                  openExtUrl(
-                    'https://github.com/lonemeow/acc-connector/releases/download/v0.9.13/ACC-Connector-Setup-0.9.13.exe',
-                  )
-                "
-                >{{ $t('servers.help.1_2') }}</mdui-button
-              >
-            </div>
-            <div class="help-item">
-              <ScrollWrapper
-                class="flex flex-col items-center"
-                show-bar="always"
-              >
-                <img
-                  src="@/assets/helpImages/2_accPath.png"
-                  class="rounded-xl"
-                />
-                <ul class="list-disc list-outside pl-4 mt-2">
-                  <li>{{ $t('servers.help.2_1') }}</li>
-                  <li>{{ $t('servers.help.2_2') }}</li>
-                  <li>
-                    {{ $t('servers.help.2_3') }}
-                  </li>
-                  <li>{{ $t('servers.help.2_4') }}</li>
-                  <li>{{ $t('servers.help.2_5') }}</li>
-                </ul>
-              </ScrollWrapper>
-            </div>
+        <MyCarousel
+          style="width: 500px; height: 500px"
+          show-arrow="never"
+          show-indicator="never"
+          v-model="helpPage"
+          :autoplay="false"
+        >
+          <div class="help-item">
+            {{ $t('servers.help.1_1') }}
+            <mdui-button
+              class="mt-4 font-bold"
+              @click="
+                openExtUrl(
+                  'https://github.com/lonemeow/acc-connector/releases/download/v0.9.13/ACC-Connector-Setup-0.9.13.exe',
+                )
+              "
+              >{{ $t('servers.help.1_2') }}</mdui-button
+            >
+          </div>
+          <div class="help-item">
+            <ScrollWrapper class="flex flex-col items-center" show-bar="always">
+              <img src="@/assets/helpImages/2_accPath.png" class="rounded-xl" />
+              <ul class="list-disc list-outside pl-4 mt-2">
+                <li>{{ $t('servers.help.2_1') }}</li>
+                <li>{{ $t('servers.help.2_2') }}</li>
+                <li>
+                  {{ $t('servers.help.2_3') }}
+                </li>
+                <li>{{ $t('servers.help.2_4') }}</li>
+                <li>{{ $t('servers.help.2_5') }}</li>
+              </ul>
+            </ScrollWrapper>
+          </div>
 
-            <div class="help-item">
-              <ScrollWrapper
-                class="flex flex-col items-center"
-                show-bar="always"
-              >
-                <img
-                  src="@/assets/helpImages/3_installHook.png"
-                  class="rounded-xl"
-                />
-                <ul class="list-disc list-outside pl-4 mt-2">
-                  <li>
-                    {{ $t('servers.help.3_1') }}
-                  </li>
-                  <li>{{ $t('servers.help.3_2') }}</li>
-                  <li>
-                    {{ $t('servers.help.3_3') }}
-                  </li>
-                </ul>
-              </ScrollWrapper>
-            </div>
+          <div class="help-item">
+            <ScrollWrapper class="flex flex-col items-center" show-bar="always">
+              <img
+                src="@/assets/helpImages/3_installHook.png"
+                class="rounded-xl"
+              />
+              <ul class="list-disc list-outside pl-4 mt-2">
+                <li>
+                  {{ $t('servers.help.3_1') }}
+                </li>
+                <li>{{ $t('servers.help.3_2') }}</li>
+                <li>
+                  {{ $t('servers.help.3_3') }}
+                </li>
+              </ul>
+            </ScrollWrapper>
+          </div>
 
-            <div class="help-item">
-              <ScrollWrapper
-                class="flex flex-col items-center"
-                show-bar="always"
-              >
-                <img
-                  src="@/assets/helpImages/4_LANServer.png"
-                  class="rounded-xl"
-                />
-                <ul class="list-disc list-outside pl-4 mt-2">
-                  <li>{{ $t('servers.help.4_1') }}</li>
-                  <li>
-                    {{ $t('servers.help.4_2') }}
-                  </li>
-                  <li>
-                    {{ $t('servers.help.4_3') }}
-                  </li>
-                  <li>{{ $t('servers.help.4_4') }}</li>
-                </ul>
-              </ScrollWrapper>
-            </div>
+          <div class="help-item">
+            <ScrollWrapper class="flex flex-col items-center" show-bar="always">
+              <img
+                src="@/assets/helpImages/4_LANServer.png"
+                class="rounded-xl"
+              />
+              <ul class="list-disc list-outside pl-4 mt-2">
+                <li>{{ $t('servers.help.4_1') }}</li>
+                <li>
+                  {{ $t('servers.help.4_2') }}
+                </li>
+                <li>
+                  {{ $t('servers.help.4_3') }}
+                </li>
+                <li>{{ $t('servers.help.4_4') }}</li>
+              </ul>
+            </ScrollWrapper>
+          </div>
 
-            <div class="help-item">
-              <ScrollWrapper
-                class="flex flex-col items-center"
-                show-bar="always"
-              >
-                <img
-                  src="@/assets/helpImages/5_removeHook.png"
-                  class="rounded-xl"
-                />
-                <ul class="list-disc list-outside pl-4 mt-2">
-                  <li>{{ $t('servers.help.5_1') }}</li>
-                  <li>{{ $t('servers.help.5_2') }}</li>
-                  <li>{{ $t('servers.help.5_3') }}</li>
-                </ul>
-              </ScrollWrapper>
-            </div>
-          </MyCarousel>
-        </div>
+          <div class="help-item">
+            <ScrollWrapper class="flex flex-col items-center" show-bar="always">
+              <img
+                src="@/assets/helpImages/5_removeHook.png"
+                class="rounded-xl"
+              />
+              <ul class="list-disc list-outside pl-4 mt-2">
+                <li>{{ $t('servers.help.5_1') }}</li>
+                <li>{{ $t('servers.help.5_2') }}</li>
+                <li>{{ $t('servers.help.5_3') }}</li>
+              </ul>
+            </ScrollWrapper>
+          </div>
+        </MyCarousel>
         <Pagination
           type="horizontal"
           v-model="helpPage"

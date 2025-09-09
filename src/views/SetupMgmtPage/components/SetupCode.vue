@@ -2,11 +2,10 @@
 import { ref, watch } from 'vue'
 import '@mdui/icons/check--rounded.js'
 import { snackbar } from 'mdui'
-import { useStore } from '@/store'
-import ChipSelect from '@/components/ChipSelect.vue'
-import tracks from '@/utils/trackData'
 import '@mdui/icons/location-on--rounded.js'
 import { translate } from '@/i18n'
+import { getCarDisplay } from '../../../utils/utils'
+import TrackSelector from '@/components/TrackSelector.vue'
 
 const props = defineProps({
   extractedSetup: {
@@ -27,8 +26,6 @@ const props = defineProps({
   },
 })
 const emits = defineEmits(['closeDialog', 'importSetup'])
-
-const store = useStore()
 
 const name = ref(props.alias.replace('.json', ''))
 
@@ -214,45 +211,14 @@ const closeDialog = () => {
         :label="$t('setup.setupNameLabel')"
       >
       </mdui-text-field>
-      <div class="mt-2 opacity-80">{{ $t('setup.carFromCode') + car }}</div>
-      <ChipSelect
+      <div class="mt-2 opacity-80">
+        {{ $t('setup.carFromCode') + getCarDisplay([car, undefined]) }}
+      </div>
+      <TrackSelector
         v-model="track"
-        :placeholder="$t('servers.trackPlaceholder')"
         dropdown-placement="right"
-        :items="tracks"
         chip-class="mt-2 w-max"
-        :for-key="(track: [string, string, string]) => track?.[0]"
-        :for-value="(track: [string, string, string]) => track?.[0]"
-        :item-label="
-          (track: [string, string, string]) => {
-            if (store.settings.setup.trackDisplay == 3) {
-              return $t(`tracks.${track?.[0]}`)
-            }
-            return track?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-          }
-        "
-        :chip-label="(track: any) => track?.label"
-        @select="
-          item => {
-            let trackLabel
-            if (store.settings.setup.trackDisplay == 3) {
-              trackLabel = $t(`tracks.${item?.[0]}`)
-            } else {
-              trackLabel = item?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-            }
-            track = {
-              value: item[0],
-              label: trackLabel,
-            }
-          }
-        "
-      >
-        <template #icon>
-          <mdui-icon-location-on--rounded
-            class="h-[1.125rem]"
-          ></mdui-icon-location-on--rounded>
-        </template>
-      </ChipSelect>
+      />
       <mdui-button
         class="mt-10"
         :disabled="!code || !name || !track"

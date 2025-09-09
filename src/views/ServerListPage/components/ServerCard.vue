@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import tracks from '@/utils/trackData'
-import { useStore } from '@/store'
 import { seriesColorMap } from '@/utils/enums'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
-const store = useStore()
 import '@mdui/icons/person-add-disabled--rounded.js'
-import { translate } from '@/i18n'
 import '@mdui/icons/directions-car-filled--rounded.js'
+import { getTrackDisplay } from '@/utils/utils'
 
 const props = defineProps({
   server: {
@@ -19,16 +16,6 @@ const connectServer = (ip: string, tcpPort: number, name: string) => {
   window.electron.openExtLink(
     `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`,
   )
-}
-
-const trackDisp = (trackId: string) => {
-  const res = tracks.find(t => t[0] === trackId.toLowerCase())
-
-  if (store.settings.setup.trackDisplay == 3) {
-    return translate(`tracks.${res?.[0]}`)
-  } else {
-    return res?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-  }
 }
 </script>
 
@@ -51,7 +38,7 @@ const trackDisp = (trackId: string) => {
       </div>
     </mdui-tooltip>
     <div class="text-sm opacity-70 mb-1">
-      {{ trackDisp(props.server.track.id) }}
+      {{ getTrackDisplay(props.server.track.id) }}
     </div>
     <mdui-divider></mdui-divider>
 

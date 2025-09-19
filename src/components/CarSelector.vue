@@ -2,11 +2,20 @@
 import carData from '@/utils/carData'
 import ChipSelect from '@/components/ChipSelect.vue'
 import { getCarDisplay } from '@/utils/utils'
+import '@mdui/icons/directions-car--rounded.js'
 
 const props = defineProps({
   group: {
     type: String,
     default: 'GT3',
+  },
+  dropdownPlacement: {
+    type: String,
+    default: 'top',
+  },
+  chipClass: {
+    type: String,
+    default: 'mt-2 mx-2',
   },
 })
 const curCar = defineModel({
@@ -19,9 +28,9 @@ const curCar = defineModel({
   <ChipSelect
     v-model="curCar"
     :placeholder="$t('setup.carPlaceholder')"
-    dropdown-placement="top"
+    :dropdown-placement="props.dropdownPlacement"
     :items="Object.entries(carData[props.group])"
-    chip-class="mt-2 mx-2"
+    :chip-class="props.chipClass"
     :for-key="(car: [string, any]) => car?.[0]"
     :for-value="(car: [string, any]) => car?.[0]"
     :item-label="getCarDisplay"

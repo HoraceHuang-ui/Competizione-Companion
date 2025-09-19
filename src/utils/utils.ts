@@ -20,9 +20,12 @@ export const obj2Param = (obj: Record<string, any>) => {
     .join('&')
 }
 
-export const getTrackDisplay = (trackId: string) => {
+export const getTrackDisplay = (trackId: string, by = trackIndex.ID) => {
   const store = useStore()
-  const res = tracks.find((t: []) => t[trackIndex.ID] === trackId.toLowerCase())
+  const res = tracks.find(
+    (t: []) =>
+      t[by] === (by === trackIndex.ID ? trackId.toLowerCase() : trackId),
+  )
 
   if (store.settings.setup.trackDisplay == trackCarDispSettings.LOCAL) {
     return translate(`tracks.${res?.[trackIndex.ID]}`)

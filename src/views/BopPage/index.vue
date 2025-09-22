@@ -3,14 +3,12 @@ import { onMounted, ref, watch } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/location-on--rounded.js'
 import { darkModeSettings, trackIndex } from '@/utils/enums'
-import {
-  getCarDisplay,
-  getCarDisplayById,
-  getTrackDisplay,
-} from '@/utils/utils'
+import { getCarDisplayById, getTrackDisplay } from '@/utils/utils'
 import { useStore } from '@/store'
 import CarSelector from '@/components/CarSelector.vue'
 import carData from '@/utils/carData'
+import '@mdui/icons/save--rounded.js'
+import PresetDialog from '@/views/BopPage/components/PresetDialog.vue'
 
 const store = useStore()
 
@@ -24,6 +22,7 @@ const curCar = ref<any>(null)
 const curSeries = ref('GT3')
 const loading = ref(true)
 const error = ref(false)
+const saveDialogShow = ref(false)
 
 const defaultGT3 = {
   value: 'amr_v8_vantage_gt3',
@@ -117,24 +116,40 @@ onMounted(() => {
             <mdui-radio value="byCar">按车型</mdui-radio>
           </mdui-radio-group>
         </div>
-        <mdui-segmented-button-group
-          :value="curSeries"
-          class="rounded-full"
-          selects="single"
-          @change="curSeries = $event.target.value"
-        >
-          <mdui-segmented-button
-            value="GT3"
-            class="border border-[rgb(var(--mdui-color-outline-variant))]"
-            >GT3</mdui-segmented-button
+        <div class="flex flex-row items-center">
+          <mdui-tooltip
+            content="保存至 ACC Dedicated Server GUI"
+            placement="bottom"
+            :disabled="loading"
           >
-          <mdui-segmented-button
-            value="GT4"
-            class="border border-[rgb(var(--mdui-color-outline-variant))]"
+            <mdui-button-icon
+              class="mr-2"
+              :disabled="loading"
+              @click="saveDialogShow = true"
+            >
+              <mdui-icon-save--rounded></mdui-icon-save--rounded>
+            </mdui-button-icon>
+          </mdui-tooltip>
+
+          <mdui-segmented-button-group
+            :value="curSeries"
+            class="rounded-full"
+            selects="single"
+            @change="curSeries = $event.target.value"
           >
-            GT4
-          </mdui-segmented-button>
-        </mdui-segmented-button-group>
+            <mdui-segmented-button
+              value="GT3"
+              class="border border-[rgb(var(--mdui-color-outline-variant))]"
+              >GT3</mdui-segmented-button
+            >
+            <mdui-segmented-button
+              value="GT4"
+              class="border border-[rgb(var(--mdui-color-outline-variant))]"
+            >
+              GT4
+            </mdui-segmented-button>
+          </mdui-segmented-button-group>
+        </div>
       </div>
 
       <div
@@ -259,6 +274,8 @@ onMounted(() => {
         </ScrollWrapper>
       </Transition>
     </mdui-card>
+
+    <PresetDialog v-model="saveDialogShow" />
   </div>
 </template>
 

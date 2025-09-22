@@ -245,7 +245,8 @@ const openExtUrl = (url: string) => {
                 <div>{{ $t('servers.serverName') }}</div>
                 <div>
                   <mdui-text-field
-                    class="cursor-text"
+                    class="cursor-text h-[40px]"
+                    variant="outlined"
                     :placeholder="$t('servers.serverNamePlaceholder')"
                     :value="filters.name"
                     @input="filters.name = $event.target.value"
@@ -256,14 +257,16 @@ const openExtUrl = (url: string) => {
                 <div>SA</div>
                 <div class="flex flex-row items-center">
                   <mdui-text-field
-                    class="mr-2 cursor-text"
+                    class="mr-2 cursor-text h-[40px]"
+                    variant="outlined"
                     :placeholder="$t('servers.saMin')"
                     :value="filters.sa.min"
                     @input="filters.sa.min = parseInt($event.target.value) || 0"
                   ></mdui-text-field>
                   <div class="mr-2">-</div>
                   <mdui-text-field
-                    class="cursor-text"
+                    class="cursor-text h-[40px]"
+                    variant="outlined"
                     :placeholder="$t('servers.saMax')"
                     :value="filters.sa.max"
                     @input="filters.sa.max = parseInt($event.target.value) || 0"
@@ -463,6 +466,11 @@ const openExtUrl = (url: string) => {
 .fade-up-leave-to {
   opacity: 0;
   transform: translateY(16px) scale(0.98);
+}
+
+::part(container) {
+  border-radius: 999px;
+  background: rgb(var(--mdui-color-background));
 }
 
 ::part(header) {

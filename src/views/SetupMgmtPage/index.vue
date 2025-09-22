@@ -668,6 +668,8 @@ const openExtUrl = (url: string) => {
 
 ::part(container) {
   background: transparent;
+  border-radius: 999px;
+  height: 50px;
 }
 ::part(label) {
   color: rgb(var(--mdui-color-on-surface-invert));

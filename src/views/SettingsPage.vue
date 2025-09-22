@@ -312,7 +312,7 @@ const setBgImage = () => {
               <div class="item-in">
                 <div>{{ $t('settings.serverDownMsg') }}</div>
                 <mdui-text-field
-                  class="w-60 bg-[rgb(var(--mdui-color-on-secondary))] cursor-text"
+                  class="msg-input w-60 cursor-text h-[46px]"
                   :placeholder="$t('settings.serverDownMsgPlaceholder')"
                   variant="outlined"
                   :value="store.settings.status.serverDownMsg"
@@ -614,6 +614,11 @@ const setBgImage = () => {
 </template>
 
 <style lang="scss" scoped>
+.msg-input::part(container) {
+  border-radius: 999px;
+  background: rgb(var(--mdui-color-on-secondary));
+}
+
 .category {
   width: 100%;
   margin-bottom: 1rem;

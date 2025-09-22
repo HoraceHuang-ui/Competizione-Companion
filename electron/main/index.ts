@@ -271,14 +271,56 @@ async function createWindow() {
       const result = await dialog.showOpenDialog(win, options)
       if (!result.canceled && result.filePaths.length > 0) {
         const sourcePath = result.filePaths[0]
-        return await fsPromises
+        const data = await fsPromises
           .readFile(sourcePath, 'base64')
           .then(data => `data:image/png;base64,${data}`)
+        return await base64ToImg(data)
       } else {
         return ''
       }
     } catch (err) {
       console.error('Error copying image:', err)
+      throw err
+    }
+  })
+
+  const base64ToImg = async (base64Str: string) => {
+    const matches = base64Str.match(/^data:(.+);base64,(.+)$/)
+    if (!matches || matches.length !== 3) {
+      throw new Error('Invalid base64 string')
+    }
+    const buffer = Buffer.from(matches[2], 'base64')
+    const userDataPath = app.getPath('userData')
+    const filePath = path.join(userDataPath, 'bg.png')
+    try {
+      await fsPromises.writeFile(filePath, buffer)
+      return filePath
+    } catch (err) {
+      console.error('Failed to write image file:', err)
+      throw err
+    }
+  }
+
+  ipcMain.handle('img:base64ToImg', async (_event, base64Str) => {
+    try {
+      return await base64ToImg(base64Str)
+    } catch (err) {
+      console.error('Error converting base64 to image:', err)
+      throw err
+    }
+  })
+
+  ipcMain.handle('img:getBgBase64', async () => {
+    const userDataPath = app.getPath('userData')
+    const filePath = path.join(userDataPath, 'bg.png')
+    try {
+      if (fs.existsSync(filePath)) {
+        return await fs.promises
+          .readFile(filePath, 'base64')
+          .then(data => `data:image/png;base64,${data}`)
+      }
+    } catch (err) {
+      console.error('Error reading background image:', err)
       throw err
     }
   })

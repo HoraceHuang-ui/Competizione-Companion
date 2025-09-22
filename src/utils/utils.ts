@@ -6,8 +6,6 @@ import carData from '@/utils/carData'
 import { snackbar } from 'mdui'
 
 export const obj2Param = (obj: Record<string, any>) => {
-  const store = useStore()
-
   return Object.entries(obj)
     .map(([key, value]) => {
       if (value === undefined || value === null) return ''

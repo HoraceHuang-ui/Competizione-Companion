@@ -5,7 +5,7 @@ import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
 import '@mdui/icons/balance--rounded.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { setTheme } from 'mdui'
@@ -62,6 +62,18 @@ const launchACC = () => {
 const updDialogShow = ref(false)
 const updInfo = ref<any>({})
 
+const bgBase64 = ref('')
+watch(
+  () => store.settings.general.bgImg,
+  newVal => {
+    if (newVal !== '') {
+      bgBase64.value = newVal
+    }
+
+    store.settings.general.bgImg = ''
+  },
+)
+
 onMounted(() => {
   checkUpdate(
     store.general.targetVersion || import.meta.env.VITE_APP_VERSION,
@@ -71,14 +83,31 @@ onMounted(() => {
       updDialogShow.value = true
     }
   })
+
+  if (store.settings.general.bgImg !== '') {
+    window.img
+      .base64ToImg(store.settings.general.bgImg)
+      .then(async path => {
+        store.settings.general.bgImgPath = path
+        bgBase64.value = await window.img.getBgBase64()
+      })
+      .catch(() => {
+        store.settings.general.bgImgPath = ''
+      })
+    store.settings.general.bgImg = ''
+  } else {
+    window.img.getBgBase64().then(base64 => {
+      bgBase64.value = base64
+    })
+  }
 })
 </script>
 <template>
   <Transition name="fade">
     <img
       class="w-[100vw] h-[100vh] absolute object-cover"
-      v-if="store.settings.general.bgImg"
-      :src="store.settings.general.bgImg"
+      v-if="store.settings.general.bgImgPath"
+      :src="bgBase64"
     />
   </Transition>
   <mdui-layout class="size-full overflow-hidden">

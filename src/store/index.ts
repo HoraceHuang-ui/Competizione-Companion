@@ -20,6 +20,7 @@ export const useStore = defineStore('userStore', {
         minToTray: false,
         themeColor: '#785abf',
         bgImg: '',
+        bgImgPath: '',
       },
       status: {
         serverDownMsg: 'Time for maimai DX!',

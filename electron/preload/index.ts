@@ -94,6 +94,15 @@ contextBridge.exposeInMainWorld('dialog', {
   },
 })
 
+contextBridge.exposeInMainWorld('img', {
+  base64ToImg: async (base64Str: string) => {
+    return await ipcRenderer.invoke('img:base64ToImg', base64Str)
+  },
+  getBgBase64: () => {
+    return ipcRenderer.invoke('img:getBgBase64')
+  },
+})
+
 // --------- Preload scripts loading ---------
 function domReady(
   condition: DocumentReadyState[] = ['complete', 'interactive'],

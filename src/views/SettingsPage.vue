@@ -155,18 +155,19 @@ const setBgImage = () => {
         },
       ],
     })
-    .then(resp => {
+    .then(async resp => {
       if (resp) {
         bgButtonLoading.value = true
-        store.settings.general.bgImg = resp
+        store.settings.general.bgImgPath = resp
         const img = new Image()
-        img.src = resp
+        img.src = await window.img.getBgBase64()
         getColorFromImage(img).then(color => {
           if (color) {
             store.settings.general.themeColor = color
             setColorScheme(color)
           }
           bgButtonLoading.value = false
+          store.settings.general.bgImg = img.src
         })
       }
     })
@@ -247,7 +248,7 @@ const setBgImage = () => {
                       class="mr-2"
                       @click="
                         () => {
-                          store.settings.general.bgImg = ''
+                          store.settings.general.bgImgPath = ''
                         }
                       "
                     >

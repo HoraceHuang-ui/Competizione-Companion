@@ -358,6 +358,7 @@
     "extracting": "Extracting colors...",
     "deleteBg": "Delete background image",
     "setBg": "Set a background image and extract theme colors",
+    "bgOpacity": "UI Opacity",
     "bgSelectTitle": "Select a Background Image",
     "bgSelectFileType": "Image Files",
     "reset": "Reset All Settings",

@@ -24,6 +24,7 @@ export const useStore = defineStore('userStore', {
         themeColor: '#785abf',
         bgImg: '',
         bgImgPath: '',
+        bgOpacity: 0.85,
       },
       status: {
         serverDownMsg: 'Time for maimai DX!',

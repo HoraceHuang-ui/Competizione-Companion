@@ -56,10 +56,11 @@ const onCancelUpd = () => {
     </div>
     <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
       {{ $t('general.updVer') }}{{ appVer }} 👉
-      {{ updInfo.version }}
+      {{ props.updInfo?.version }}
     </div>
     <div class="text-red-600 dark:text-red-400">
-      {{ $t('general.updSize') }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
+      {{ $t('general.updSize')
+      }}{{ (props.updInfo?.size / 1024 / 1024).toFixed(1) }}MB
     </div>
     <div
       class="w-full flex flex-row justify-between items-center"

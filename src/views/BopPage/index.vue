@@ -89,7 +89,9 @@ onMounted(() => {
     <mdui-card
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex flex-col"
-      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
+      :style="{
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+      }"
     >
       <div class="flex flex-row justify-between items-center mx-6 mt-4 mb-4">
         <div class="flex flex-row items-center">

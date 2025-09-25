@@ -263,8 +263,10 @@ onMounted(() => {
     </mdui-navigation-rail>
 
     <mdui-layout-main
-      class="overflow-hidden"
-      style="background: rgba(var(--mdui-color-surface), 0.85)"
+      class="overflow-hidden transition-all"
+      :style="{
+        background: `rgba(var(--mdui-color-surface), ${store.settings.general.bgOpacity || 0.85})`,
+      }"
     >
       <router-view id="mainRouterView" v-slot="{ Component }">
         <transition name="swipe-up" mode="out-in">

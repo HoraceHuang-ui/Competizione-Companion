@@ -181,8 +181,10 @@ const setBgImage = () => {
   <div class="h-full flex flex-col justify-center items-center relative w-full">
     <mdui-card
       variant="outlined"
-      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex"
-      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
+      class="size-full transition-all border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex"
+      :style="{
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+      }"
     >
       <ScrollWrapper class="pl-2 pr-1">
         <div class="pl-6 pt-6 pr-5">
@@ -260,9 +262,44 @@ const setBgImage = () => {
                     :content="$t('settings.setBg')"
                     placement="bottom"
                   >
-                    <mdui-button-icon class="mr-2" @click="setBgImage">
+                    <mdui-button-icon class="mr-1" @click="setBgImage">
                       <mdui-icon-image--rounded></mdui-icon-image--rounded>
                     </mdui-button-icon>
+                  </mdui-tooltip>
+                  <mdui-tooltip
+                    placement="bottom"
+                    v-if="!bgButtonLoading && store.settings.general.bgImgPath"
+                    variant="rich"
+                    :headline="$t('settings.bgOpacity')"
+                  >
+                    <div slot="content" class="w-[300px]">
+                      <mdui-slider
+                        class="px-4"
+                        :value="store.settings.general.bgOpacity || 0.85"
+                        :min="0.5"
+                        :step="0.05"
+                        :max="1"
+                        @input="
+                          store.settings.general.bgOpacity = $event.target.value
+                        "
+                        nolabel
+                      ></mdui-slider>
+                    </div>
+                    <div
+                      class="mr-2 px-4 py-2 rounded-full"
+                      style="
+                        background: rgba(
+                          var(--mdui-color-inverse-on-surface),
+                          0.6
+                        );
+                      "
+                    >
+                      {{
+                        (
+                          (store.settings.general.bgOpacity || 0.85) * 100
+                        ).toFixed(0)
+                      }}%
+                    </div>
                   </mdui-tooltip>
 
                   <mdui-tooltip placement="bottom-end" class="picker">

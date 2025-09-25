@@ -346,7 +346,9 @@ const openExtUrl = (url: string) => {
     <mdui-card
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-2 flex"
-      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
+      :style="{
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+      }"
     >
       <div
         v-for="side in ['left', 'right']"

@@ -357,6 +357,7 @@
     "extracting": "正在提取……",
     "deleteBg": "删除背景图片",
     "setBg": "设置背景图并提取主题色",
+    "bgOpacity": "UI 不透明度",
     "bgSelectTitle": "选择背景图片",
     "bgSelectFileType": "图片",
     "minToTray": "最小化到托盘",

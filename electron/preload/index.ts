@@ -74,6 +74,12 @@ contextBridge.exposeInMainWorld('fs', {
   ) => {
     return ipcRenderer.invoke('fs:setupFile', car, track, fileName, writeVal)
   },
+  presetList: (exePath: string) => {
+    return ipcRenderer.invoke('fs:presetList', exePath)
+  },
+  presetFile: (exePath: string, presetName: string, writeVal: string) => {
+    return ipcRenderer.invoke('fs:presetFile', exePath, presetName, writeVal)
+  },
 })
 
 contextBridge.exposeInMainWorld('brotli', {

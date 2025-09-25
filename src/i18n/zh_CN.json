@@ -322,6 +322,31 @@
       }
     }
   },
+  "bop":{
+    "byCar": "按车型",
+    "byTrack": "按赛道",
+    "car": "车型",
+    "track": "赛道",
+    "year": "年份",
+    "restrictor": "限气",
+    "ballast": "增减重",
+    "saveToGUI": "保存至 ACC Dedicated Server GUI",
+    "dialogTitle": "保存为预设",
+    "dialogDesc1Pref": "需先安装",
+    "dialogDesc1Suff": "以使用本功能。",
+    "dialogDesc2": "保存后请重启 ACC Dedicated Server GUI 以加载预设。",
+    "pathToExe": "ACC Dedicated Server GUI.exe 路径：",
+    "currentSelect": "当前已选择：",
+    "clickToSelect": "点击选择文件",
+    "select": "选择",
+    "reselect": "重新选择",
+    "presetName": "预设名：",
+    "newPreset": "新预设",
+    "fileInputPlaceholder": "请输入文件名",
+    "fileSelectPlaceholder": "请选择预设文件",
+    "fileSelectTitle": "请选择 ACC Dedicated Server GUI.exe",
+    "presetSaved": "预设已保存"
+  },
   "settings": {
     "general": "通用",
     "language": "语言",

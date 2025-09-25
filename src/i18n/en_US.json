@@ -322,6 +322,31 @@
       }
     }
   },
+  "bop":{
+    "byCar": "By Car",
+    "byTrack": "By Track",
+    "car": "Car",
+    "track": "Track",
+    "year": "Year",
+    "restrictor": "Restrictor",
+    "ballast": "Ballast",
+    "saveToGUI": "Save to ACC Dedicated Server GUI",
+    "dialogTitle": "Save as Preset",
+    "dialogDesc1Pref": "You need to install",
+    "dialogDesc1Suff": "to use this feature.",
+    "dialogDesc2": "Please restart ACC Dedicated Server GUI after saving to load the preset.",
+    "pathToExe": "Path to ACC Dedicated Server GUI.exe:",
+    "currentSelect": "Currently selected:",
+    "clickToSelect": "Click to select EXE",
+    "select": "Select",
+    "reselect": "Reselect",
+    "presetName": "Preset Name:",
+    "newPreset": "New Preset",
+    "fileInputPlaceholder": "Enter file name",
+    "fileSelectPlaceholder": "Select preset file",
+    "fileSelectTitle": "Select ACC Dedicated Server GUI.exe",
+    "presetSaved": "Preset saved"
+  },
   "settings": {
     "general": "General",
     "language": "Language",

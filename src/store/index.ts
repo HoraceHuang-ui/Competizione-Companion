@@ -13,6 +13,9 @@ export const useStore = defineStore('userStore', {
     servers: {
       listView: false,
     },
+    presets: {
+      serverExePath: '',
+    },
     settings: {
       general: {
         lang: 'zh_CN',

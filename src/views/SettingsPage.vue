@@ -242,13 +242,14 @@ const setBgImage = () => {
                   <mdui-tooltip
                     :content="$t('settings.deleteBg')"
                     placement="bottom"
-                    v-if="!bgButtonLoading && store.settings.general.bgImg"
+                    v-if="!bgButtonLoading && store.settings.general.bgImgPath"
                   >
                     <mdui-button-icon
                       class="mr-2"
                       @click="
                         () => {
                           store.settings.general.bgImgPath = ''
+                          store.settings.general.bgImg = ''
                         }
                       "
                     >

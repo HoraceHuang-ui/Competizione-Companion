@@ -4,6 +4,7 @@ import { useStore } from '@/store'
 import { trackCarDispSettings, trackIndex } from '@/utils/enums'
 import carData from '@/utils/carData'
 import { snackbar } from 'mdui'
+import trackData from '@/utils/trackData'
 
 export const obj2Param = (obj: Record<string, any>) => {
   return Object.entries(obj)
@@ -107,4 +108,47 @@ export const checkUpdate = async (
     })
     console.error(error)
   }
+}
+
+export const parsePreset = (presetStr: string) => {
+  const result: Record<string, any> = {}
+  const regex = /#([A-Z]+)\s*({[\s\S]*?})/g
+  let match
+  while ((match = regex.exec(presetStr)) !== null) {
+    const key = match[1]
+    try {
+      result[key] = JSON.parse(match[2])
+    } catch (e) {
+      // Invalid JSON, skip
+    }
+  }
+  return result
+}
+
+export const json2Preset = (json: Record<string, any>) => {
+  return Object.entries(json)
+    .map(
+      ([key, value]) =>
+        `#${key}\r\n${JSON.stringify(value, null, 2).replace(/\n/g, '\r\n')}`,
+    )
+    .join('\r\n\r\n')
+}
+
+export const formatBopData = (bop: any[]) => {
+  const entries = []
+  for (const trackBop of bop) {
+    const track = trackData.find(
+      it => it[trackIndex.LFM] === trackBop.track_name,
+    )?.[trackIndex.ID]
+    for (const car of trackBop.bop.GT3.concat(trackBop.bop.GT4)) {
+      entries.push({
+        track,
+        carModel: car.car_model,
+        ballastKg: car.ballast,
+        restrictor: car.restrictor,
+      })
+    }
+  }
+
+  return { entries }
 }

@@ -112,13 +112,13 @@ onMounted(() => {
             class="h-[40px]"
             @change="curCategoryMethod = $event.target.value"
           >
-            <mdui-radio value="byTrack">按赛道</mdui-radio>
-            <mdui-radio value="byCar">按车型</mdui-radio>
+            <mdui-radio value="byTrack">{{ $t('bop.byTrack') }}</mdui-radio>
+            <mdui-radio value="byCar">{{ $t('bop.byCar') }}</mdui-radio>
           </mdui-radio-group>
         </div>
         <div class="flex flex-row items-center">
           <mdui-tooltip
-            content="保存至 ACC Dedicated Server GUI"
+            :content="$t('bop.saveToGUI')"
             placement="bottom"
             :disabled="loading"
           >
@@ -156,13 +156,15 @@ onMounted(() => {
         class="flex flex-row justify-between mx-10 mt-2 title text-lg font-bold text-[rgb(var(--mdui-color-primary))]"
       >
         <div class="w-[50%]">
-          {{ curCategoryMethod === 'byTrack' ? '车型' : '赛道' }}
+          {{
+            curCategoryMethod === 'byTrack' ? $t('bop.car') : $t('bop.track')
+          }}
         </div>
         <div class="w-[20%]">
-          {{ curCategoryMethod === 'byTrack' ? '年份' : '' }}
+          {{ curCategoryMethod === 'byTrack' ? $t('bop.year') : '' }}
         </div>
-        <div class="w-[15%]">限气</div>
-        <div class="w-[10%] text-right">增减重</div>
+        <div class="w-[15%]">{{ $t('bop.restrictor') }}</div>
+        <div class="w-[10%] text-right">{{ $t('bop.ballast') }}</div>
       </div>
       <mdui-divider class="mt-4 mx-6"></mdui-divider>
 
@@ -275,7 +277,7 @@ onMounted(() => {
       </Transition>
     </mdui-card>
 
-    <PresetDialog v-model="saveDialogShow" />
+    <PresetDialog v-model="saveDialogShow" :bop="bopData" />
   </div>
 </template>
 

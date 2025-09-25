@@ -13,7 +13,7 @@ import path from 'node:path'
 import os from 'node:os'
 import brotli from 'brotli-compress'
 import axios from 'axios'
-import { promises as fsPromises } from 'fs'
+import fs, { promises as fsPromises } from 'fs'
 
 // const store = new Store({
 //   defaults: {
@@ -241,6 +241,44 @@ async function createWindow() {
       } else {
         fs.writeFileSync(setupPath, writeVal, 'utf-8')
         return writeVal
+      }
+    },
+  )
+
+  ipcMain.handle('fs:presetList', async (_event, exePath) => {
+    if (!fs.existsSync(exePath)) {
+      return []
+    }
+    const presetDir = path.join(path.dirname(exePath), 'presets')
+    if (!fs.existsSync(presetDir)) {
+      fs.mkdirSync(presetDir)
+      return []
+    }
+    return fs.readdirSync(presetDir).filter(file => file.endsWith('.pre'))
+  })
+
+  ipcMain.handle(
+    'fs:presetFile',
+    async (_event, exePath, presetName, writeVal = undefined) => {
+      if (!fs.existsSync(exePath)) {
+        return ''
+      }
+      const presetDir = path.join(path.dirname(exePath), 'presets')
+      if (!fs.existsSync(presetDir)) {
+        fs.mkdirSync(presetDir)
+      }
+      const presetPath = path.join(presetDir, presetName)
+
+      if (writeVal) {
+        const buffer = Buffer.from('\uFEFF' + writeVal, 'utf16le')
+        fs.writeFileSync(presetPath, buffer)
+        return writeVal
+      } else {
+        if (fs.existsSync(presetPath)) {
+          return fs.readFileSync(presetPath, 'utf16le')
+        } else {
+          return ''
+        }
       }
     },
   )

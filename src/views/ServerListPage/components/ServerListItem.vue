@@ -33,7 +33,7 @@ const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])
   >
     <div class="flex flex-row justify-between items-end pr-2">
       <mdui-tooltip :content="props.server.name" placement="bottom-start">
-        <div class="title w-full text-xl flex flex-row items-center">
+        <div class="title truncate text-xl flex flex-row items-center">
           <img
             v-if="hipoleEvent"
             src="@/assets/hipole/logo.png"
@@ -53,7 +53,7 @@ const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])
           <div class="truncate w-full">{{ props.server.name }}</div>
         </div>
       </mdui-tooltip>
-      <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right">
+      <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right text-nowrap">
         {{ getTrackDisplay(props.server.track.id) }}
       </div>
     </div>

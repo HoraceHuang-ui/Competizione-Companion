@@ -33,7 +33,9 @@ const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])
   >
     <mdui-tooltip :content="props.server.name" placement="bottom-start">
       <div class="flex flex-row justify-between items-center">
-        <div class="title w-5/6 font-bold text-xl flex flex-row items-center">
+        <div
+          class="title w-5/6 font-bold text-xl flex flex-row items-center truncate"
+        >
           <img
             v-if="hipoleEvent"
             src="@/assets/hipole/logo.png"

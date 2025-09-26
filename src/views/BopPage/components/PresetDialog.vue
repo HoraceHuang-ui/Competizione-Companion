@@ -2,11 +2,13 @@
 import { onMounted, ref, watch } from 'vue'
 import '@mdui/icons/attach-file--rounded.js'
 import '@mdui/icons/keyboard-arrow-down--rounded.js'
+import '@mdui/icons/check--rounded.js'
 import { useStore } from '@/store'
 import presetTemplate from './presetTemplate'
 import { snackbar } from 'mdui'
 import { formatBopData, json2Preset, parsePreset } from '@/utils/utils'
 import { translate } from '@/i18n'
+import ScrollWrapper from '@/components/ScrollWrapper.vue'
 
 const store = useStore()
 
@@ -208,20 +210,30 @@ onMounted(() => {
             <mdui-icon-keyboard-arrow-down--rounded
               slot="end-icon"
             ></mdui-icon-keyboard-arrow-down--rounded>
+            <ScrollWrapper :height="presetList.length > 5 ? '240px' : '100%'">
+              <mdui-menu-item
+                v-for="item in presetList"
+                :key="item"
+                :value="item"
+                @click="
+                  () => {
+                    fileName = item
+                    getPreset()
+                  }
+                "
+                :class="{
+                  'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
+                    item === fileName,
+                }"
+              >
+                {{ item }}
 
-            <mdui-menu-item
-              v-for="item in presetList"
-              :key="item"
-              :value="item"
-              @click="
-                () => {
-                  fileName = item
-                  getPreset()
-                }
-              "
-            >
-              {{ item }}
-            </mdui-menu-item>
+                <mdui-icon-check--rounded
+                  slot="end-icon"
+                  v-if="item === fileName"
+                ></mdui-icon-check--rounded>
+              </mdui-menu-item>
+            </ScrollWrapper>
           </mdui-select>
         </div>
       </div>

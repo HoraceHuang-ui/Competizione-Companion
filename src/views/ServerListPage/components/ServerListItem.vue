@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { seriesColorMap } from '@/utils/enums'
+import {
+  hipoleEventColors,
+  hipoleEventMap,
+  seriesColorMap,
+} from '@/utils/enums'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/person-add-disabled--rounded.js'
 import '@mdui/icons/directions-car-filled--rounded.js'
-import { getTrackDisplay } from '@/utils/utils'
+import { getTrackDisplay, isHipole } from '@/utils/utils'
+import { computed } from 'vue'
 
 const props = defineProps({
   server: {
@@ -17,6 +22,9 @@ const connectServer = (ip: string, tcpPort: number, name: string) => {
     `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`,
   )
 }
+
+const hipoleEvent = computed(() => isHipole(props.server.name))
+const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])
 </script>
 
 <template>
@@ -25,8 +33,24 @@ const connectServer = (ip: string, tcpPort: number, name: string) => {
   >
     <div class="flex flex-row justify-between items-end pr-2">
       <mdui-tooltip :content="props.server.name" placement="bottom-start">
-        <div class="title truncate w-full text-xl">
-          {{ props.server.name }}
+        <div class="title w-full text-xl flex flex-row items-center">
+          <img
+            v-if="hipoleEvent"
+            src="@/assets/hipole/logo.png"
+            width="26"
+            class="mr-1"
+          />
+          <div
+            v-if="hipoleEvent"
+            class="font-bold text-sm rounded-md px-2 mr-2 text-nowrap pt-0.5"
+            :style="{
+              background: hipoleEventColors[hipoleTier][0],
+              color: hipoleEventColors[hipoleTier][1],
+            }"
+          >
+            {{ $t(`servers.hipole${hipoleTier}`).toUpperCase() }}
+          </div>
+          <div class="truncate w-full">{{ props.server.name }}</div>
         </div>
       </mdui-tooltip>
       <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right">

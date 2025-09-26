@@ -39,3 +39,18 @@ export const trackIndex = {
   FULL: 2,
   LFM: 3,
 }
+
+export const hipoleEventMap = {
+  RCC: 'Bronze',
+  TTC: 'Silver',
+  MCC: 'Silver',
+  RWC: 'Gold',
+  HEC: 'Platinum',
+}
+
+export const hipoleEventColors = {
+  Bronze: ['#a15e1a', '#fff'],
+  Silver: ['#c0c0c0', '#000'],
+  Gold: ['#ffd700', '#000'],
+  Platinum: ['#1db0fd', '#fff'],
+}

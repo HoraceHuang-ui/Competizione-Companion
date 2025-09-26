@@ -46,6 +46,11 @@
     "seriesPlaceholder": "Select Series",
     "private": "Private",
     "helpTitle": "ACC Connector Tutorial",
+    "hipoleRookie": "ROOKIE",
+    "hipoleBronze": "BRONZE",
+    "hipoleSilver": "SILVER",
+    "hipoleGold": "GOLD",
+    "hipolePlatinum": "PLATINUM",
     "help": {
       "1_1": "Make sure ACC Connector is installed and ACC is closed.",
       "1_2": "Download ACC Connector",

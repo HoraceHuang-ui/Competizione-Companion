@@ -46,6 +46,11 @@
     "seriesPlaceholder": "请选择组别",
     "private": "有密码",
     "helpTitle": "ACC Connector 使用说明",
+    "hipoleRookie": "新手",
+    "hipoleBronze": "青铜",
+    "hipoleSilver": "白银",
+    "hipoleGold": "黄金",
+    "hipolePlatinum": "铂金",
     "help": {
       "1_1": "请确保 ACC Connector 已安装，并退出 ACC。",
       "1_2": "下载 ACC Connector",

@@ -64,7 +64,13 @@ const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])
       </div>
     </mdui-tooltip>
     <div class="text-sm opacity-70 mb-1">
-      {{ getTrackDisplay(props.server.track.id) }}
+      <span
+        v-if="props.server.offline"
+        style="font-family: Consolas, monospace"
+      >
+        {{ `${props.server.ip_address}:${props.server.tcp_port}` }}
+      </span>
+      <span v-else>{{ getTrackDisplay(props.server.track.id) }}</span>
     </div>
     <mdui-divider></mdui-divider>
 

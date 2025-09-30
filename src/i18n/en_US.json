@@ -46,6 +46,8 @@
     "seriesPlaceholder": "Select Series",
     "private": "Private",
     "helpTitle": "ACC Connector Tutorial",
+    "hipoleServersList": "HiPole Servers List",
+    "hipoleServerDownMsg": "Lobby servers are down! Here is a list of common HiPole servers",
     "hipoleRookie": "ROOKIE",
     "hipoleBronze": "BRONZE",
     "hipoleSilver": "SILVER",

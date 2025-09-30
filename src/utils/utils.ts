@@ -5,6 +5,7 @@ import { trackCarDispSettings, trackIndex } from '@/utils/enums'
 import carData from '@/utils/carData'
 import { snackbar } from 'mdui'
 import trackData from '@/utils/trackData'
+import { nextTick } from 'vue'
 
 export const obj2Param = (obj: Record<string, any>) => {
   return Object.entries(obj)
@@ -161,4 +162,16 @@ export const isHipole = (name: string) => {
       : undefined
   }
   return undefined
+}
+
+export const connectServer = (ip: string, tcpPort: number, name: string) => {
+  const iframe = document.createElement('iframe')
+  iframe.style.display = 'none'
+  iframe.src = `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`
+  document.body.appendChild(iframe)
+  iframe.onload = () => {
+    nextTick(() => {
+      document.body.removeChild(iframe)
+    })
+  }
 }

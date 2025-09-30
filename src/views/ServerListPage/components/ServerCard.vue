@@ -7,7 +7,7 @@ import {
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/person-add-disabled--rounded.js'
 import '@mdui/icons/directions-car-filled--rounded.js'
-import { getTrackDisplay, isHipole } from '@/utils/utils'
+import { getTrackDisplay, isHipole, connectServer } from '@/utils/utils'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -16,12 +16,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const connectServer = (ip: string, tcpPort: number, name: string) => {
-  window.electron.openExtLink(
-    `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`,
-  )
-}
 
 const hipoleEvent = computed(() => isHipole(props.server.name))
 const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])

@@ -15,6 +15,24 @@ import brotli from 'brotli-compress'
 import axios from 'axios'
 import fs, { promises as fsPromises } from 'fs'
 
+const i18n = {
+  en: {
+    appName: 'Competizione Companion',
+    trayTooltip: 'Competizione Companion',
+    windowTitle: 'Competizione Companion',
+  },
+  'zh-CN': {
+    appName: '争锋小助手',
+    trayTooltip: '争锋小助手',
+    windowTitle: '争锋小助手',
+  },
+}
+
+// 找不到语言时默认英文
+function t(locale) {
+  return i18n[locale] || i18n['en']
+}
+
 // const store = new Store({
 //   defaults: {
 //     w: 1200,
@@ -65,8 +83,11 @@ let tray = null
 const iconPath = path.join(process.env.VITE_PUBLIC, 'favicon.ico')
 
 async function createWindow() {
+  const locale = app.getLocale()
+  const lang = t(locale)
+
   win = new BrowserWindow({
-    title: 'Competizione Companion',
+    title: lang.windowTitle,
     icon: iconPath,
     minWidth: 1200,
     minHeight: 700,
@@ -101,6 +122,10 @@ async function createWindow() {
   // win.on('unmaximize', () => {
   //   store.set('max', false)
   // })
+
+  win.webContents.executeJavaScript(
+    `document.title = ${JSON.stringify(lang.appName)}`,
+  )
 
   if (VITE_DEV_SERVER_URL) {
     // #298
@@ -372,7 +397,7 @@ async function createWindow() {
     },
   ])
   tray = new Tray(iconPath)
-  tray.setToolTip('Competizione Companion')
+  tray.setToolTip(lang.trayTooltip)
   tray.setContextMenu(contextMenu)
   tray.on('click', () => {
     win.isVisible() ? win.hide() : win.show()

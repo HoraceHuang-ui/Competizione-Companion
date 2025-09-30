@@ -28,7 +28,7 @@ const queryData = () => {
     .then(data => {
       console.log(data)
       status.value = data
-      sessionStorage.serverDown = status.value?.status
+      sessionStorage.serverDown = !status.value?.status
     })
     .finally(() => {
       loading.value = false

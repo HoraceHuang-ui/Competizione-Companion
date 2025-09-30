@@ -47,7 +47,7 @@
     "private": "有密码",
     "helpTitle": "ACC Connector 使用说明",
     "hipoleServersList": "嗨跑服务器列表",
-    "hipoleServerDownMsg": "Lobby 服务器炸啦！帮你准备了嗨跑准入服信息，可直接连接",
+    "hipoleServerDownMsg": "Lobby 服务器炸啦！以下是嗨跑准入服列表，可直接连接",
     "hipoleRookie": "新手",
     "hipoleBronze": "青铜",
     "hipoleSilver": "白银",

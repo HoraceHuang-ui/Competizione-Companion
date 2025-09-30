@@ -47,8 +47,8 @@ const reqData = async () => {
     let resp = await fetch('https://acc-status.jonatan.net/api/v2/acc/status', {
       method: 'GET',
     })
-    resp = resp.json()
-    sessionStorage.serverDown = resp.status
+    resp = await resp.json()
+    sessionStorage.serverDown = !resp.status
     offline = resp.status === 0
   }
   loading.value = true

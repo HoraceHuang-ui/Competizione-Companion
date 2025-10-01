@@ -37,6 +37,7 @@ export const getTrackDisplay = (trackId: string, by = trackIndex.ID) => {
 }
 
 export const getCarDisplay = (car: [string, any]) => {
+  if (!car) return ''
   const store = useStore()
 
   if (store.settings.setup.carDisplay == trackCarDispSettings.LOCAL) {
@@ -57,14 +58,19 @@ export const getCarDisplay = (car: [string, any]) => {
   return ''
 }
 
-export const getCarDisplayById = (carId: number) => {
+export const getCarById = (carId: number) => {
   for (const series of Object.values(carData) as any[]) {
     for (const [key, car] of Object.entries(series) as [string, any][]) {
       if (car.id === carId) {
-        return getCarDisplay([key, car])
+        return [key, car] as [string, any]
       }
     }
   }
+  return undefined
+}
+
+export const getCarDisplayById = (carId: number) => {
+  return getCarDisplay(getCarById(carId) as [string, any])
 }
 
 export const checkUpdate = async (

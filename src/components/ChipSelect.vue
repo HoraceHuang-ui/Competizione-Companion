@@ -26,6 +26,10 @@ const props = defineProps({
     type: Function,
     default: (item: string) => item,
   },
+  itemIcon: {
+    type: Function,
+    default: (item: string) => null,
+  },
   itemLabel: {
     type: Function,
     default: (item: string) => item,
@@ -86,6 +90,12 @@ const onSelect = (item: any) => {
           @click="onSelect(item)"
         >
           {{ props.itemLabel(item) }}
+          <img
+            v-if="props.itemIcon(item)"
+            slot="icon"
+            :src="props.itemIcon(item)"
+            class="w-7 h-7"
+          />
           <mdui-icon-check--rounded
             slot="end-icon"
             v-if="props.chipLabel(selection) === props.itemLabel(item)"

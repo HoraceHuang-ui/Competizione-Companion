@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/location-on--rounded.js'
 import { darkModeSettings, trackIndex } from '@/utils/enums'
-import { getCarDisplayById, getTrackDisplay } from '@/utils/utils'
+import { getCarById, getCarDisplayById, getTrackDisplay } from '@/utils/utils'
 import { useStore } from '@/store'
 import CarSelector from '@/components/CarSelector.vue'
 import carData from '@/utils/carData'
@@ -199,8 +199,14 @@ onMounted(() => {
                     : 'none',
               }"
             >
-              <div class="w-[50%]">
-                {{ getCarDisplayById(bop.car_model) || bop.car_name }}
+              <div class="w-[50%] flex flex-row items-center">
+                <img
+                  :src="`../../../src/assets/carLogos/${getCarById(bop.car_model)?.[1]?.manufacturer}.png`"
+                  class="w-8 h-8 mr-3"
+                />
+                <div>
+                  {{ getCarDisplayById(bop.car_model) || bop.car_name }}
+                </div>
               </div>
               <div class="w-[20%]">{{ bop.car_year }}</div>
               <div

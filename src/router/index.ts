@@ -26,7 +26,7 @@ const router = VueRouter.createRouter({
     {
       name: 'settings',
       path: '/settings',
-      component: () => import('../views/SettingsPage.vue'),
+      component: () => import('../views/SettingsPage/SettingsPage.vue'),
     },
   ],
 })

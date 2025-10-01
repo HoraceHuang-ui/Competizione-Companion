@@ -33,6 +33,10 @@ const curCar = defineModel({
     :chip-class="props.chipClass"
     :for-key="(car: [string, any]) => car?.[0]"
     :for-value="(car: [string, any]) => car?.[0]"
+    :item-icon="
+      (car: [string, any]) =>
+        `../../src/assets/carLogos/${car?.[1]?.manufacturer}.png`
+    "
     :item-label="getCarDisplay"
     :chip-label="(car: any) => car?.label"
     @select="

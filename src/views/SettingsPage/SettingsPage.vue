@@ -437,7 +437,7 @@ const setBgImage = () => {
                       )
                     "
                   >
-                    <img src="@/assets/github-mark.png" class="p-1" />
+                    <img src="../../assets/github-mark.png" class="p-1" />
                   </mdui-button-icon>
                   <mdui-button
                     variant="tonal"
@@ -465,12 +465,12 @@ const setBgImage = () => {
                   <div>{{ $t('settings.donation1Msg') }}</div>
                   <div class="flex flex-row mt-2">
                     <img
-                      src="@/assets/wechat.jpg"
+                      src="../../assets/wechat.jpg"
                       width="250"
                       class="mr-2 donation-pic"
                     />
                     <img
-                      src="@/assets/alipay.jpg"
+                      src="../../assets/alipay.jpg"
                       width="250"
                       class="donation-pic"
                     />
@@ -517,7 +517,7 @@ const setBgImage = () => {
                 <mdui-tooltip placement="top" class="credits">
                   <div slot="content">Dynamic Esports Academy</div>
                   <img
-                    src="@/assets/DEA_light.png"
+                    src="../../assets/DEA_light.png"
                     class="mx-4 transition-all inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))] opacity-55 hover:opacity-100"
                     width="80"
                   />
@@ -549,8 +549,8 @@ const setBgImage = () => {
                   <div
                     class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
                   >
-                    <img src="@/assets/HerMess.png" width="40" />
-                    <img src="@/assets/HerMess_text.png" width="90" />
+                    <img src="../../assets/HerMess.png" width="40" />
+                    <img src="../../assets/HerMess_text.png" width="90" />
                   </div>
                 </mdui-tooltip>
 
@@ -603,7 +603,7 @@ const setBgImage = () => {
                     class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
                   >
                     <img
-                      src="@/assets/lonemeow.png"
+                      src="../../assets/lonemeow.png"
                       class="inline mr-1 rounded-full transition-all"
                       width="30"
                     />

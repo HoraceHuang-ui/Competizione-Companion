@@ -128,7 +128,7 @@ onMounted(() => {
         >
           ACC Dedicated Server (Steam)
         </a>
-        、
+        {{ $t('general.listSeparator') }}
         <a
           class="cursor-pointer"
           style="

@@ -85,7 +85,8 @@ const onSelect = (item: any) => {
           :value="props.forValue(item)"
           :class="{
             'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
-              props.chipLabel(selection) === props.itemLabel(item),
+              props.chipLabel(selection) ===
+              props.itemLabel(item).replace('★ ', ''),
           }"
           @click="onSelect(item)"
         >
@@ -98,7 +99,10 @@ const onSelect = (item: any) => {
           />
           <mdui-icon-check--rounded
             slot="end-icon"
-            v-if="props.chipLabel(selection) === props.itemLabel(item)"
+            v-if="
+              props.chipLabel(selection) ===
+              props.itemLabel(item).replace('★ ', '')
+            "
           ></mdui-icon-check--rounded>
         </mdui-menu-item>
       </ScrollWrapper>

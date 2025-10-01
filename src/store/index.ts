@@ -9,6 +9,13 @@ export const useStore = defineStore('userStore', {
         height: 700,
         isMax: false,
       },
+      favTracks: [] as string[],
+      favCars: {
+        GT3: [] as string[],
+        GT4: [] as string[],
+        GTC: [] as string[],
+        TCX: [] as string[],
+      },
     },
     servers: {
       listView: false,

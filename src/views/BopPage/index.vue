@@ -3,7 +3,13 @@ import { onMounted, ref, watch } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/location-on--rounded.js'
 import { darkModeSettings, trackIndex } from '@/utils/enums'
-import { getCarById, getCarDisplayById, getTrackDisplay } from '@/utils/utils'
+import {
+  getCarById,
+  getCarDisplay,
+  getCarDisplayById,
+  getTrack,
+  getTrackDisplay,
+} from '@/utils/utils'
 import { useStore } from '@/store'
 import CarSelector from '@/components/CarSelector.vue'
 import carData from '@/utils/carData'
@@ -190,7 +196,19 @@ onMounted(() => {
               class="flex flex-row justify-between mx-4 my-2 px-6 py-3 rounded-full"
               v-for="(bop, index) in bopData
                 ?.find(it => it.track_name === curTrack?.value)
-                ?.bop[curSeries].sort((a, b) => a.ballast - b.ballast)"
+                ?.bop[curSeries].sort((a, b) => {
+                  const favCars = store.general.favCars[curSeries]
+                  const aFav = favCars.includes(getCarById(a.car_model)?.[0])
+                    ? 0
+                    : 1
+                  const bFav = favCars.includes(getCarById(b.car_model)?.[0])
+                    ? 0
+                    : 1
+                  if (aFav !== bFav) {
+                    return aFav - bFav
+                  }
+                  return a.ballast - b.ballast
+                })"
               :key="bop.car_model"
               :style="{
                 background:
@@ -205,7 +223,9 @@ onMounted(() => {
                   class="w-8 h-8 mr-3"
                 />
                 <div>
-                  {{ getCarDisplayById(bop.car_model) || bop.car_name }}
+                  {{
+                    `${store.general.favCars[curSeries].includes(getCarById(bop.car_model)?.[0]) ? `★ ` : ''}${getCarDisplayById(bop.car_model) || bop.car_name}`
+                  }}
                 </div>
               </div>
               <div class="w-[20%]">{{ bop.car_year }}</div>
@@ -246,7 +266,23 @@ onMounted(() => {
                     ballast: bopInfo?.ballast,
                   }
                 })
-                ?.sort((a, b) => a.ballast - b.ballast)"
+                ?.sort((a, b) => {
+                  const favTracks = store.general.favTracks
+                  const aFav = favTracks.includes(
+                    getTrack(a.name, trackIndex.LFM)?.[trackIndex.ID],
+                  )
+                    ? 0
+                    : 1
+                  const bFav = favTracks.includes(
+                    getTrack(b.name, trackIndex.LFM)?.[trackIndex.ID],
+                  )
+                    ? 0
+                    : 1
+                  if (aFav !== bFav) {
+                    return aFav - bFav
+                  }
+                  return a.ballast - b.ballast
+                })"
               :key="track.name"
               :style="{
                 background:
@@ -256,7 +292,9 @@ onMounted(() => {
               }"
             >
               <div class="w-[50%]">
-                {{ getTrackDisplay(track.name, trackIndex.LFM) }}
+                {{
+                  `${store.general.favTracks.includes(getTrack(track.name, trackIndex.LFM)?.[trackIndex.ID]) ? `★ ` : ''}${getTrackDisplay(track.name, trackIndex.LFM)}`
+                }}
               </div>
               <div class="w-[20%]"></div>
               <div

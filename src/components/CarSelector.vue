@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import carData from '@/utils/carData'
 import ChipSelect from '@/components/ChipSelect.vue'
-import { getCarDisplay } from '@/utils/utils'
+import { getCarDisplay, sortCars } from '@/utils/utils'
 import '@mdui/icons/directions-car--rounded.js'
+import { useStore } from '@/store'
+
+const store = useStore()
 
 const props = defineProps({
   group: {
@@ -17,6 +19,10 @@ const props = defineProps({
     type: String,
     default: 'mt-2 mx-2',
   },
+  excludeKeys: {
+    type: Array,
+    default: [],
+  },
 })
 const curCar = defineModel({
   type: Object,
@@ -29,7 +35,11 @@ const curCar = defineModel({
     v-model="curCar"
     :placeholder="$t('setup.carPlaceholder')"
     :dropdown-placement="props.dropdownPlacement"
-    :items="Object.entries(carData[props.group])"
+    :items="
+      sortCars(props.group).filter(
+        (car: [string, any]) => !props.excludeKeys.includes(car?.[0]),
+      )
+    "
     :chip-class="props.chipClass"
     :for-key="(car: [string, any]) => car?.[0]"
     :for-value="(car: [string, any]) => car?.[0]"
@@ -37,7 +47,12 @@ const curCar = defineModel({
       (car: [string, any]) =>
         `../../src/assets/carLogos/${car?.[1]?.manufacturer}.png`
     "
-    :item-label="getCarDisplay"
+    :item-label="
+      (item: string) => {
+        const disp = getCarDisplay(item)
+        return `${store.general.favCars[props.group].includes(item[0]) ? `★ ` : ''}${disp}`
+      }
+    "
     :chip-label="(car: any) => car?.label"
     @select="
       item => {

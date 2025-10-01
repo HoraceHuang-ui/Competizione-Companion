@@ -8,6 +8,7 @@ import '@mdui/icons/dark-mode--outlined.js'
 import '@mdui/icons/update--rounded.js'
 import '@mdui/icons/image--rounded.js'
 import '@mdui/icons/undo--rounded.js'
+import '@mdui/icons/help-outline--rounded.js'
 import { computed, ref, watch } from 'vue'
 import { getColorFromImage, setColorScheme, setTheme, snackbar } from 'mdui'
 import { themeMap, darkModeSettings, trackCarDispSettings } from '@/utils/enums'
@@ -15,6 +16,9 @@ import { availableLangCodes, switchLang, translate, langMap } from '@/i18n'
 import { ChromePicker } from 'vue-color'
 import UpdateDialog from '@/components/UpdateDialog.vue'
 import { checkUpdate } from '@/utils/utils'
+import FavDialog from '@/views/SettingsPage/components/FavDialog.vue'
+
+const showFavDialog = ref(false)
 
 const store = useStore()
 const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
@@ -389,6 +393,22 @@ const setBgImage = () => {
                 </ChipSelect>
               </div>
             </div>
+            <div class="item">
+              <div class="item-in">
+                <div class="flex flex-row items-center">
+                  <div>{{ '车型 / 赛道收藏' }}</div>
+                  <mdui-tooltip
+                    :content="'收藏的车型和赛道会在所有相关列表中置顶显示。'"
+                  >
+                    <mdui-button-icon>
+                      <mdui-icon-help-outline--rounded></mdui-icon-help-outline--rounded> </mdui-button-icon
+                  ></mdui-tooltip>
+                </div>
+                <mdui-button variant="tonal" @click="showFavDialog = true">
+                  {{ '点击设置' }}
+                </mdui-button>
+              </div>
+            </div>
             <div class="item" v-if="lang !== 'en_US'">
               <div class="item-in">
                 <div>{{ $t('settings.paramsEn') }}</div>
@@ -648,6 +668,8 @@ const setBgImage = () => {
     </mdui-dialog>
 
     <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" />
+
+    <FavDialog v-model="showFavDialog" />
   </div>
 </template>
 

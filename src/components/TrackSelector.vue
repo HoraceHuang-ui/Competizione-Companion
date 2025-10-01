@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import tracks from '@/utils/trackData'
 import ChipSelect from '@/components/ChipSelect.vue'
-import { getTrackDisplay } from '@/utils/utils'
+import { getTrackDisplay, sortTracks } from '@/utils/utils'
 import { trackIndex } from '@/utils/enums'
+import { useStore } from '@/store'
+
+const store = useStore()
 
 const curTrack = defineModel({
   type: Object,
@@ -21,6 +23,10 @@ const props = defineProps({
     type: Number,
     default: trackIndex.ID,
   },
+  excludeIds: {
+    type: Array,
+    default: [],
+  },
 })
 </script>
 
@@ -29,7 +35,12 @@ const props = defineProps({
     v-model="curTrack"
     :placeholder="$t('setup.trackPlaceholder')"
     :dropdown-placement="props.dropdownPlacement"
-    :items="tracks"
+    :items="
+      sortTracks().filter(
+        (track: [string, string, string, string]) =>
+          !props.excludeIds.includes(track?.[trackIndex.ID]),
+      )
+    "
     :chip-class="props.chipClass"
     :for-key="
       (track: [string, string, string, string]) => track?.[props.keyIdx]
@@ -38,8 +49,10 @@ const props = defineProps({
       (track: [string, string, string, string]) => track?.[props.keyIdx]
     "
     :item-label="
-      (track: [string, string, string, string]) =>
-        getTrackDisplay(track[trackIndex.ID])
+      (track: [string, string, string, string]) => {
+        const disp = getTrackDisplay(track[trackIndex.ID])
+        return `${store.general.favTracks.includes(track[trackIndex.ID]) ? `★ ` : ''}${disp}`
+      }
     "
     :chip-label="(track: any) => track?.label"
     @select="

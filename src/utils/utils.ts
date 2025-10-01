@@ -20,12 +20,16 @@ export const obj2Param = (obj: Record<string, any>) => {
     .join('&')
 }
 
-export const getTrackDisplay = (trackId: string, by = trackIndex.ID) => {
-  const store = useStore()
-  const res = tracks.find(
+export const getTrack = (trackId: string, by = trackIndex.ID) => {
+  return tracks.find(
     (t: []) =>
       t[by] === (by === trackIndex.ID ? trackId.toLowerCase() : trackId),
   )
+}
+
+export const getTrackDisplay = (trackId: string, by = trackIndex.ID) => {
+  const store = useStore()
+  const res = getTrack(trackId, by)
 
   if (store.settings.setup.trackDisplay == trackCarDispSettings.LOCAL) {
     return translate(`tracks.${res?.[trackIndex.ID]}`)
@@ -63,6 +67,17 @@ export const getCarById = (carId: number) => {
     for (const [key, car] of Object.entries(series) as [string, any][]) {
       if (car.id === carId) {
         return [key, car] as [string, any]
+      }
+    }
+  }
+  return undefined
+}
+
+export const getCarByKey = (key: string) => {
+  for (const series of Object.values(carData) as any[]) {
+    for (const [carKey, car] of Object.entries(series) as [string, any][]) {
+      if (carKey === key) {
+        return car
       }
     }
   }
@@ -180,4 +195,31 @@ export const connectServer = (ip: string, tcpPort: number, name: string) => {
       document.body.removeChild(iframe)
     })
   }
+}
+
+export const sortCars = (group = 'GT3') => {
+  const store = useStore()
+  const favCars = store.general.favCars[group]
+  const list = Object.entries(carData[group])
+  return list.sort((a, b) => {
+    const aFav = favCars.includes(a[0]) ? 0 : 1
+    const bFav = favCars.includes(b[0]) ? 0 : 1
+    if (aFav !== bFav) {
+      return aFav - bFav
+    }
+    return getCarDisplay(a) - getCarDisplay(b)
+  })
+}
+
+export const sortTracks = () => {
+  const store = useStore()
+  const favTracks = store.general.favTracks
+  return tracks.slice().sort((a, b) => {
+    const aFav = favTracks.includes(a[trackIndex.ID]) ? 0 : 1
+    const bFav = favTracks.includes(b[trackIndex.ID]) ? 0 : 1
+    if (aFav !== bFav) {
+      return aFav - bFav
+    }
+    return getTrackDisplay(a[trackIndex.ID]) - getTrackDisplay(b[trackIndex.ID])
+  })
 }

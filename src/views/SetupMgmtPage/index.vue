@@ -591,7 +591,7 @@ const openExtUrl = (url: string) => {
 
         <mdui-button
           variant="filled"
-          class="mt-6 mb-2"
+          class="mt-6 mb-2 font-bold"
           :disabled="!curSaveTrack"
           @click="saveSetup"
           >{{ $t('setup.saveAndView') }}</mdui-button

@@ -19,6 +19,7 @@
     "skipCurVersion": "跳过此版本",
     "checkUpdFail": "检查更新失败",
     "listSeparator": "、",
+    "clickToSet": "点击设置",
     "unknownFail": "出错了！请按Ctrl+Shift+i，在顶部切换到“控制台”，然后截图并在GitHub仓库创建一个 Issue 或联系开发者QQ：3214442497 反映情况，感谢理解！"
   },
   "status": {
@@ -379,6 +380,10 @@
     "dispEnFull": "英文全写",
     "dispEnShort": "英文简写",
     "dispLocalShort": "中文简写",
+    "favCarsTracks": "车型 / 赛道收藏",
+    "favCarsTracksTooltip": "收藏的车型和赛道会在所有相关列表中置顶显示",
+    "favCars": "车型收藏",
+    "favTracks": "赛道收藏",
     "paramsEn": "参数显示英文",
     "alwaysViewOnly": "导入时默认仅查看",
     "about": "关于",

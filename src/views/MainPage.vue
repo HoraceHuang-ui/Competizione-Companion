@@ -103,7 +103,7 @@ onMounted(() => {
         @click="launchGame"
         :disabled="launching"
         :loading="launching"
-        class="w-max mb-3"
+        class="w-max mb-3 font-bold"
         >{{ $t('general.launchACC') }}</mdui-button
       >
       <span

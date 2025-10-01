@@ -432,7 +432,7 @@ const retrieveHipoleServers = () => {
                   @click="filters = JSON.parse(JSON.stringify(defaultFilters))"
                   >{{ $t('servers.resetFilter') }}</mdui-button
                 >
-                <mdui-button @click="reqData">{{
+                <mdui-button @click="reqData" class="font-bold">{{
                   $t('general.confirm')
                 }}</mdui-button>
               </div>

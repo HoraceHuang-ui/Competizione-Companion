@@ -182,7 +182,7 @@ const closeDialog = () => {
         :label="$t('setup.setupNameLabel')"
       >
       </mdui-text-field>
-      <mdui-button class="mt-10" @click="copyCode">{{
+      <mdui-button class="mt-10 font-bold" @click="copyCode">{{
         $t('setup.copyCode')
       }}</mdui-button>
       <mdui-button class="mt-2" variant="text" @click="$emit('closeDialog')">
@@ -220,7 +220,7 @@ const closeDialog = () => {
         chip-class="mt-2 w-max"
       />
       <mdui-button
-        class="mt-10"
+        class="mt-10 font-bold"
         :disabled="!code || !name || !track"
         @click="() => viewSetup(true)"
         >{{ $t('setup.saveAndView') }}</mdui-button

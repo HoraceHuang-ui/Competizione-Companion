@@ -63,7 +63,7 @@ const confirm = () => {
   <mdui-dialog :open="show" @close="() => {}" class="no-drag">
     <ScrollWrapper width="500px" height="50vh">
       <div class="flex flex-row justify-between">
-        <div class="text-lg title">车型收藏</div>
+        <div class="text-lg title">{{ $t('settings.favCars') }}</div>
         <ChipSelect
           v-model="curGroup"
           chip-class="mx-2 mb-2"
@@ -97,7 +97,7 @@ const confirm = () => {
 
       <mdui-divider class="my-4"></mdui-divider>
 
-      <div class="text-lg title mb-4">赛道收藏</div>
+      <div class="text-lg title mb-4">{{ $t('settings.favTracks') }}</div>
       <mdui-chip
         deletable
         v-for="(track, index) in store.general.favTracks"
@@ -115,7 +115,7 @@ const confirm = () => {
       />
     </ScrollWrapper>
 
-    <mdui-button slot="action" @click="confirm">
+    <mdui-button slot="action" @click="confirm" class="font-bold">
       {{ $t('general.confirm') }}
     </mdui-button>
   </mdui-dialog>

@@ -244,6 +244,7 @@ onMounted(() => {
     </mdui-button>
     <mdui-button
       slot="action"
+      class="font-bold"
       @click="confirm"
       :loading="loading"
       :disabled="!store.presets.serverExePath || !fileName || loading"

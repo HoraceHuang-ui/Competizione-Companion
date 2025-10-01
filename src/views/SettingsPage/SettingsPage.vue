@@ -396,16 +396,14 @@ const setBgImage = () => {
             <div class="item">
               <div class="item-in">
                 <div class="flex flex-row items-center">
-                  <div>{{ '车型 / 赛道收藏' }}</div>
-                  <mdui-tooltip
-                    :content="'收藏的车型和赛道会在所有相关列表中置顶显示。'"
-                  >
+                  <div>{{ $t('settings.favCarsTracks') }}</div>
+                  <mdui-tooltip :content="$t('settings.favCarsTracksTooltip')">
                     <mdui-button-icon>
                       <mdui-icon-help-outline--rounded></mdui-icon-help-outline--rounded> </mdui-button-icon
                   ></mdui-tooltip>
                 </div>
                 <mdui-button variant="tonal" @click="showFavDialog = true">
-                  {{ '点击设置' }}
+                  {{ $t('general.clickToSet') }}
                 </mdui-button>
               </div>
             </div>
@@ -503,6 +501,7 @@ const setBgImage = () => {
                   >
                   <mdui-button
                     slot="action"
+                    class="font-bold"
                     @click="
                       () => {
                         donationOpen1 = false
@@ -662,7 +661,7 @@ const setBgImage = () => {
         @click="resetDialogOpen = false"
         >{{ $t('general.cancel') }}</mdui-button
       >
-      <mdui-button slot="action" @click="resetSettings">{{
+      <mdui-button slot="action" @click="resetSettings" class="font-bold">{{
         $t('general.confirm')
       }}</mdui-button>
     </mdui-dialog>

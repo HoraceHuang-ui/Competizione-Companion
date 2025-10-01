@@ -19,6 +19,7 @@
     "skipCurVersion": "Skip this version",
     "checkUpdFail": "Failed to Check for Updates",
     "listSeparator": ", ",
+    "clickToSet": "Click to Set",
     "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
   },
   "status": {
@@ -379,6 +380,10 @@
     "dispEnFull": "Full Name",
     "dispEnShort": "Short Name",
     "dispLocalShort": "Localized Short Name",
+    "favCarsTracks": "Favorite Cars / Tracks",
+    "favCarsTracksTooltip": "Favorite cars and tracks will be pinned to the top of all related lists",
+    "favCars": "Favorite Cars",
+    "favTracks": "Favorite Tracks",
     "paramsEn": "Show Parameters in English",
     "alwaysViewOnly": "Always Open Setups in View Only Mode",
     "about": "About",

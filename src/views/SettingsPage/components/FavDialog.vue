@@ -10,6 +10,7 @@ import {
 } from '../../../utils/utils'
 import CarSelector from '@/components/CarSelector.vue'
 import TrackSelector from '@/components/TrackSelector.vue'
+import ScrollWrapper from '@/components/ScrollWrapper.vue'
 
 const show = defineModel({
   type: Boolean,
@@ -59,58 +60,60 @@ const confirm = () => {
 </script>
 
 <template>
-  <mdui-dialog :open="show" @close="() => {}">
-    <div class="flex flex-row w-full justify-between">
-      <div class="text-lg title">车型收藏</div>
-      <ChipSelect
-        v-model="curGroup"
-        chip-class="mx-2 mb-2"
-        dropdown-placement="top"
-        :items="['GT3', 'GT4', 'GTC', 'TCX']"
-        @select="onSelectGroup"
+  <mdui-dialog :open="show" @close="() => {}" class="no-drag">
+    <ScrollWrapper width="500px" height="50vh">
+      <div class="flex flex-row justify-between">
+        <div class="text-lg title">车型收藏</div>
+        <ChipSelect
+          v-model="curGroup"
+          chip-class="mx-2 mb-2"
+          dropdown-placement="top"
+          :items="['GT3', 'GT4', 'GTC', 'TCX']"
+          @select="onSelectGroup"
+        >
+        </ChipSelect>
+      </div>
+      <mdui-chip
+        deletable
+        v-for="(car, index) in store.general.favCars[curGroup]"
+        :key="car"
+        class="mr-2"
+        @delete="store.general.favCars[curGroup].splice(index, 1)"
       >
-      </ChipSelect>
-    </div>
-    <mdui-chip
-      deletable
-      v-for="(car, index) in store.general.favCars[curGroup]"
-      :key="car"
-      class="mr-2"
-      @delete="store.general.favCars[curGroup].splice(index, 1)"
-    >
-      {{ getCarDisplay([car, undefined]) }}
-      <img
-        slot="icon"
-        :src="`../../../../src/assets/carLogos/${getCarByKey(car)?.manufacturer}.png`"
-        class="w-6 h-6"
+        {{ getCarDisplay([car, undefined]) }}
+        <img
+          slot="icon"
+          :src="`../../../../src/assets/carLogos/${getCarByKey(car)?.manufacturer}.png`"
+          class="w-6 h-6"
+        />
+      </mdui-chip>
+      <CarSelector
+        v-model="curCar"
+        :group="curGroup"
+        :excludeKeys="store.general.favCars[curGroup]"
+        dropdown-placement="right"
+        chip-class="m-0"
       />
-    </mdui-chip>
-    <CarSelector
-      v-model="curCar"
-      :group="curGroup"
-      :excludeKeys="store.general.favCars[curGroup]"
-      dropdown-placement="right"
-      chip-class="m-0"
-    />
 
-    <mdui-divider class="my-4"></mdui-divider>
+      <mdui-divider class="my-4"></mdui-divider>
 
-    <div class="text-lg title mb-4">赛道收藏</div>
-    <mdui-chip
-      deletable
-      v-for="(track, index) in store.general.favTracks"
-      :key="track"
-      class="mr-2"
-      @delete="store.general.favTracks.splice(index, 1)"
-    >
-      {{ getTrackDisplay(track) }}
-    </mdui-chip>
-    <TrackSelector
-      v-model="curTrack"
-      :excludeIds="store.general.favTracks"
-      dropdown-placement="right"
-      chip-class="m-0"
-    />
+      <div class="text-lg title mb-4">赛道收藏</div>
+      <mdui-chip
+        deletable
+        v-for="(track, index) in store.general.favTracks"
+        :key="track"
+        class="mr-2"
+        @delete="store.general.favTracks.splice(index, 1)"
+      >
+        {{ getTrackDisplay(track) }}
+      </mdui-chip>
+      <TrackSelector
+        v-model="curTrack"
+        :excludeIds="store.general.favTracks"
+        dropdown-placement="right"
+        chip-class="m-0"
+      />
+    </ScrollWrapper>
 
     <mdui-button slot="action" @click="confirm">
       {{ $t('general.confirm') }}
@@ -118,4 +121,8 @@ const confirm = () => {
   </mdui-dialog>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+</style>

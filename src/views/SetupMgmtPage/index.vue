@@ -8,15 +8,16 @@ import carData from '@/utils/carData'
 import SetupDisplay from '@/views/SetupMgmtPage/components/SetupDisplay.vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/arrow-drop-down--rounded.js'
-import '@mdui/icons/directions-car--rounded.js'
 import '@mdui/icons/location-on--rounded.js'
 import '@mdui/icons/check--rounded.js'
 import ChipSelect from '@/components/ChipSelect.vue'
 import { useStore } from '@/store'
 import { seriesColorMap } from '@/utils/enums'
-import tracks from '@/utils/trackData'
 import { translate } from '@/i18n'
 import SetupCode from '@/views/SetupMgmtPage/components/SetupCode.vue'
+import CarSelector from '@/components/CarSelector.vue'
+import TrackSelector from '@/components/TrackSelector.vue'
+import { getCarByKey } from '../../utils/utils'
 
 const store = useStore()
 
@@ -153,19 +154,6 @@ const onSelectGroup = (group: string) => {
     right: undefined,
   }
 }
-const onSelectCar = (side: Side, car: [string, any]) => {
-  let carLabel
-  if (store.settings.setup.carDisplay == 3) {
-    carLabel = translate(`cars.${car?.[0]}`)
-  } else {
-    carLabel =
-      car?.[1]?.[['name', 'shortName'][store.settings.setup.carDisplay - 1]]
-  }
-  curCar.value[side] = {
-    value: car[0],
-    label: carLabel,
-  }
-}
 
 const triggerFileInput = (side: 'left' | 'right') => {
   if (side === 'left') {
@@ -293,6 +281,7 @@ const closeFileSaveDialog = () => {
 }
 
 const saveSetup = async () => {
+  console.log(files.value[fileImportOpen.value]?.carName)
   await window.fs.setupFile(
     files.value[fileImportOpen.value]?.carName,
     curSaveTrack.value?.value,
@@ -358,7 +347,9 @@ const openExtUrl = (url: string) => {
     <mdui-card
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-2 flex"
-      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
+      :style="{
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+      }"
     >
       <div
         v-for="side in ['left', 'right']"
@@ -434,77 +425,8 @@ const openExtUrl = (url: string) => {
                 >
                 </ChipSelect>
 
-                <ChipSelect
-                  v-model="curCar[side as Side]"
-                  :placeholder="$t('setup.carPlaceholder')"
-                  dropdown-placement="top"
-                  :items="Object.entries(carData[curGroup])"
-                  chip-class="mt-2 mx-2"
-                  :for-key="(car: [string, any]) => car?.[0]"
-                  :for-value="(car: [string, any]) => car?.[0]"
-                  :item-label="
-                    (car: [string, any]) => {
-                      if (store.settings.setup.carDisplay == 3) {
-                        return $t(`cars.${car?.[0]}`)
-                      }
-                      return car?.[1]?.[
-                        ['name', 'shortName'][
-                          store.settings.setup.carDisplay - 1
-                        ]
-                      ]
-                    }
-                  "
-                  :chip-label="(car: any) => car?.label"
-                  @select="item => onSelectCar(side as Side, item)"
-                >
-                  <template #icon>
-                    <mdui-icon-directions-car--rounded
-                      class="h-[1.125rem]"
-                    ></mdui-icon-directions-car--rounded>
-                  </template>
-                </ChipSelect>
-
-                <ChipSelect
-                  v-model="curTrack[side as Side]"
-                  :placeholder="$t('setup.trackPlaceholder')"
-                  dropdown-placement="top"
-                  :items="tracks"
-                  chip-class="mt-2 mx-2"
-                  :for-key="(track: [string, string, string]) => track?.[0]"
-                  :for-value="(track: [string, string, string]) => track?.[0]"
-                  :item-label="
-                    (track: [string, string, string]) => {
-                      if (store.settings.setup.trackDisplay == 3) {
-                        return $t(`tracks.${track?.[0]}`)
-                      }
-                      return track?.[
-                        [2, 1][store.settings.setup.trackDisplay - 1]
-                      ]
-                    }
-                  "
-                  :chip-label="(track: any) => track?.label"
-                  @select="
-                    item => {
-                      let trackLabel
-                      if (store.settings.setup.trackDisplay == 3) {
-                        trackLabel = $t(`tracks.${item?.[0]}`)
-                      } else {
-                        trackLabel =
-                          item?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-                      }
-                      curTrack[side as Side] = {
-                        value: item[0],
-                        label: trackLabel,
-                      }
-                    }
-                  "
-                >
-                  <template #icon>
-                    <mdui-icon-location-on--rounded
-                      class="h-[1.125rem]"
-                    ></mdui-icon-location-on--rounded>
-                  </template>
-                </ChipSelect>
+                <CarSelector v-model="curCar[side as Side]" :group="curGroup" />
+                <TrackSelector v-model="curTrack[side as Side]" />
               </div>
               <mdui-dropdown
                 :disabled="
@@ -625,52 +547,18 @@ const openExtUrl = (url: string) => {
             class="h-[1.125rem] ml-2 text-[rgb(var(--mdui-color-primary))]"
           ></mdui-icon-directions-car--rounded>
           <div class="ml-1 truncate">
-            {{ files[fileImportOpen]?.carName }}
+            {{ getCarByKey(files[fileImportOpen]?.carName)?.name }}
           </div>
         </div>
-        <ChipSelect
+        <TrackSelector
           v-model="curSaveTrack"
-          :placeholder="$t('servers.trackPlaceholder')"
           dropdown-placement="right"
-          :items="tracks"
           chip-class="mt-2 w-max"
-          :for-key="(track: [string, string, string]) => track?.[0]"
-          :for-value="(track: [string, string, string]) => track?.[0]"
-          :item-label="
-            (track: [string, string, string]) => {
-              if (store.settings.setup.trackDisplay == 3) {
-                return $t(`tracks.${track?.[0]}`)
-              }
-              return track?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-            }
-          "
-          :chip-label="(track: any) => track?.label"
-          @select="
-            item => {
-              let trackLabel
-              if (store.settings.setup.trackDisplay == 3) {
-                trackLabel = $t(`tracks.${item?.[0]}`)
-              } else {
-                trackLabel =
-                  item?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-              }
-              curSaveTrack = {
-                value: item[0],
-                label: trackLabel,
-              }
-            }
-          "
-        >
-          <template #icon>
-            <mdui-icon-location-on--rounded
-              class="h-[1.125rem]"
-            ></mdui-icon-location-on--rounded>
-          </template>
-        </ChipSelect>
+        />
 
         <mdui-button
           variant="filled"
-          class="mt-6 mb-2"
+          class="mt-6 mb-2 font-bold"
           :disabled="!curSaveTrack"
           @click="saveSetup"
           >{{ $t('setup.saveAndView') }}</mdui-button
@@ -749,6 +637,8 @@ const openExtUrl = (url: string) => {
 
 ::part(container) {
   background: transparent;
+  border-radius: 999px;
+  height: 50px;
 }
 ::part(label) {
   color: rgb(var(--mdui-color-on-surface-invert));

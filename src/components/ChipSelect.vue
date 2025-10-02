@@ -26,6 +26,10 @@ const props = defineProps({
     type: Function,
     default: (item: string) => item,
   },
+  itemIcon: {
+    type: Function,
+    default: (item: string) => null,
+  },
   itemLabel: {
     type: Function,
     default: (item: string) => item,
@@ -81,14 +85,24 @@ const onSelect = (item: any) => {
           :value="props.forValue(item)"
           :class="{
             'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
-              props.chipLabel(selection) === props.itemLabel(item),
+              props.chipLabel(selection) ===
+              props.itemLabel(item).replace('★ ', ''),
           }"
           @click="onSelect(item)"
         >
           {{ props.itemLabel(item) }}
+          <img
+            v-if="props.itemIcon(item)"
+            slot="icon"
+            :src="props.itemIcon(item)"
+            class="w-7 h-7"
+          />
           <mdui-icon-check--rounded
             slot="end-icon"
-            v-if="props.chipLabel(selection) === props.itemLabel(item)"
+            v-if="
+              props.chipLabel(selection) ===
+              props.itemLabel(item).replace('★ ', '')
+            "
           ></mdui-icon-check--rounded>
         </mdui-menu-item>
       </ScrollWrapper>

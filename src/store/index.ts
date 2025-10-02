@@ -9,9 +9,19 @@ export const useStore = defineStore('userStore', {
         height: 700,
         isMax: false,
       },
+      favTracks: [] as string[],
+      favCars: {
+        GT3: [] as string[],
+        GT4: [] as string[],
+        GTC: [] as string[],
+        TCX: [] as string[],
+      },
     },
     servers: {
       listView: false,
+    },
+    presets: {
+      serverExePath: '',
     },
     settings: {
       general: {
@@ -20,6 +30,8 @@ export const useStore = defineStore('userStore', {
         minToTray: false,
         themeColor: '#785abf',
         bgImg: '',
+        bgImgPath: '',
+        bgOpacity: 0.85,
       },
       status: {
         serverDownMsg: 'Time for maimai DX!',

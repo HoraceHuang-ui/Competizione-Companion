@@ -4,13 +4,16 @@ import '@mdui/icons/view-list--rounded.js'
 import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
-import { onMounted, ref } from 'vue'
+import '@mdui/icons/balance--rounded.js'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { setTheme, snackbar } from 'mdui'
+import { setTheme } from 'mdui'
 import { themeMap } from '@/utils/enums'
 import { translate } from '@/i18n'
 import { marked } from 'marked'
+import { checkUpdate } from '@/utils/utils'
+import UpdateDialog from '@/components/UpdateDialog.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -37,10 +40,11 @@ const modes = [
   'general.status',
   'general.servers',
   'general.setup',
+  'general.bop',
   'general.launchACC',
   'general.settings',
 ]
-const pages = ['status', 'list', 'setup', '', 'settings']
+const pages = ['status', 'list', 'setup', 'bop', '', 'settings']
 const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
@@ -55,82 +59,55 @@ const launchACC = () => {
   }, 3000)
 }
 
-const verCompare = (a: string, b: string) => {
-  const arr1 = a.split('.')
-  const arr2 = b.split('.')
-
-  if (arr1.length != arr2.length) {
-    return 114
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
-      return 1
-    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
-      return -1
-    }
-  }
-  return 0
-}
-
-const appVer = ref('')
-
-const needsUpdate = (latestStr: string) => {
-  return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
-}
-
 const updDialogShow = ref(false)
 const updInfo = ref<any>({})
-const skipVersion = ref(false)
-const checkUpdate = () => {
-  window.axios
-    // .get('http://0.0.0.0:5005/competizione')
-    .get('http://120.55.52.240:5005/competizione')
-    .then((res: any) => {
-      console.log(res)
-      if (res.success) {
-        const resp = res.updInfo
-        if (needsUpdate(resp.version)) {
-          updInfo.value = resp
-          updDialogShow.value = true
-        }
-      }
-    })
-    .catch((err: Error) => {
-      snackbar({
-        message: translate('general.checkUpdFail'),
-        autoCloseDelay: 3000,
-      })
-      console.error(err)
-    })
-}
-const confirmUpd = () => {
-  updDialogShow.value = false
-  window.electron.openExtLink(updInfo.value.dlUrl)
-  window.win.close()
-}
-const onCancelUpd = () => {
-  updDialogShow.value = false
-  if (skipVersion.value) {
-    store.general.targetVersion = updInfo.value.version
-  }
-}
+
+const bgBase64 = ref('')
+watch(
+  () => store.settings.general.bgImg,
+  newVal => {
+    if (newVal !== '') {
+      bgBase64.value = newVal
+    }
+
+    store.settings.general.bgImg = ''
+  },
+)
 
 onMounted(() => {
-  fetch('../package.json')
-    .then(response => response.json())
-    .then(resp => {
-      appVer.value = resp.version
-      checkUpdate()
+  checkUpdate(
+    store.general.targetVersion || import.meta.env.VITE_APP_VERSION,
+  ).then(resp => {
+    updInfo.value = resp
+    if (resp) {
+      updDialogShow.value = true
+    }
+  })
+
+  if (store.settings.general.bgImg !== '') {
+    window.img
+      .base64ToImg(store.settings.general.bgImg)
+      .then(async path => {
+        store.settings.general.bgImgPath = path
+        bgBase64.value = await window.img.getBgBase64()
+      })
+      .catch(() => {
+        store.settings.general.bgImgPath = ''
+      })
+    store.settings.general.bgImg = ''
+  } else {
+    window.img.getBgBase64().then(base64 => {
+      bgBase64.value = base64
     })
+  }
 })
 </script>
 <template>
   <Transition name="fade">
     <img
       class="w-[100vw] h-[100vh] absolute object-cover"
-      v-if="store.settings.general.bgImg"
-      :src="store.settings.general.bgImg"
+      v-if="store.settings.general.bgImgPath"
+      :src="bgBase64"
     />
   </Transition>
   <mdui-layout class="size-full overflow-hidden">
@@ -224,6 +201,21 @@ onMounted(() => {
         </mdui-button-icon>
       </mdui-tooltip>
 
+      <mdui-tooltip :content="translate('general.bop')" placement="right">
+        <mdui-button-icon
+          class="mb-2"
+          :style="{
+            background:
+              mode == 3
+                ? 'rgb(var(--mdui-color-secondary-container))'
+                : 'transparent',
+          }"
+          @click="nav(3)"
+        >
+          <mdui-icon-balance--rounded></mdui-icon-balance--rounded>
+        </mdui-button-icon>
+      </mdui-tooltip>
+
       <mdui-tooltip
         :content="translate('general.launchACC')"
         placement="right"
@@ -234,7 +226,7 @@ onMounted(() => {
           class="mb-2"
           :style="{
             background:
-              mode == 3
+              mode == 4
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
@@ -259,11 +251,11 @@ onMounted(() => {
         <mdui-button-icon
           :style="{
             background:
-              mode == 4
+              mode == 5
                 ? 'rgb(var(--mdui-color-secondary-container))'
                 : 'transparent',
           }"
-          @click="nav(4)"
+          @click="nav(5)"
         >
           <mdui-icon-settings--rounded></mdui-icon-settings--rounded>
         </mdui-button-icon>
@@ -271,8 +263,10 @@ onMounted(() => {
     </mdui-navigation-rail>
 
     <mdui-layout-main
-      class="overflow-hidden"
-      style="background: rgba(var(--mdui-color-surface), 0.85)"
+      class="overflow-hidden transition-all"
+      :style="{
+        background: `rgba(var(--mdui-color-surface), ${store.settings.general.bgOpacity || 0.85})`,
+      }"
     >
       <router-view id="mainRouterView" v-slot="{ Component }">
         <transition name="swipe-up" mode="out-in">
@@ -281,52 +275,7 @@ onMounted(() => {
       </router-view>
     </mdui-layout-main>
 
-    <mdui-dialog
-      :open="updDialogShow"
-      close-on-overlay-click
-      close-on-esc
-      :headline="$t('general.newVerDetected')"
-      @close="updDialogShow = false"
-    >
-      <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
-      <div
-        class="overflow-y-scroll max-h-[300px] w-[400px] scroll-wrapper-app-vue"
-      >
-        <div
-          class="marked"
-          v-html="marked(updInfo?.desc?.[$t('langCode')] || '')"
-        />
-      </div>
-      <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
-        {{ $t('general.updVer') }}{{ appVer }} 👉
-        {{ updInfo.version }}
-      </div>
-      <div class="text-red-600 dark:text-red-400">
-        {{ $t('general.updSize')
-        }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
-      </div>
-      <div
-        class="w-full flex flex-row justify-between items-center"
-        slot="action"
-      >
-        <mdui-checkbox
-          :checked="skipVersion"
-          @change="skipVersion = !skipVersion"
-          >{{ $t('general.skipCurVersion') }}</mdui-checkbox
-        >
-        <div class="flex flex-row">
-          <mdui-button slot="action" variant="text" @click="onCancelUpd">{{
-            $t('general.cancel')
-          }}</mdui-button>
-          <mdui-button
-            slot="action"
-            @click="confirmUpd"
-            :disabled="skipVersion"
-            >{{ $t('general.update') }}</mdui-button
-          >
-        </div>
-      </div>
-    </mdui-dialog>
+    <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" show-skip />
   </mdui-layout>
 </template>
 

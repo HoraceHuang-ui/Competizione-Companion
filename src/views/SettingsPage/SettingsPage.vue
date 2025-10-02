@@ -8,39 +8,30 @@ import '@mdui/icons/dark-mode--outlined.js'
 import '@mdui/icons/update--rounded.js'
 import '@mdui/icons/image--rounded.js'
 import '@mdui/icons/undo--rounded.js'
-import { computed, onMounted, ref, watch } from 'vue'
-import {
-  getColorFromImage,
-  getTheme,
-  setColorScheme,
-  setTheme,
-  snackbar,
-} from 'mdui'
-import { themeMap } from '@/utils/enums'
-import { marked } from 'marked'
-import {
-  availableLangCodes,
-  availableLangNames,
-  Lang,
-  switchLang,
-  translate,
-  translateWithLocale,
-  langMap,
-} from '@/i18n'
+import '@mdui/icons/help-outline--rounded.js'
+import { computed, ref, watch } from 'vue'
+import { getColorFromImage, setColorScheme, setTheme, snackbar } from 'mdui'
+import { themeMap, darkModeSettings, trackCarDispSettings } from '@/utils/enums'
+import { availableLangCodes, switchLang, translate, langMap } from '@/i18n'
 import { ChromePicker } from 'vue-color'
+import UpdateDialog from '@/components/UpdateDialog.vue'
+import { checkUpdate } from '@/utils/utils'
+import FavDialog from '@/views/SettingsPage/components/FavDialog.vue'
+
+const showFavDialog = ref(false)
 
 const store = useStore()
 const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
 const isDark = ref(
-  store.settings.general.darkMode === '2'
+  store.settings.general.darkMode === darkModeSettings.AUTO
     ? darkModePreference.matches
-    : store.settings.general.darkMode !== '1',
+    : store.settings.general.darkMode !== darkModeSettings.LIGHT,
 )
 darkModePreference.addEventListener('change', e => {
   isDark.value =
-    store.settings.general.darkMode === '2'
+    store.settings.general.darkMode === darkModeSettings.AUTO
       ? e.matches
-      : store.settings.general.darkMode !== '1'
+      : store.settings.general.darkMode !== darkModeSettings.LIGHT
 })
 
 const donationOpen1 = ref(false)
@@ -50,10 +41,6 @@ if (!localStorage.lang) {
   localStorage.lang = 'en_US'
 }
 const lang = ref(localStorage.lang || 'en_US')
-const langMsg = computed(() => {
-  console.log(translateWithLocale('settings.languageChangeMsg', lang.value))
-  return translateWithLocale('settings.languageChangeMsg', lang.value)
-})
 const dispMap = ['dispEnFull', 'dispEnShort', 'dispLocalShort']
 const dispItems = computed(() => {
   if (lang.value === 'en_US') {
@@ -84,15 +71,15 @@ const darkModeChange = (event: Event) => {
   store.settings.general.darkMode = mode
   setTheme(themeMap[mode])
   isDark.value =
-    store.settings.general.darkMode === '2'
+    store.settings.general.darkMode === darkModeSettings.AUTO
       ? darkModePreference.matches
-      : store.settings.general.darkMode !== '1'
+      : store.settings.general.darkMode !== darkModeSettings.LIGHT
 }
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
 }
 
-const onLangSelect = (item: Lang) => {
+const onLangSelect = () => {
   switchLang(lang.value)
   if (
     ['舞萌DX启动！', 'Time for maimai DX!'].includes(
@@ -105,8 +92,8 @@ const onLangSelect = (item: Lang) => {
   }
 
   if (lang.value === 'en_US') {
-    store.settings.setup.carDisplay = 2
-    store.settings.setup.trackDisplay = 2
+    store.settings.setup.carDisplay = trackCarDispSettings.EN_SHORT
+    store.settings.setup.trackDisplay = trackCarDispSettings.EN_SHORT
   }
 }
 
@@ -115,76 +102,30 @@ const changeTray = (checked: boolean) => {
   // window.electron.storeSet('tray', checked)
 }
 
-const verCompare = (a: string, b: string) => {
-  const arr1 = a.split('.')
-  const arr2 = b.split('.')
-
-  if (arr1.length != arr2.length) {
-    return 114
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
-      return 1
-    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
-      return -1
-    }
-  }
-  return 0
-}
-
-const appVer = ref('')
-// BUILD: '../../app.asar/package.json'
-// DEV: '../../package.json'
-fetch('../../app.asar/package.json')
-  .then(response => response.json())
-  .then(resp => {
-    appVer.value = resp.version
-  })
-
-const needsUpdate = (latestStr: string) => {
-  return verCompare(latestStr.split(' ')[0], appVer.value.split(' ')[0]) > 0
-}
-
+const appVer = import.meta.env.VITE_APP_VERSION
 const updChecking = ref(false)
-const latest = ref(false)
 const updDialogShow = ref(false)
 const updInfo = ref<any>({})
-const checkUpdate = () => {
+const latest = ref(false)
+const invokeUpdateCheck = () => {
   updChecking.value = true
-  window.axios
-    // .get('http://0.0.0.0:5005/competizione')
-    .get('http://120.55.52.240:5005/competizione')
-    .then((res: any) => {
-      console.log(res)
-      if (res.success) {
-        const resp = res.updInfo
-        if (needsUpdate(resp.version)) {
-          updInfo.value = resp
-          updDialogShow.value = true
-        } else {
-          latest.value = true
-          snackbar({
-            message: translate('settings.upToDate'),
-            autoCloseDelay: 3000,
-          })
-        }
+  checkUpdate()
+    .then((info: any) => {
+      if (info) {
+        updInfo.value = info
+        updDialogShow.value = true
+        latest.value = false
+      } else {
+        snackbar({
+          message: translate('settings.upToDate'),
+          autoCloseDelay: 3000,
+        })
+        latest.value = true
       }
+    })
+    .finally(() => {
       updChecking.value = false
     })
-    .catch((err: Error) => {
-      snackbar({
-        message: translate('general.checkUpdFail'),
-        autoCloseDelay: 3000,
-      })
-      updChecking.value = false
-      console.error(err)
-    })
-}
-const confirmUpd = () => {
-  updDialogShow.value = false
-  window.electron.openExtLink(updInfo.value.dlUrl)
-  window.win.close()
 }
 
 let throttleTimeout: ReturnType<typeof setTimeout> | null = null
@@ -218,18 +159,19 @@ const setBgImage = () => {
         },
       ],
     })
-    .then(resp => {
+    .then(async resp => {
       if (resp) {
         bgButtonLoading.value = true
-        store.settings.general.bgImg = resp
+        store.settings.general.bgImgPath = resp
         const img = new Image()
-        img.src = resp
+        img.src = await window.img.getBgBase64()
         getColorFromImage(img).then(color => {
           if (color) {
             store.settings.general.themeColor = color
             setColorScheme(color)
           }
           bgButtonLoading.value = false
+          store.settings.general.bgImg = img.src
         })
       }
     })
@@ -243,8 +185,10 @@ const setBgImage = () => {
   <div class="h-full flex flex-col justify-center items-center relative w-full">
     <mdui-card
       variant="outlined"
-      class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex"
-      style="background: rgba(var(--mdui-color-surface-container-lowest), 0.65)"
+      class="size-full transition-all border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex"
+      :style="{
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+      }"
     >
       <ScrollWrapper class="pl-2 pr-1">
         <div class="pl-6 pt-6 pr-5">
@@ -304,12 +248,13 @@ const setBgImage = () => {
                   <mdui-tooltip
                     :content="$t('settings.deleteBg')"
                     placement="bottom"
-                    v-if="!bgButtonLoading && store.settings.general.bgImg"
+                    v-if="!bgButtonLoading && store.settings.general.bgImgPath"
                   >
                     <mdui-button-icon
                       class="mr-2"
                       @click="
                         () => {
+                          store.settings.general.bgImgPath = ''
                           store.settings.general.bgImg = ''
                         }
                       "
@@ -321,9 +266,44 @@ const setBgImage = () => {
                     :content="$t('settings.setBg')"
                     placement="bottom"
                   >
-                    <mdui-button-icon class="mr-2" @click="setBgImage">
+                    <mdui-button-icon class="mr-1" @click="setBgImage">
                       <mdui-icon-image--rounded></mdui-icon-image--rounded>
                     </mdui-button-icon>
+                  </mdui-tooltip>
+                  <mdui-tooltip
+                    placement="bottom"
+                    v-if="!bgButtonLoading && store.settings.general.bgImgPath"
+                    variant="rich"
+                    :headline="$t('settings.bgOpacity')"
+                  >
+                    <div slot="content" class="w-[300px]">
+                      <mdui-slider
+                        class="px-4"
+                        :value="store.settings.general.bgOpacity || 0.85"
+                        :min="0.5"
+                        :step="0.05"
+                        :max="1"
+                        @input="
+                          store.settings.general.bgOpacity = $event.target.value
+                        "
+                        nolabel
+                      ></mdui-slider>
+                    </div>
+                    <div
+                      class="mr-2 px-4 py-2 rounded-full"
+                      style="
+                        background: rgba(
+                          var(--mdui-color-inverse-on-surface),
+                          0.6
+                        );
+                      "
+                    >
+                      {{
+                        (
+                          (store.settings.general.bgOpacity || 0.85) * 100
+                        ).toFixed(0)
+                      }}%
+                    </div>
                   </mdui-tooltip>
 
                   <mdui-tooltip placement="bottom-end" class="picker">
@@ -374,7 +354,7 @@ const setBgImage = () => {
               <div class="item-in">
                 <div>{{ $t('settings.serverDownMsg') }}</div>
                 <mdui-text-field
-                  class="w-60 bg-[rgb(var(--mdui-color-on-secondary))] cursor-text"
+                  class="msg-input w-60 cursor-text h-[46px]"
                   :placeholder="$t('settings.serverDownMsgPlaceholder')"
                   variant="outlined"
                   :value="store.settings.status.serverDownMsg"
@@ -411,6 +391,20 @@ const setBgImage = () => {
                   :chip-label="item => $t(`settings.${dispMap[item - 1]}`)"
                 >
                 </ChipSelect>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div class="flex flex-row items-center">
+                  <div>{{ $t('settings.favCarsTracks') }}</div>
+                  <mdui-tooltip :content="$t('settings.favCarsTracksTooltip')">
+                    <mdui-button-icon>
+                      <mdui-icon-help-outline--rounded></mdui-icon-help-outline--rounded> </mdui-button-icon
+                  ></mdui-tooltip>
+                </div>
+                <mdui-button variant="tonal" @click="showFavDialog = true">
+                  {{ $t('general.clickToSet') }}
+                </mdui-button>
               </div>
             </div>
             <div class="item" v-if="lang !== 'en_US'">
@@ -461,11 +455,11 @@ const setBgImage = () => {
                       )
                     "
                   >
-                    <img src="@/assets/github-mark.png" class="p-1" />
+                    <img src="../../assets/github-mark.png" class="p-1" />
                   </mdui-button-icon>
                   <mdui-button
                     variant="tonal"
-                    @click="checkUpdate"
+                    @click="invokeUpdateCheck"
                     :disabled="updChecking || latest"
                     :loading="updChecking"
                   >
@@ -489,12 +483,12 @@ const setBgImage = () => {
                   <div>{{ $t('settings.donation1Msg') }}</div>
                   <div class="flex flex-row mt-2">
                     <img
-                      src="@/assets/wechat.jpg"
+                      src="../../assets/wechat.jpg"
                       width="250"
                       class="mr-2 donation-pic"
                     />
                     <img
-                      src="@/assets/alipay.jpg"
+                      src="../../assets/alipay.jpg"
                       width="250"
                       class="donation-pic"
                     />
@@ -507,6 +501,7 @@ const setBgImage = () => {
                   >
                   <mdui-button
                     slot="action"
+                    class="font-bold"
                     @click="
                       () => {
                         donationOpen1 = false
@@ -541,7 +536,7 @@ const setBgImage = () => {
                 <mdui-tooltip placement="top" class="credits">
                   <div slot="content">Dynamic Esports Academy</div>
                   <img
-                    src="@/assets/DEA_light.png"
+                    src="../../assets/DEA_light.png"
                     class="mx-4 transition-all inline px-1 py-0.5 mb-0.5 rounded-full bg-[rgb(var(--mdui-color-primary-light))] opacity-55 hover:opacity-100"
                     width="80"
                   />
@@ -573,8 +568,8 @@ const setBgImage = () => {
                   <div
                     class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
                   >
-                    <img src="@/assets/HerMess.png" width="40" />
-                    <img src="@/assets/HerMess_text.png" width="90" />
+                    <img src="../../assets/HerMess.png" width="40" />
+                    <img src="../../assets/HerMess_text.png" width="90" />
                   </div>
                 </mdui-tooltip>
 
@@ -591,7 +586,7 @@ const setBgImage = () => {
                     >
                   </div>
                   <img
-                    src="https://acc-status.jonatan.net/favicon.ico"
+                    src="../../assets/acc-status.ico"
                     class="transition-all mx-4 inline px-2 py-1.5 mb-0.5 rounded-full opacity-55 hover:opacity-100 bg-[rgb(var(--mdui-color-primary-dark))]"
                     width="40"
                   />
@@ -627,7 +622,7 @@ const setBgImage = () => {
                     class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
                   >
                     <img
-                      src="@/assets/lonemeow.png"
+                      src="../../assets/lonemeow.png"
                       class="inline mr-1 rounded-full transition-all"
                       width="30"
                     />
@@ -666,46 +661,23 @@ const setBgImage = () => {
         @click="resetDialogOpen = false"
         >{{ $t('general.cancel') }}</mdui-button
       >
-      <mdui-button slot="action" @click="resetSettings">{{
+      <mdui-button slot="action" @click="resetSettings" class="font-bold">{{
         $t('general.confirm')
       }}</mdui-button>
     </mdui-dialog>
-    <mdui-dialog
-      :open="updDialogShow"
-      close-on-overlay-click
-      close-on-esc
-      :headline="$t('general.newVerDetected')"
-      @close="updDialogShow = false"
-    >
-      <mdui-icon-update--rounded slot="icon"></mdui-icon-update--rounded>
-      <div class="overflow-y-scroll max-h-[300px] w-[400px] scroll-wrapper">
-        <div
-          class="marked"
-          v-html="marked(updInfo?.desc?.[$t('langCode')] || '')"
-        />
-      </div>
-      <div class="text-red-600 dark:text-red-400" style="margin-top: 10px">
-        {{ $t('general.updVer') }}{{ appVer }} 👉
-        {{ updInfo.version }}
-      </div>
-      <div class="text-red-600 dark:text-red-400">
-        {{ $t('general.updSize')
-        }}{{ (updInfo.size / 1024 / 1024).toFixed(1) }}MB
-      </div>
-      <mdui-button
-        slot="action"
-        variant="text"
-        @click="updDialogShow = false"
-        >{{ $t('general.cancel') }}</mdui-button
-      >
-      <mdui-button slot="action" @click="confirmUpd">{{
-        $t('general.update')
-      }}</mdui-button>
-    </mdui-dialog>
+
+    <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" />
+
+    <FavDialog v-model="showFavDialog" />
   </div>
 </template>
 
 <style lang="scss" scoped>
+.msg-input::part(container) {
+  border-radius: 999px;
+  background: rgb(var(--mdui-color-on-secondary));
+}
+
 .category {
   width: 100%;
   margin-bottom: 1rem;
@@ -734,7 +706,7 @@ const setBgImage = () => {
     }
 
     &:hover {
-      background: rgb(var(--mdui-color-surface-container-low));
+      background: rgba(var(--mdui-color-secondary-container), 0.3);
     }
   }
 

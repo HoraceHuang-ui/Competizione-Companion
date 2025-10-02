@@ -25,10 +25,13 @@ const queryData = () => {
     method: 'GET',
   })
     .then(resp => resp.json())
+    .catch(() => {
+      status.value = undefined
+      loading.value = false
+    })
     .then(data => {
-      console.log(data)
       status.value = data
-      sessionStorage.serverDown = status.value?.status
+      sessionStorage.serverDown = !status.value?.status
     })
     .finally(() => {
       loading.value = false
@@ -58,7 +61,7 @@ onMounted(() => {
             class="rounded-full px-1 py-0.5 border border-gray-400 mb-3 flex flex-row justify-center items-center"
           >
             <mdui-icon-check-circle--rounded
-              v-if="status.status === 1"
+              v-if="status?.status === 1"
               class="text-green-500 dark:text-green-400"
             ></mdui-icon-check-circle--rounded>
             <mdui-icon-error--rounded
@@ -67,7 +70,7 @@ onMounted(() => {
             ></mdui-icon-error--rounded>
             <div class="mx-2 mt-0.5">
               {{
-                status.status == 1
+                status?.status == 1
                   ? $t('status.badNews')
                   : $t('status.goodNews')
               }}
@@ -76,8 +79,8 @@ onMounted(() => {
         </div>
         <div class="title mb-1 font-bold text-3xl relative">
           {{
-            'status' in status
-              ? status.status === 1
+            status?.status !== undefined
+              ? status?.status === 1
                 ? $t('status.serverUp')
                 : $t('status.serverDown')
               : $t('status.apiDown')
@@ -90,7 +93,7 @@ onMounted(() => {
             <mdui-icon-refresh--rounded></mdui-icon-refresh--rounded>
           </mdui-button-icon>
         </div>
-        <div v-if="!status.status" class="opacity-70 text-center mb-3">
+        <div v-if="!status?.status" class="opacity-70 text-center mb-3">
           {{ store.settings.status.serverDownMsg }}
         </div>
       </div>
@@ -103,7 +106,7 @@ onMounted(() => {
         @click="launchGame"
         :disabled="launching"
         :loading="launching"
-        class="w-max mb-3"
+        class="w-max mb-3 font-bold"
         >{{ $t('general.launchACC') }}</mdui-button
       >
       <span

@@ -13,7 +13,25 @@ import path from 'node:path'
 import os from 'node:os'
 import brotli from 'brotli-compress'
 import axios from 'axios'
-import { promises as fsPromises } from 'fs'
+import fs, { promises as fsPromises } from 'fs'
+
+const i18n = {
+  en: {
+    appName: 'Competizione Companion',
+    trayTooltip: 'Competizione Companion',
+    windowTitle: 'Competizione Companion',
+  },
+  'zh-CN': {
+    appName: '争锋小助手',
+    trayTooltip: '争锋小助手',
+    windowTitle: '争锋小助手',
+  },
+}
+
+// 找不到语言时默认英文
+function t(locale) {
+  return i18n[locale] || i18n['en']
+}
 
 // const store = new Store({
 //   defaults: {
@@ -65,8 +83,11 @@ let tray = null
 const iconPath = path.join(process.env.VITE_PUBLIC, 'favicon.ico')
 
 async function createWindow() {
+  const locale = app.getLocale()
+  const lang = t(locale)
+
   win = new BrowserWindow({
-    title: 'Competizione Companion',
+    title: lang.windowTitle,
     icon: iconPath,
     minWidth: 1200,
     minHeight: 700,
@@ -101,6 +122,10 @@ async function createWindow() {
   // win.on('unmaximize', () => {
   //   store.set('max', false)
   // })
+
+  win.webContents.executeJavaScript(
+    `document.title = ${JSON.stringify(lang.appName)}`,
+  )
 
   if (VITE_DEV_SERVER_URL) {
     // #298
@@ -176,22 +201,30 @@ async function createWindow() {
     return result.data
   })
 
-  /**
-   * 在一个目录中查找与目标名称大小写不敏感相等的真实文件夹名
-   */
-  const fs = require('fs')
-  function findCaseInsensitiveName(parentDir, targetName) {
+  function findOrCreateCaseInsensitiveName(
+    parentDir: string,
+    targetName: string,
+  ): string {
+    const fs = require('fs')
+    // Ensure parentDir exists
+    if (!fs.existsSync(parentDir)) {
+      fs.mkdirSync(parentDir, { recursive: true })
+    }
     const items = fs.readdirSync(parentDir, { withFileTypes: true })
     const lowerTarget = targetName.toLowerCase()
 
     for (const item of items) {
       if (item.isDirectory() && item.name.toLowerCase() === lowerTarget) {
-        return item.name // 返回真实名字
+        return item.name // Return actual name
       }
     }
 
-    return null // 找不到
+    // Not found, create it
+    const newDir = path.join(parentDir, targetName)
+    fs.mkdirSync(newDir)
+    return targetName
   }
+
   ipcMain.handle('fs:setupList', async (_event, car, track) => {
     const setupsDir = path.join(
       os.homedir(),
@@ -203,11 +236,11 @@ async function createWindow() {
       return []
     }
 
-    const realCar = findCaseInsensitiveName(setupsDir, car)
+    const realCar = findOrCreateCaseInsensitiveName(setupsDir, car)
     if (!realCar) {
       fs.mkdirSync(path.join(setupsDir, car), { recursive: true })
     }
-    const realTrack = findCaseInsensitiveName(
+    const realTrack = findOrCreateCaseInsensitiveName(
       path.join(setupsDir, realCar || car),
       track,
     )
@@ -230,8 +263,8 @@ async function createWindow() {
         'Assetto Corsa Competizione',
         'Setups',
       )
-      const realCar = findCaseInsensitiveName(setupsDir, car)
-      const realTrack = findCaseInsensitiveName(
+      const realCar = findOrCreateCaseInsensitiveName(setupsDir, car)
+      const realTrack = findOrCreateCaseInsensitiveName(
         path.join(setupsDir, realCar || car),
         track,
       )
@@ -241,6 +274,44 @@ async function createWindow() {
       } else {
         fs.writeFileSync(setupPath, writeVal, 'utf-8')
         return writeVal
+      }
+    },
+  )
+
+  ipcMain.handle('fs:presetList', async (_event, exePath) => {
+    if (!fs.existsSync(exePath)) {
+      return []
+    }
+    const presetDir = path.join(path.dirname(exePath), 'presets')
+    if (!fs.existsSync(presetDir)) {
+      fs.mkdirSync(presetDir)
+      return []
+    }
+    return fs.readdirSync(presetDir).filter(file => file.endsWith('.pre'))
+  })
+
+  ipcMain.handle(
+    'fs:presetFile',
+    async (_event, exePath, presetName, writeVal = undefined) => {
+      if (!fs.existsSync(exePath)) {
+        return ''
+      }
+      const presetDir = path.join(path.dirname(exePath), 'presets')
+      if (!fs.existsSync(presetDir)) {
+        fs.mkdirSync(presetDir)
+      }
+      const presetPath = path.join(presetDir, presetName)
+
+      if (writeVal) {
+        const buffer = Buffer.from('\uFEFF' + writeVal, 'utf16le')
+        fs.writeFileSync(presetPath, buffer)
+        return writeVal
+      } else {
+        if (fs.existsSync(presetPath)) {
+          return fs.readFileSync(presetPath, 'utf16le')
+        } else {
+          return ''
+        }
       }
     },
   )
@@ -271,14 +342,56 @@ async function createWindow() {
       const result = await dialog.showOpenDialog(win, options)
       if (!result.canceled && result.filePaths.length > 0) {
         const sourcePath = result.filePaths[0]
-        return await fsPromises
+        const data = await fsPromises
           .readFile(sourcePath, 'base64')
           .then(data => `data:image/png;base64,${data}`)
+        return await base64ToImg(data)
       } else {
         return ''
       }
     } catch (err) {
       console.error('Error copying image:', err)
+      throw err
+    }
+  })
+
+  const base64ToImg = async (base64Str: string) => {
+    const matches = base64Str.match(/^data:(.+);base64,(.+)$/)
+    if (!matches || matches.length !== 3) {
+      throw new Error('Invalid base64 string')
+    }
+    const buffer = Buffer.from(matches[2], 'base64')
+    const userDataPath = app.getPath('userData')
+    const filePath = path.join(userDataPath, 'bg.png')
+    try {
+      await fsPromises.writeFile(filePath, buffer)
+      return filePath
+    } catch (err) {
+      console.error('Failed to write image file:', err)
+      throw err
+    }
+  }
+
+  ipcMain.handle('img:base64ToImg', async (_event, base64Str) => {
+    try {
+      return await base64ToImg(base64Str)
+    } catch (err) {
+      console.error('Error converting base64 to image:', err)
+      throw err
+    }
+  })
+
+  ipcMain.handle('img:getBgBase64', async () => {
+    const userDataPath = app.getPath('userData')
+    const filePath = path.join(userDataPath, 'bg.png')
+    try {
+      if (fs.existsSync(filePath)) {
+        return await fs.promises
+          .readFile(filePath, 'base64')
+          .then(data => `data:image/png;base64,${data}`)
+      }
+    } catch (err) {
+      console.error('Error reading background image:', err)
       throw err
     }
   })
@@ -292,7 +405,7 @@ async function createWindow() {
     },
   ])
   tray = new Tray(iconPath)
-  tray.setToolTip('Competizione Companion')
+  tray.setToolTip(lang.trayTooltip)
   tray.setContextMenu(contextMenu)
   tray.on('click', () => {
     win.isVisible() ? win.hide() : win.show()

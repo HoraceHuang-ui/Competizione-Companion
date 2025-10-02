@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import tracks from '@/utils/trackData'
-import { useStore } from '@/store'
-import { seriesColorMap } from '@/utils/enums'
+import {
+  hipoleEventColors,
+  hipoleEventMap,
+  seriesColorMap,
+} from '@/utils/enums'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
-const store = useStore()
 import '@mdui/icons/person-add-disabled--rounded.js'
-import { translate } from '@/i18n'
 import '@mdui/icons/directions-car-filled--rounded.js'
+import { getTrackDisplay, isHipole, connectServer } from '@/utils/utils'
+import { computed } from 'vue'
 
 const props = defineProps({
   server: {
@@ -15,21 +17,8 @@ const props = defineProps({
   },
 })
 
-const connectServer = (ip: string, tcpPort: number, name: string) => {
-  window.electron.openExtLink(
-    `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`,
-  )
-}
-
-const trackDisp = (trackId: string) => {
-  const res = tracks.find(t => t[0] === trackId.toLowerCase())
-
-  if (store.settings.setup.trackDisplay == 3) {
-    return translate(`tracks.${res?.[0]}`)
-  } else {
-    return res?.[[2, 1][store.settings.setup.trackDisplay - 1]]
-  }
-}
+const hipoleEvent = computed(() => isHipole(props.server.name))
+const hipoleTier = computed(() => hipoleEventMap[hipoleEvent.value])
 </script>
 
 <template>
@@ -38,12 +27,34 @@ const trackDisp = (trackId: string) => {
   >
     <div class="flex flex-row justify-between items-end pr-2">
       <mdui-tooltip :content="props.server.name" placement="bottom-start">
-        <div class="title truncate w-full text-xl">
-          {{ props.server.name }}
+        <div class="title truncate text-xl flex flex-row items-center">
+          <img
+            v-if="hipoleEvent"
+            src="@/assets/hipole/logo.png"
+            width="26"
+            class="mr-1"
+          />
+          <div
+            v-if="hipoleEvent"
+            class="font-bold text-sm rounded-md px-2 mr-2 text-nowrap pt-0.5"
+            :style="{
+              background: hipoleEventColors[hipoleTier][0],
+              color: hipoleEventColors[hipoleTier][1],
+            }"
+          >
+            {{ $t(`servers.hipole${hipoleTier}`).toUpperCase() }}
+          </div>
+          <div class="truncate w-full">{{ props.server.name }}</div>
         </div>
       </mdui-tooltip>
-      <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right">
-        {{ trackDisp(props.server.track.id) }}
+      <div class="text-sm opacity-70 mb-1 w-[20.5rem] text-right text-nowrap">
+        <span
+          v-if="props.server.offline"
+          style="font-family: Consolas, monospace"
+        >
+          {{ `${props.server.ip_address}:${props.server.tcp_port}` }}
+        </span>
+        <span v-else>{{ getTrackDisplay(props.server.track.id) }}</span>
       </div>
     </div>
     <div class="flex flex-row justify-between items-center w-full">

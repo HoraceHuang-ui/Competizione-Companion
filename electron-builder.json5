@@ -41,6 +41,7 @@
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   extraResources: [
-    "src/assets/hipole/*"
+    "src/assets/hipole/*",
+    "src/assets/carLogos/*"
   ]
 }

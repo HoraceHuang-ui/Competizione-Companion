@@ -5,6 +5,7 @@
     "status": "Lobby Server Status",
     "servers": "Server List",
     "setup": "Setup Management",
+    "bop": "LFM BoP",
     "settings": "Settings",
     "launchACC": "Launch ACC",
     "cancel": "Cancel",
@@ -17,6 +18,8 @@
     "update": "Update",
     "skipCurVersion": "Skip this version",
     "checkUpdFail": "Failed to Check for Updates",
+    "listSeparator": ", ",
+    "clickToSet": "Click to Set",
     "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
   },
   "status": {
@@ -45,6 +48,13 @@
     "seriesPlaceholder": "Select Series",
     "private": "Private",
     "helpTitle": "ACC Connector Tutorial",
+    "hipoleServersList": "HiPole Servers List",
+    "hipoleServerDownMsg": "Lobby servers are down! Here is a list of common HiPole servers",
+    "hipoleRookie": "ROOKIE",
+    "hipoleBronze": "BRONZE",
+    "hipoleSilver": "SILVER",
+    "hipoleGold": "GOLD",
+    "hipolePlatinum": "PLATINUM",
     "help": {
       "1_1": "Make sure ACC Connector is installed and ACC is closed.",
       "1_2": "Download ACC Connector",
@@ -149,7 +159,7 @@
         "sum": "Looking from above, toe-out is negative, toe-in is positive.",
         "inc": "Increasing front toe makes the outer tyre steer more than the inner, improving front-end response; but reduces mid-corner grip and can cause understeer.",
         "dec": "Decreasing front toe makes the inner tyre steer more than the outer, improving initial steering response and weight transfer reaction, but reduces initial response and sensitivity.",
-        "notes": "Generally, rear toe is not adjusted."
+        "notes": "Generally, slight changes in rear toe based on existing setups are OK."
       },
       "caster": {
         "name": "Caster",
@@ -261,28 +271,28 @@
         "sum": "Adjusts the compression rate of the springs during weight transfer under acceleration and braking.",
         "inc": "Helps reduce body dive, reduces added response during pedal operation, and increases consistency; but also reduces pitch limit.",
         "dec": "Helps increase body dive, amplifies response during pedal operation; but increases body dynamic changes and reduces consistency.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "bumpFast": {
         "name": "Fast Bump",
         "sum": "Adjusts the compression rate of the springs when encountering small bumps or kerbs.",
         "inc": "Suppresses initial body dive, increases body support, and can slightly reduce bouncing from bumps; but reduces grip limit and makes overloading easier.",
         "dec": "Increases initial body dive, raises overall pitch limit; but makes the body more relaxed and increases inertia.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "reboundSlow": {
         "name": "Rebound",
         "sum": "Adjusts the rebound rate of the springs during weight transfer under acceleration and braking.",
         "inc": "Helps reduce body lift, reduces added response during pedal operation, and increases consistency; but also reduces pitch limit.",
         "dec": "Helps increase body lift, amplifies response during pedal operation; but increases body dynamic changes and reduces consistency.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "reboundFast": {
         "name": "Fast Rebound",
         "sum": "Adjusts the rebound rate of the springs after encountering small bumps or kerbs.",
         "inc": "Suppresses initial body lift, improves dynamic consistency, and increases body contact with the ground; but can cause the tyres to bounce if over-suppressed on bumpy surfaces.",
         "dec": "Increases initial body lift, weakens the dynamic binding between tyres and body, improving ground contact and slightly reducing bouncing from bumps; but makes the body more relaxed and increases inertia.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "rideHeight": {
         "name": "Ride Height",
@@ -321,6 +331,31 @@
       }
     }
   },
+  "bop":{
+    "byCar": "By Car",
+    "byTrack": "By Track",
+    "car": "Car",
+    "track": "Track",
+    "year": "Year",
+    "restrictor": "Restrictor",
+    "ballast": "Ballast",
+    "saveToGUI": "Save to ACC Dedicated Server GUI",
+    "dialogTitle": "Save as Preset",
+    "dialogDesc1Pref": "You need to install",
+    "dialogDesc1Suff": "to use this feature.",
+    "dialogDesc2": "Please restart ACC Dedicated Server GUI after saving to load the preset.",
+    "pathToExe": "Path to ACC Dedicated Server GUI.exe:",
+    "currentSelect": "Currently selected:",
+    "clickToSelect": "Click to select EXE",
+    "select": "Select",
+    "reselect": "Reselect",
+    "presetName": "Preset Name:",
+    "newPreset": "New Preset",
+    "fileInputPlaceholder": "Enter file name",
+    "fileSelectPlaceholder": "Select preset file",
+    "fileSelectTitle": "Select ACC Dedicated Server GUI.exe",
+    "presetSaved": "Preset saved"
+  },
   "settings": {
     "general": "General",
     "language": "Language",
@@ -332,6 +367,7 @@
     "extracting": "Extracting colors...",
     "deleteBg": "Delete background image",
     "setBg": "Set a background image and extract theme colors",
+    "bgOpacity": "UI Opacity",
     "bgSelectTitle": "Select a Background Image",
     "bgSelectFileType": "Image Files",
     "reset": "Reset All Settings",
@@ -344,6 +380,10 @@
     "dispEnFull": "Full Name",
     "dispEnShort": "Short Name",
     "dispLocalShort": "Localized Short Name",
+    "favCarsTracks": "Favorite Cars & Tracks",
+    "favCarsTracksTooltip": "Favorite cars and tracks will be pinned to the top of all related lists",
+    "favCars": "Favorite Cars",
+    "favTracks": "Favorite Tracks",
     "paramsEn": "Show Parameters in English",
     "alwaysViewOnly": "Always Open Setups in View Only Mode",
     "about": "About",
@@ -364,24 +404,44 @@
     "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
   },
   "cars": {
+    "amr_v12_vantage_gt3": "AMR V12",
     "amr_v8_vantage_gt3": "AMR V8",
+    "audi_r8_lms": "R8",
+    "audi_r8_lms_evo": "R8 Evo",
     "audi_r8_lms_evo_ii": "R8 Evo2",
+    "bentley_continental_gt3_2016": "Bentley 2016",
     "bentley_continental_gt3_2018": "Bentley 2018",
     "bmw_m4_gt3": "BMW M4",
+    "bmw_m6_gt3": "BMW M6",
     "ferrari_296_gt3": "Ferrari 296",
+    "ferrari_488_gt3": "Ferrari 488",
+    "ferrari_488_gt3_evo": "Ferrari 488 Evo",
     "ford_mustang_gt3": "Mustang",
+    "honda_nsx_gt3": "NSX",
     "honda_nsx_gt3_evo": "NSX Evo",
+    "jaguar_g3": "Jaguar G3",
+    "lamborghini_gallardo_rex": "Gallardo R-EX",
+    "lamborghini_huracan_gt3": "Huracán",
+    "lamborghini_huracan_gt3_evo": "Huracán Evo",
     "lamborghini_huracan_gt3_evo2": "Lambo Evo2",
     "lexus_rc_f_gt3": "Lexus RC F",
+    "mclaren_650s_gt3": "McLaren 650S",
+    "mclaren_720s_gt3": "McLaren 720S",
     "mclaren_720s_gt3_evo": "McLaren 720S Evo",
+    "mercedes_amg_gt3": "AMG 2015",
     "mercedes_amg_gt3_evo": "AMG 2020",
-    "nissan_gt_r_gt3_2018": "Nissan GT-R",
+    "nissan_gt_r_gt3_2017": "GT-R 2017",
+    "nissan_gt_r_gt3_2018": "GT-R 2018",
+    "porsche_991_gt3_r": "991",
+    "porsche_991ii_gt3_r": "991.2",
     "porsche_992_gt3_r": "992 R",
     "alpine_a110_gt4": "Alpine A110",
     "amr_v8_vantage_gt4": "AMR V8",
     "audi_r8_gt4": "Audi R8",
+    "bmw_m4_gt4": "BMW M4",
     "chevrolet_camaro_gt4r": "Camaro",
     "ginetta_g55_gt4": "Ginetta G55",
+    "ktm_xbow_gt4": "KTM X-Bow GT4",
     "maserati_mc_gt4": "Maserati GT MC",
     "mclaren_570s_gt4": "McLaren 570S",
     "mercedes_amg_gt4": "AMG",

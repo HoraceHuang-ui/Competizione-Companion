@@ -5,6 +5,7 @@
     "status": "Lobby 服务器状态",
     "servers": "服务器列表",
     "setup": "调校管理",
+    "bop": "LFM BoP",
     "settings": "设置",
     "launchACC": "启动 ACC",
     "cancel": "取消",
@@ -17,6 +18,8 @@
     "update": "更新",
     "skipCurVersion": "跳过此版本",
     "checkUpdFail": "检查更新失败",
+    "listSeparator": "、",
+    "clickToSet": "点击设置",
     "unknownFail": "出错了！请按Ctrl+Shift+i，在顶部切换到“控制台”，然后截图并在GitHub仓库创建一个 Issue 或联系开发者QQ：3214442497 反映情况，感谢理解！"
   },
   "status": {
@@ -45,6 +48,13 @@
     "seriesPlaceholder": "请选择组别",
     "private": "有密码",
     "helpTitle": "ACC Connector 使用说明",
+    "hipoleServersList": "嗨跑服务器列表",
+    "hipoleServerDownMsg": "Lobby 服务器炸啦！以下是嗨跑准入服列表，可直接连接",
+    "hipoleRookie": "新手",
+    "hipoleBronze": "青铜",
+    "hipoleSilver": "白银",
+    "hipoleGold": "黄金",
+    "hipolePlatinum": "铂金",
     "help": {
       "1_1": "请确保 ACC Connector 已安装，并退出 ACC。",
       "1_2": "下载 ACC Connector",
@@ -149,7 +159,7 @@
         "sum": "从车顶往下看轮胎呈外八字就是负束角，内八字是正束角。",
         "inc": "调高前轮束角会使外侧轮胎转向比内侧多，可增加前轴指向性；但会导致弯心抓地衰减而出现转向不足。",
         "dec": "调低前轮束角会使内侧轮胎转向比外侧多，可以增加前轴对转向输入的反应，但会减少初段输入指向性和对重心转移的反应。",
-        "notes": "一般不调后轮束角。"
+        "notes": "对于后轮束角，基于成品调校作微调即可。"
       },
       "caster": {
         "name": "主销倾角",
@@ -261,28 +271,28 @@
         "sum": "调整弹簧在加减速时的重心转移时压缩的速率。",
         "inc": "有助于减少车身下潜，减少在踏板操作时增加的反应、增加一致性；但同时会降低俯仰上限。",
         "dec": "有助于增加车身下潜，踏板操作时增加的反应会放大；但车身动态变化会较大，导致一致性较弱。",
-        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是前轴最低、后轴最高。"
+        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是压缩最小、回弹最高。"
       },
       "bumpFast": {
         "name": "快速压缩阻尼",
         "sum": "调整弹簧遇到细碎颠簸或吃路肩时压缩的速率。",
         "inc": "抑制初段的车身下潜、增加车身的支撑，也可以稍微缓解路面颠簸而导致的弹跳；但会降低抓地上限，导致容易超载。",
         "dec": "增加初段的车身下潜，提升整体的俯仰上限；但车身会较松弛，惯量会加大。",
-        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是前轴最低、后轴最高。"
+        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是压缩最小、回弹最高。"
       },
       "reboundSlow": {
         "name": "回弹阻尼",
         "sum": "调整弹簧在加减速时的重心转移时回弹的速率。",
         "inc": "有助于减弱车身上抬，减少在踏板操作时增加的反应，增加一致性；但同时会减弱俯仰上限。",
         "dec": "有助增加车身上抬，踏板操作时增加的反应会放大；但车身动态变化会较大，导致一致性较弱。",
-        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是前轴最低、后轴最高。"
+        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是压缩最小、回弹最高。"
       },
       "reboundFast": {
         "name": "快速回弹阻尼",
         "sum": "调整弹簧遇到细碎颠簸或吃路肩后回弹的速率。",
         "inc": "抑制初段的车身上抬，提高动态一致性、增加车身的接地；但在路面颠簸时容易因动态过度抑制而导致轮胎带动车身弹跳。",
         "dec": "增加初段的车身上抬，轮胎因和车身动态的绑定减弱而更接地，可以稍微缓解路面颠簸而导致的弹跳；但车身会较松弛，惯量会加大。",
-        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是前轴最低、后轴最高。"
+        "notes": "当前ACC meta（即物理特性导致的调校秘诀），阻尼的基础设置一般都是压缩最小、回弹最高。"
       },
       "rideHeight": {
         "name": "车高",
@@ -321,6 +331,31 @@
       }
     }
   },
+  "bop":{
+    "byCar": "按车型",
+    "byTrack": "按赛道",
+    "car": "车型",
+    "track": "赛道",
+    "year": "年份",
+    "restrictor": "限气",
+    "ballast": "增减重",
+    "saveToGUI": "保存至 ACC Dedicated Server GUI",
+    "dialogTitle": "保存为预设",
+    "dialogDesc1Pref": "需先安装",
+    "dialogDesc1Suff": "以使用本功能。",
+    "dialogDesc2": "保存后请重启 ACC Dedicated Server GUI 以加载预设。",
+    "pathToExe": "ACC Dedicated Server GUI.exe 路径：",
+    "currentSelect": "当前已选择：",
+    "clickToSelect": "点击选择文件",
+    "select": "选择",
+    "reselect": "重新选择",
+    "presetName": "预设名：",
+    "newPreset": "新预设",
+    "fileInputPlaceholder": "请输入文件名",
+    "fileSelectPlaceholder": "请选择预设文件",
+    "fileSelectTitle": "请选择 ACC Dedicated Server GUI.exe",
+    "presetSaved": "预设已保存"
+  },
   "settings": {
     "general": "通用",
     "language": "语言",
@@ -331,6 +366,7 @@
     "extracting": "正在提取……",
     "deleteBg": "删除背景图片",
     "setBg": "设置背景图并提取主题色",
+    "bgOpacity": "UI 不透明度",
     "bgSelectTitle": "选择背景图片",
     "bgSelectFileType": "图片",
     "minToTray": "最小化到托盘",
@@ -344,6 +380,10 @@
     "dispEnFull": "英文全写",
     "dispEnShort": "英文简写",
     "dispLocalShort": "中文简写",
+    "favCarsTracks": "车型、赛道收藏",
+    "favCarsTracksTooltip": "收藏的车型和赛道会在所有相关列表中置顶显示",
+    "favCars": "车型收藏",
+    "favTracks": "赛道收藏",
     "paramsEn": "参数显示英文",
     "alwaysViewOnly": "导入时默认仅查看",
     "about": "关于",
@@ -364,24 +404,44 @@
     "thanksMsg": "感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，是你们的支持让这个项目越来越好"
   },
   "cars": {
+    "amr_v12_vantage_gt3": "马丁 V12",
     "amr_v8_vantage_gt3": "马丁 V8",
+    "audi_r8_lms": "奥迪 R8",
+    "audi_r8_lms_evo": "奥迪 R8 Evo",
     "audi_r8_lms_evo_ii": "奥迪 R8 Evo2",
-    "bentley_continental_gt3_2018": "宾利欧陆 2018",
+    "bentley_continental_gt3_2016": "宾利欧陆 '16",
+    "bentley_continental_gt3_2018": "宾利欧陆 '18",
     "bmw_m4_gt3": "宝马 M4",
+    "bmw_m6_gt3": "宝马 M6",
     "ferrari_296_gt3": "法拉利 296",
+    "ferrari_488_gt3": "法拉利 488",
+    "ferrari_488_gt3_evo": "法拉利 488 Evo",
     "ford_mustang_gt3": "福特野马",
+    "honda_nsx_gt3": "本田 NSX",
     "honda_nsx_gt3_evo": "本田 NSX Evo",
+    "jaguar_g3": "捷豹 G3",
+    "lamborghini_gallardo_rex": "盖拉多 R-EX",
+    "lamborghini_huracan_gt3": "兰博小牛",
+    "lamborghini_huracan_gt3_evo": "兰博 Evo",
     "lamborghini_huracan_gt3_evo2": "兰博 Evo2",
     "lexus_rc_f_gt3": "凌志 RC F",
+    "mclaren_650s_gt3": "迈凯伦 650S",
+    "mclaren_720s_gt3": "迈凯伦 720S",
     "mclaren_720s_gt3_evo": "迈凯伦 720S Evo",
-    "mercedes_amg_gt3_evo": "奔驰 AMG 2020",
-    "nissan_gt_r_gt3_2018": "日产 GT-R",
+    "mercedes_amg_gt3": "奔驰 AMG '15",
+    "mercedes_amg_gt3_evo": "奔驰 AMG '20",
+    "nissan_gt_r_gt3_2017": "日产 GT-R '17",
+    "nissan_gt_r_gt3_2018": "日产 GT-R '18",
+    "porsche_991_gt3_r": "保时捷 991",
+    "porsche_991ii_gt3_r": "保时捷 991.2",
     "porsche_992_gt3_r": "保时捷 992",
     "alpine_a110_gt4": "Alpine A110",
     "amr_v8_vantage_gt4": "马丁 V8",
     "audi_r8_gt4": "奥迪 R8",
+    "bmw_m4_gt4": "宝马 M4",
     "chevrolet_camaro_gt4r": "雪佛兰科迈罗",
-    "ginetta_g55_gt4": "Ginetta GS5",
+    "ginetta_g55_gt4": "Ginetta G55",
+    "ktm_xbow_gt4": "KTM X-Bow",
     "maserati_mc_gt4": "玛莎拉蒂 GT MC",
     "mclaren_570s_gt4": "迈凯伦 570S",
     "mercedes_amg_gt4": "奔驰 AMG",

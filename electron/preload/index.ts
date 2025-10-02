@@ -74,6 +74,12 @@ contextBridge.exposeInMainWorld('fs', {
   ) => {
     return ipcRenderer.invoke('fs:setupFile', car, track, fileName, writeVal)
   },
+  presetList: (exePath: string) => {
+    return ipcRenderer.invoke('fs:presetList', exePath)
+  },
+  presetFile: (exePath: string, presetName: string, writeVal: string) => {
+    return ipcRenderer.invoke('fs:presetFile', exePath, presetName, writeVal)
+  },
 })
 
 contextBridge.exposeInMainWorld('brotli', {
@@ -91,6 +97,15 @@ contextBridge.exposeInMainWorld('dialog', {
   },
   showAndCopy: async options => {
     return await ipcRenderer.invoke('dialog:showAndCopy', options)
+  },
+})
+
+contextBridge.exposeInMainWorld('img', {
+  base64ToImg: async (base64Str: string) => {
+    return await ipcRenderer.invoke('img:base64ToImg', base64Str)
+  },
+  getBgBase64: () => {
+    return ipcRenderer.invoke('img:getBgBase64')
   },
 })
 

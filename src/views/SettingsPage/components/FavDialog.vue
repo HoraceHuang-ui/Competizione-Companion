@@ -83,7 +83,7 @@ const confirm = () => {
         {{ getCarDisplay([car, undefined]) }}
         <img
           slot="icon"
-          :src="`../../../../src/assets/carLogos/${getCarByKey(car)?.manufacturer}.png`"
+          :src="`../../src/assets/carLogos/${getCarByKey(car)?.manufacturer}.png`"
           class="w-6 h-6"
         />
       </mdui-chip>

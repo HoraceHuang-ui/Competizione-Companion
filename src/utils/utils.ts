@@ -201,12 +201,19 @@ export const sortCars = (group = 'GT3') => {
   const store = useStore()
   const favCars = store.general.favCars[group]
   const list = Object.entries(carData[group])
-  return list.sort((a, b) => {
+  return list.sort((a: [string, any], b: [string, any]) => {
     const aFav = favCars.includes(a[0]) ? 0 : 1
     const bFav = favCars.includes(b[0]) ? 0 : 1
     if (aFav !== bFav) {
       return aFav - bFav
     }
+
+    const aComp = a[1].competitive ? 0 : 1
+    const bComp = b[1].competitive ? 0 : 1
+    if (aComp !== bComp) {
+      return aComp - bComp
+    }
+
     return getCarDisplay(a) - getCarDisplay(b)
   })
 }

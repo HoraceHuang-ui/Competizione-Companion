@@ -4,7 +4,7 @@ import '@mdui/icons/check--rounded.js'
 import { snackbar } from 'mdui'
 import '@mdui/icons/location-on--rounded.js'
 import { translate } from '@/i18n'
-import { getCarDisplay } from '../../../utils/utils'
+import { getCarByKey } from '../../../utils/utils'
 import TrackSelector from '@/components/TrackSelector.vue'
 
 const props = defineProps({
@@ -212,7 +212,7 @@ const closeDialog = () => {
       >
       </mdui-text-field>
       <div class="mt-2 opacity-80">
-        {{ $t('setup.carFromCode') + getCarDisplay([car, undefined]) }}
+        {{ $t('setup.carFromCode') + (getCarByKey(car)?.name || '') }}
       </div>
       <TrackSelector
         v-model="track"

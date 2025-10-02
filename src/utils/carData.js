@@ -611,7 +611,7 @@ const data = {
     alpine_a110_gt4: {
       id: 50,
       name: 'Alpine A110 GT4',
-      shortName: 'Alpine A110',
+      shortName: 'A110',
       manufacturer: 'alpine',
       tirePressureMin: 17,
       casterFunc: v => (v * (13.7 - 7.3)) / 34 + 7.3,
@@ -628,7 +628,7 @@ const data = {
     amr_v8_vantage_gt4: {
       id: 51,
       name: 'AMR V8 Vantage GT4',
-      shortName: 'AMR V8',
+      shortName: 'V8',
       manufacturer: 'amr',
       tirePressureMin: 17,
       casterFunc: v => v * 0.18 + 10.7,
@@ -645,7 +645,7 @@ const data = {
     audi_r8_gt4: {
       id: 52,
       name: 'Audi R8 LMS GT4',
-      shortName: 'Audi R8',
+      shortName: 'R8',
       manufacturer: 'audi',
       tirePressureMin: 17,
       casterFunc: v => (v * (13.3 - 6.6)) / 34 + 6.6,
@@ -662,7 +662,7 @@ const data = {
     bmw_m4_gt4: {
       id: 53,
       name: 'BMW M4 GT4',
-      shortName: 'BMW M4',
+      shortName: 'M4',
       manufacturer: 'bmw',
       tirePressureMin: 17,
       casterFunc: v => 8.4,
@@ -696,7 +696,7 @@ const data = {
     ginetta_g55_gt4: {
       id: 56,
       name: 'Ginetta G55 GT4',
-      shortName: 'Ginetta G55',
+      shortName: 'G55',
       manufacturer: 'ginetta',
       tirePressureMin: 17,
       casterFunc: v => v * 0.2625 + 3.7,
@@ -713,7 +713,7 @@ const data = {
     ktm_xbow_gt4: {
       id: 57,
       name: 'KTM X-Bow GT4',
-      shortName: 'KTM X-Bow',
+      shortName: 'X-Bow',
       manufacturer: 'ktm',
       tirePressureMin: 17,
       casterFunc: v => v * 0.1925 + 1.7,
@@ -730,7 +730,7 @@ const data = {
     maserati_mc_gt4: {
       id: 58,
       name: 'Maserati GranTurismo MC GT4',
-      shortName: 'Maserati MC',
+      shortName: 'GT MC',
       manufacturer: 'maserati',
       tirePressureMin: 17,
       casterFunc: v => v * 0.22 + 3.4,
@@ -747,7 +747,7 @@ const data = {
     mclaren_570s_gt4: {
       id: 59,
       name: 'McLaren 570S GT4',
-      shortName: 'McLaren 570S',
+      shortName: '570S',
       manufacturer: 'mclaren',
       tirePressureMin: 17,
       casterFunc: v => v * 0.245 + 5.3,

@@ -201,22 +201,30 @@ async function createWindow() {
     return result.data
   })
 
-  /**
-   * 在一个目录中查找与目标名称大小写不敏感相等的真实文件夹名
-   */
-  const fs = require('fs')
-  function findCaseInsensitiveName(parentDir, targetName) {
+  function findOrCreateCaseInsensitiveName(
+    parentDir: string,
+    targetName: string,
+  ): string {
+    const fs = require('fs')
+    // Ensure parentDir exists
+    if (!fs.existsSync(parentDir)) {
+      fs.mkdirSync(parentDir, { recursive: true })
+    }
     const items = fs.readdirSync(parentDir, { withFileTypes: true })
     const lowerTarget = targetName.toLowerCase()
 
     for (const item of items) {
       if (item.isDirectory() && item.name.toLowerCase() === lowerTarget) {
-        return item.name // 返回真实名字
+        return item.name // Return actual name
       }
     }
 
-    return null // 找不到
+    // Not found, create it
+    const newDir = path.join(parentDir, targetName)
+    fs.mkdirSync(newDir)
+    return targetName
   }
+
   ipcMain.handle('fs:setupList', async (_event, car, track) => {
     const setupsDir = path.join(
       os.homedir(),
@@ -228,11 +236,11 @@ async function createWindow() {
       return []
     }
 
-    const realCar = findCaseInsensitiveName(setupsDir, car)
+    const realCar = findOrCreateCaseInsensitiveName(setupsDir, car)
     if (!realCar) {
       fs.mkdirSync(path.join(setupsDir, car), { recursive: true })
     }
-    const realTrack = findCaseInsensitiveName(
+    const realTrack = findOrCreateCaseInsensitiveName(
       path.join(setupsDir, realCar || car),
       track,
     )
@@ -255,8 +263,8 @@ async function createWindow() {
         'Assetto Corsa Competizione',
         'Setups',
       )
-      const realCar = findCaseInsensitiveName(setupsDir, car)
-      const realTrack = findCaseInsensitiveName(
+      const realCar = findOrCreateCaseInsensitiveName(setupsDir, car)
+      const realTrack = findOrCreateCaseInsensitiveName(
         path.join(setupsDir, realCar || car),
         track,
       )

@@ -67,7 +67,7 @@ const confirm = () => {
         <ChipSelect
           v-model="curGroup"
           chip-class="mx-2 mb-2"
-          dropdown-placement="top"
+          dropdown-placement="bottom"
           :items="['GT3', 'GT4', 'GTC', 'TCX']"
           @select="onSelectGroup"
         >

@@ -159,7 +159,7 @@
         "sum": "Looking from above, toe-out is negative, toe-in is positive.",
         "inc": "Increasing front toe makes the outer tyre steer more than the inner, improving front-end response; but reduces mid-corner grip and can cause understeer.",
         "dec": "Decreasing front toe makes the inner tyre steer more than the outer, improving initial steering response and weight transfer reaction, but reduces initial response and sensitivity.",
-        "notes": "Generally, rear toe is not adjusted."
+        "notes": "Generally, slight changes in rear toe based on existing setups are OK."
       },
       "caster": {
         "name": "Caster",
@@ -271,28 +271,28 @@
         "sum": "Adjusts the compression rate of the springs during weight transfer under acceleration and braking.",
         "inc": "Helps reduce body dive, reduces added response during pedal operation, and increases consistency; but also reduces pitch limit.",
         "dec": "Helps increase body dive, amplifies response during pedal operation; but increases body dynamic changes and reduces consistency.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "bumpFast": {
         "name": "Fast Bump",
         "sum": "Adjusts the compression rate of the springs when encountering small bumps or kerbs.",
         "inc": "Suppresses initial body dive, increases body support, and can slightly reduce bouncing from bumps; but reduces grip limit and makes overloading easier.",
         "dec": "Increases initial body dive, raises overall pitch limit; but makes the body more relaxed and increases inertia.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "reboundSlow": {
         "name": "Rebound",
         "sum": "Adjusts the rebound rate of the springs during weight transfer under acceleration and braking.",
         "inc": "Helps reduce body lift, reduces added response during pedal operation, and increases consistency; but also reduces pitch limit.",
         "dec": "Helps increase body lift, amplifies response during pedal operation; but increases body dynamic changes and reduces consistency.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "reboundFast": {
         "name": "Fast Rebound",
         "sum": "Adjusts the rebound rate of the springs after encountering small bumps or kerbs.",
         "inc": "Suppresses initial body lift, improves dynamic consistency, and increases body contact with the ground; but can cause the tyres to bounce if over-suppressed on bumpy surfaces.",
         "dec": "Increases initial body lift, weakens the dynamic binding between tyres and body, improving ground contact and slightly reducing bouncing from bumps; but makes the body more relaxed and increases inertia.",
-        "notes": "Current ACC meta: base damper settings are usually lowest at the front, highest at the rear."
+        "notes": "Current ACC meta: base damper settings are usually lowest for bumps, highest for rebounds."
       },
       "rideHeight": {
         "name": "Ride Height",

@@ -586,7 +586,7 @@ const setBgImage = () => {
                     >
                   </div>
                   <img
-                    src="https://acc-status.jonatan.net/favicon.ico"
+                    src="../../assets/acc-status.ico"
                     class="transition-all mx-4 inline px-2 py-1.5 mb-0.5 rounded-full opacity-55 hover:opacity-100 bg-[rgb(var(--mdui-color-primary-dark))]"
                     width="40"
                   />

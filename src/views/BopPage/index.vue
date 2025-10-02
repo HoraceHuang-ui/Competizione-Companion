@@ -178,19 +178,19 @@ onMounted(() => {
 
       <Transition name="fade" mode="out-in">
         <div
-          v-if="loading"
+          v-if="loading || !bopData || error"
           class="size-full flex flex-row justify-center items-center absolute pt-[120px]"
         >
           <Transition name="fade" mode="out-in">
             <mdui-circular-progress v-if="loading"></mdui-circular-progress>
-            <div v-else-if="!bopData">
+            <div v-else-if="!bopData || error">
               {{ $t('servers.noData') }}
             </div>
           </Transition>
         </div>
       </Transition>
       <Transition name="fade-up">
-        <ScrollWrapper v-if="!loading && bopData">
+        <ScrollWrapper v-if="!loading && bopData && !error">
           <div class="pb-6" v-if="curCategoryMethod === 'byTrack'">
             <div
               class="flex flex-row justify-between mx-4 my-2 px-6 py-3 rounded-full"

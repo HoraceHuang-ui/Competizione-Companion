@@ -42,14 +42,22 @@ const filters = ref(JSON.parse(JSON.stringify(defaultFilters)))
 const reqData = async () => {
   showingHipoleOffline.value = false
   let offline = sessionStorage.serverDown ? undefined : false
-  if (offline === undefined) {
-    loading.value = true
-    let resp = await fetch('https://acc-status.jonatan.net/api/v2/acc/status', {
-      method: 'GET',
-    })
-    resp = await resp.json()
-    sessionStorage.serverDown = !resp.status
-    offline = resp.status === 0
+  try {
+    if (offline === undefined) {
+      loading.value = true
+      let resp = await fetch(
+        'https://acc-status.jonatan.net/api/v2/acc/status',
+        {
+          method: 'GET',
+        },
+      )
+      resp = await resp.json()
+      sessionStorage.serverDown = !resp.status
+      offline = resp.status === 0
+    }
+  } catch {
+    loading.value = false
+    return
   }
   loading.value = true
   const params = obj2Param({

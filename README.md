@@ -14,10 +14,13 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 - ☑️ Compares two setups with clear indications on differences.
 - ☑️ Supports sharing a setup via a Setup Code.
 - ☑️ Offers comprehensive summay, effects on increase/decrease, and general suggestions for each setup parameter, helping those who want to improves further to step forward. Technical support from DEA @AlvinW52610.
+- ☑️ Available to view latest LFM BoPs for GT3/GT4 series, categorized by track or by car.
+- ☑️ LFM BoPs can be exported in ACC Dedicated Server GUI format.
+- ☑️ Available to favorite cars & tracks, which will be moved to the top of all related lists.
 - ☑️ Chinese / English supported.
 - ☑️ Light/dark mode & following system supported.
 - ☑️ Available to set car display preferences between full name & short name, e.g. `Lamborghini Huracán GT3 EVO2`/`Lambo Evo2`.
-- ☑️ Available to set track display preferences between full name & short name, e.g. `Autodromo Enzo e Dino Ferrari`/`Imola`。
+- ☑️ Available to set track display preferences between full name & short name, e.g. `Autodromo Enzo e Dino Ferrari`/`Imola`.
 - ☑️ Available to set the theme color, with support for extracting colors from a custom background image.
 - 🔳 To support setting up executable paths to retrieve along with launching ACC (telemetry, accelerator, etc.).
 - 🔳 To support importing a folder or a zip file and batch loading setups.
@@ -28,18 +31,20 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 ## Screenshots
 <details>
   <summary>Click to expand</summary>
+  
+  <img alt="QQ_1759474892729" src="https://github.com/user-attachments/assets/5a9dfe68-4e0c-4fef-8ae4-448be91d81e0" />
 
-  <img width="1500" height="920" alt="QQ_1755274810942" src="https://github.com/user-attachments/assets/e03a3131-b553-4e9f-9277-8696ca5ce425" />
+  <img alt="QQ_1759475036183" src="https://github.com/user-attachments/assets/d4052c8d-edb8-4a0b-8e5d-8096ccfb16eb" />
 
-  <img width="1500" height="920" alt="QQ_1755274874514" src="https://github.com/user-attachments/assets/2bcf1b5b-30c2-4f39-83a1-176ac260f3d2" />
+  <img alt="QQ_1759475181179" src="https://github.com/user-attachments/assets/709571cc-4fba-4983-bc03-5b8d703972ce" />
 
-  <img width="1500" height="920" alt="QQ_1755274929362" src="https://github.com/user-attachments/assets/aa3cf3d2-6631-4e37-a4b2-91171b29c0a7" />
+  <img alt="QQ_1759475252645" src="https://github.com/user-attachments/assets/217297b4-c25b-487e-8b52-e68c344d2a23" />
 
-  <img width="1500" height="920" alt="QQ_1755274974066" src="https://github.com/user-attachments/assets/f34b6b01-fd3f-475c-905e-2acb98215a9e" />
+  <img alt="QQ_1759475342125" src="https://github.com/user-attachments/assets/d1723cf5-438d-49d4-83d7-82a7affa6f49" />
 
-  <img width="1500" height="920" alt="QQ_1755274995661" src="https://github.com/user-attachments/assets/e400884a-0d41-4d98-9ca7-49032ea01ce2" />
+  <img alt="QQ_1759475400739" src="https://github.com/user-attachments/assets/2d867482-5944-47b7-b6d0-b19c6625855f" />
 
-  <img width="1500" height="920" alt="QQ_1755275005081" src="https://github.com/user-attachments/assets/08b8b737-36ee-4a62-9400-5e144b56d714" />
+  <img alt="QQ_1759475466871" src="https://github.com/user-attachments/assets/a1fc50ee-9aa9-4436-825d-39213c9c2994" />
 
 </details>
 

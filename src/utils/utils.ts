@@ -88,27 +88,28 @@ export const getCarDisplayById = (carId: number) => {
   return getCarDisplay(getCarById(carId) as [string, any])
 }
 
+export const verCompare = (a: string, b: string) => {
+  const arr1 = a.split('.')
+  const arr2 = b.split('.')
+
+  if (arr1.length != arr2.length) {
+    return 114
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
+      return 1
+    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
+      return -1
+    }
+  }
+  return 0
+}
+
 export const checkUpdate = async (
   curVersion: string = import.meta.env.VITE_APP_VERSION,
 ) => {
   const needsUpdate = (latestStr: string) => {
-    const verCompare = (a: string, b: string) => {
-      const arr1 = a.split('.')
-      const arr2 = b.split('.')
-
-      if (arr1.length != arr2.length) {
-        return 114
-      }
-
-      for (let i = 0; i < arr1.length; i++) {
-        if (parseInt(arr1[i]) > parseInt(arr2[i])) {
-          return 1
-        } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
-          return -1
-        }
-      }
-      return 0
-    }
     return verCompare(latestStr.split(' ')[0], curVersion.split(' ')[0]) > 0
   }
 
@@ -120,7 +121,6 @@ export const checkUpdate = async (
       const resp = res.updInfo
       if (needsUpdate(resp.version)) {
         return resp
-      } else {
       }
     }
   } catch (error) {

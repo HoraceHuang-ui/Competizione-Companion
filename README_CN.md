@@ -10,10 +10,13 @@
 - ☑️ 查询 ACC Lobby 服务器炸没炸。
 - ☑️ 查询多人服务器列表，可一键自动唤起并配置 ACC Connector 以在官方炸服时直连服务器进行多人游戏。
 - ☑️ 内置清晰易懂图文并茂的 ACC Connector 使用教程。
-- ☑️ 赛车调校管理：可【选择文件/拖拽文件/粘贴他人分享的调校码/直接选择车型与赛道后读取游戏文档】进行导入。
+- ☑️ 赛车调校管理：可【选择文件/拖拽文件/粘贴他人分享的调校码/直接选择车型与赛道后读取游戏文档进行导入。
 - ☑️ 导入调校后可快速载入游戏、查看各项参数，并同屏对比直观展现两份调校的参数异同。
 - ☑️ 支持通过调校码分享调校。
 - ☑️ 每项参数均有清晰易懂的概述、调高/调低效果及一般建议，帮助想要进步的车手进一步提升。技术支持来自 DEA @AlvinW52610。
+- ☑️ 可查看 GT3/GT4 组别的最新 LFM BoP，可按赛道或按车型查看。
+- ☑️ 可将 LFM BoP 一键导出为 ACC Dedicated Server GUI Preset 格式。
+- ☑️ 可收藏车型/赛道并在所有列表中置顶。
 - ☑️ 支持中文/英文显示。
 - ☑️ 支持设置亮暗色或跟随系统。
 - ☑️ 可设置车型显示偏好为英文全写/英文简写/中文简写，对应示例：`Lamborghini Huracán GT3 EVO2`/`Lambo Evo2`/`兰博 Evo2`。
@@ -29,17 +32,19 @@
 <details>
   <summary>点击展开</summary>
 
-  <img width="1500" height="920" alt="QQ_1755273423642" src="https://github.com/user-attachments/assets/e05aa9ed-8e78-410e-a60c-1e8c26348759" />
+  <img alt="QQ_1759472845419" src="https://github.com/user-attachments/assets/51c5230f-deb9-4ce8-a2aa-4011f4c02715" />
 
-  <img width="1500" height="920" alt="QQ_1755273457992" src="https://github.com/user-attachments/assets/109c622b-0fa7-4696-9814-1b27e3430b57" />
+  <img alt="QQ_1759473062510" src="https://github.com/user-attachments/assets/b5fb9bbc-f57c-439f-9565-74891b57a11f" />
+  
+  <img alt="QQ_1759473158793" src="https://github.com/user-attachments/assets/d34e7128-42c2-4b5a-badf-1a685ffc0605" />
 
-  <img width="1500" height="920" alt="QQ_1755273533719" src="https://github.com/user-attachments/assets/34093868-704d-4b77-81c8-dbe3820cfad1" />
+  <img alt="QQ_1759473266507" src="https://github.com/user-attachments/assets/13ef90db-f10b-4cfa-8dc5-9cbe7e2c7d00" />
+  
+  <img alt="QQ_1759473435169" src="https://github.com/user-attachments/assets/20a54a36-05a3-44a9-b67b-e47fe1d7e97b" />
 
-  <img width="1500" height="920" alt="QQ_1755273580213" src="https://github.com/user-attachments/assets/d98f0a5b-95aa-4def-ac63-447c8dacb1b3" />
+  <img alt="QQ_1759473348948" src="https://github.com/user-attachments/assets/d41685e1-a0c0-47a5-8ae0-3e9f8a70aa88" />
 
-  <img width="1500" height="920" alt="QQ_1755273728155" src="https://github.com/user-attachments/assets/a8b915b0-b436-4957-aceb-d0585cc4c2ea" />
-
-  <img width="1500" height="920" alt="QQ_1755273638109" src="https://github.com/user-attachments/assets/f8ac8116-3fb7-4323-8e5b-176baa8587a4" />
+  <img alt="QQ_1759473803696" src="https://github.com/user-attachments/assets/ef55ea72-d59f-424c-89b9-8d694ea8b9d7" />
 
 </details>
 

@@ -12,7 +12,7 @@ import { setTheme } from 'mdui'
 import { themeMap } from '@/utils/enums'
 import { translate } from '@/i18n'
 import { marked } from 'marked'
-import { checkUpdate } from '@/utils/utils'
+import { checkUpdate, verCompare } from '@/utils/utils'
 import UpdateDialog from '@/components/UpdateDialog.vue'
 
 const router = useRouter()
@@ -75,6 +75,15 @@ watch(
 )
 
 onMounted(() => {
+  if (
+    verCompare(
+      import.meta.env.VITE_APP_VERSION,
+      store.general.targetVersion || '0.0.0',
+    ) > 0
+  ) {
+    store.general.targetVersion = import.meta.env.VITE_APP_VERSION
+  }
+
   checkUpdate(
     store.general.targetVersion || import.meta.env.VITE_APP_VERSION,
   ).then(resp => {

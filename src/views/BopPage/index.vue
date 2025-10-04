@@ -220,7 +220,7 @@ onMounted(() => {
               <div class="w-[50%] flex flex-row items-center">
                 <img
                   :src="`../../src/assets/carLogos/${getCarById(bop.car_model)?.[1]?.manufacturer}.png`"
-                  class="w-8 h-8 mr-3"
+                  class="w-6 h-6 mr-3"
                 />
                 <div>
                   {{

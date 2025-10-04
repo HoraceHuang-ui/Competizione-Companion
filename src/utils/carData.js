@@ -4,7 +4,7 @@ const data = {
     amr_v12_vantage_gt3: {
       id: 12,
       name: 'AMR V12 Vantage GT3',
-      shortName: 'V12',
+      shortName: 'V12 Vantage',
       manufacturer: 'amr',
       competitive: false,
       tirePressureMin: 20.3,
@@ -28,7 +28,7 @@ const data = {
     amr_v8_vantage_gt3: {
       id: 20,
       name: 'AMR V8 Vantage GT3',
-      shortName: 'V8',
+      shortName: 'V8 Vantage',
       manufacturer: 'amr',
       competitive: true,
       tirePressureMin: 20.3,

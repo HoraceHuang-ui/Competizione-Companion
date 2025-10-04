@@ -80,6 +80,9 @@ contextBridge.exposeInMainWorld('fs', {
   presetFile: (exePath: string, presetName: string, writeVal: string) => {
     return ipcRenderer.invoke('fs:presetFile', exePath, presetName, writeVal)
   },
+  bopJsonFile: (exePath: string, writeVal: string, overwrite: boolean) => {
+    return ipcRenderer.invoke('fs:bopJsonFile', exePath, writeVal, overwrite)
+  },
 })
 
 contextBridge.exposeInMainWorld('brotli', {

@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import '@mdui/icons/attach-file--rounded.js'
 import '@mdui/icons/keyboard-arrow-down--rounded.js'
 import '@mdui/icons/check--rounded.js'
+import '@mdui/icons/help-outline--rounded.js'
 import { useStore } from '@/store'
 import presetTemplate from './presetTemplate'
 import { snackbar } from 'mdui'
@@ -27,6 +28,9 @@ const createFile = ref(false)
 const fileName = ref('')
 const presetContent = ref('')
 const loading = ref(false)
+const exportToPre = ref(true)
+const exportToJson = ref(false)
+const overwriteJson = ref(true)
 
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
@@ -101,7 +105,30 @@ const close = () => {
 }
 
 const confirm = () => {
-  writePreset()
+  if (exportToPre.value) {
+    writePreset()
+  }
+  if (exportToJson.value) {
+    loading.value = true
+    window.fs
+      .bopJsonFile(
+        store.presets.serverExePath,
+        JSON.stringify(formatBopData(props.bop)),
+        overwriteJson.value,
+      )
+      .then(() => {
+        show.value = false
+        snackbar({
+          message: translate(
+            overwriteJson.value ? 'bop.jsonSaved' : 'bop.json1Saved',
+          ),
+          autoCloseDelay: 3000,
+        })
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
 }
 
 watch(show, () => {
@@ -148,7 +175,7 @@ onMounted(() => {
       <p class="mt-1">* {{ $t('bop.dialogDesc2') }}</p>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col overflow-hidden">
       <mdui-divider class="mb-2"></mdui-divider>
       <div class="flex flex-row items-center justify-between">
         <div>{{ $t('bop.pathToExe') }}</div>
@@ -175,7 +202,12 @@ onMounted(() => {
         </mdui-tooltip>
       </div>
       <div class="flex flex-row justify-between items-center mt-2">
-        <div>{{ $t('bop.presetName') }}</div>
+        <mdui-checkbox
+          :checked="exportToPre"
+          :disabled="!store.presets.serverExePath"
+          @change="exportToPre = !exportToPre"
+          >{{ $t('bop.saveAsPreset') }}</mdui-checkbox
+        >
         <div class="flex flex-row items-center">
           <mdui-checkbox
             :checked="createFile"
@@ -186,7 +218,7 @@ onMounted(() => {
                 fileName = ''
               }
             "
-            :disabled="!store.presets.serverExePath"
+            :disabled="!store.presets.serverExePath || !exportToPre"
           >
             {{ $t('bop.newPreset') }}
           </mdui-checkbox>
@@ -197,7 +229,7 @@ onMounted(() => {
             class="h-[40px] w-[260px] cursor-text input"
             :value="fileName"
             @input="fileName = $event.target.value"
-            :disabled="!store.presets.serverExePath"
+            :disabled="!store.presets.serverExePath || !exportToPre"
           ></mdui-text-field>
           <mdui-select
             v-else
@@ -205,7 +237,7 @@ onMounted(() => {
             :placeholder="$t('bop.fileSelectPlaceholder')"
             variant="outlined"
             :value="fileName"
-            :disabled="!store.presets.serverExePath"
+            :disabled="!store.presets.serverExePath || !exportToPre"
           >
             <mdui-icon-keyboard-arrow-down--rounded
               slot="end-icon"
@@ -237,6 +269,36 @@ onMounted(() => {
           </mdui-select>
         </div>
       </div>
+      <div class="flex flex-row justify-between items-center mt-2">
+        <mdui-checkbox
+          :checked="exportToJson"
+          :disabled="!store.presets.serverExePath"
+          @change="exportToJson = !exportToJson"
+          >{{ $t('bop.saveAsJson') }}</mdui-checkbox
+        >
+        <div class="flex flex-row items-center h-[50px]">
+          <div>{{ $t('bop.overwriteJson') }}</div>
+          <mdui-tooltip>
+            <div slot="content">
+              <ul class="list-disc list-outside pl-3">
+                <li>
+                  {{ $t('bop.overwriteNote1') }}
+                </li>
+                <li>
+                  {{ $t('bop.overwriteNote2') }}
+                </li>
+              </ul>
+            </div>
+            <mdui-button-icon>
+              <mdui-icon-help-outline--rounded></mdui-icon-help-outline--rounded>
+            </mdui-button-icon>
+          </mdui-tooltip>
+          <mdui-switch
+            :checked="overwriteJson"
+            @change="overwriteJson = !overwriteJson"
+          ></mdui-switch>
+        </div>
+      </div>
     </div>
 
     <mdui-button slot="action" variant="text" @click="close" class="mr-2">
@@ -247,7 +309,12 @@ onMounted(() => {
       class="font-bold"
       @click="confirm"
       :loading="loading"
-      :disabled="!store.presets.serverExePath || !fileName || loading"
+      :disabled="
+        !store.presets.serverExePath ||
+        loading ||
+        (exportToPre && !fileName) ||
+        (!exportToJson && !exportToPre)
+      "
     >
       {{ $t('general.confirm') }}
     </mdui-button>

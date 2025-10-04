@@ -316,6 +316,27 @@ async function createWindow() {
     },
   )
 
+  ipcMain.handle(
+    'fs:bopJsonFile',
+    async (_event, exePath, writeVal, overwrite = false) => {
+      if (!fs.existsSync(exePath)) {
+        return ''
+      }
+      const cfgDir = path.join(path.dirname(exePath), 'cfg')
+      if (!fs.existsSync(cfgDir)) {
+        fs.mkdirSync(cfgDir)
+      }
+      const bopJsonPath = path.join(
+        cfgDir,
+        overwrite ? 'bop.json' : 'bop_1.json',
+      )
+      if (writeVal) {
+        fs.writeFileSync(bopJsonPath, writeVal, 'utf-8')
+        return writeVal
+      }
+    },
+  )
+
   ipcMain.handle('brotli:compress', async (_event, input) => {
     const buf = Buffer.from(input, 'utf-8')
     const compressed = await brotli.compress(buf, { quality: 5 })

@@ -178,7 +178,7 @@ export const formatBopData = (bop: any[]) => {
 export const isHipole = (name: string) => {
   if (name.startsWith('HiPole.com | ') && name.length >= 16) {
     const event = name.split(' | ')[1].substring(0, 3)
-    return ['RCC', 'TTC', 'MCC', 'RWC', 'HEC'].includes(event)
+    return ['RCC', 'TTC', 'MCC', 'RWC', 'Thr'].includes(event)
       ? event
       : undefined
   }

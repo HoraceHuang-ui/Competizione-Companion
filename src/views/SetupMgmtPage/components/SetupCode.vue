@@ -2,7 +2,6 @@
 import { ref, watch } from 'vue'
 import '@mdui/icons/check--rounded.js'
 import { snackbar } from 'mdui'
-import '@mdui/icons/location-on--rounded.js'
 import { translate } from '@/i18n'
 import { getCarByKey } from '../../../utils/utils'
 import TrackSelector from '@/components/TrackSelector.vue'

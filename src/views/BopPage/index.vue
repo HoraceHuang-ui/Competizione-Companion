@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
-import '@mdui/icons/location-on--rounded.js'
 import { darkModeSettings, trackIndex } from '@/utils/enums'
 import {
   getCarById,

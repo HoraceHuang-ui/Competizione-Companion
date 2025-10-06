@@ -3,6 +3,7 @@ import ChipSelect from '@/components/ChipSelect.vue'
 import { getTrackDisplay, sortTracks } from '@/utils/utils'
 import { trackIndex } from '@/utils/enums'
 import { useStore } from '@/store'
+import '@mdui/icons/location-on--rounded.js'
 
 const store = useStore()
 

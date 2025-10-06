@@ -295,6 +295,7 @@ onMounted(() => {
           </mdui-tooltip>
           <mdui-switch
             :checked="overwriteJson"
+            :disabled="!exportToJson"
             @change="overwriteJson = !overwriteJson"
           ></mdui-switch>
         </div>

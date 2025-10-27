@@ -196,16 +196,22 @@ onMounted(() => {
               v-for="(bop, index) in bopData
                 ?.find(it => it.track_name === curTrack?.value)
                 ?.bop[curSeries].sort((a, b) => {
+                  const carA = getCarById(a.car_model)
+                  const carB = getCarById(b.car_model)
+
                   const favCars = store.general.favCars[curSeries]
-                  const aFav = favCars.includes(getCarById(a.car_model)?.[0])
-                    ? 0
-                    : 1
-                  const bFav = favCars.includes(getCarById(b.car_model)?.[0])
-                    ? 0
-                    : 1
+                  const aFav = favCars.includes(carA?.[0]) ? 0 : 1
+                  const bFav = favCars.includes(carB?.[0]) ? 0 : 1
                   if (aFav !== bFav) {
                     return aFav - bFav
                   }
+
+                  const aComp = carA?.[1]?.competitive ? 0 : 1
+                  const bComp = carB?.[1]?.competitive ? 0 : 1
+                  if (aComp !== bComp) {
+                    return aComp - bComp
+                  }
+
                   return a.ballast - b.ballast
                 })"
               :key="bop.car_model"

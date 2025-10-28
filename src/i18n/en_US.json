@@ -171,8 +171,8 @@
       "steerRatio": {
         "name": "Steer Ratio",
         "sum": "The angle the steering wheel turns for each degree the wheels turn.",
-        "inc": "Makes steering more sensitive.",
-        "dec": "Requires turning the wheel more to make a corner.",
+        "inc": "Requires turning the wheel more to make a corner.",
+        "dec": "Makes steering more sensitive.",
         "notes": "Purely personal preference, set to what feels comfortable."
       },
       "fuel": {

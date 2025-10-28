@@ -16,6 +16,7 @@ export const useStore = defineStore('userStore', {
         GTC: [] as string[],
         TCX: [] as string[],
       },
+      msgId: 0,
     },
     servers: {
       listView: false,

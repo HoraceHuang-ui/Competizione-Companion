@@ -5,6 +5,7 @@ import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
 import '@mdui/icons/balance--rounded.js'
+import '@mdui/icons/close--rounded.js'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
@@ -74,7 +75,21 @@ watch(
   },
 )
 
+const showBulletin = ref(false)
+const bulletin = ref(undefined)
+const queryBulletin = async () => {
+  showBulletin.value = false
+  // const res = await window.axios.get('http://0.0.0.0:5005/bulletin')
+  const res = await window.axios.get('http://120.55.52.240:5005/bulletin')
+  if (res.success && res.msgInfo.id > store.general.msgId) {
+    bulletin.value = res.msgInfo
+    showBulletin.value = true
+    store.general.msgId = res.msgInfo.id
+  }
+}
+
 onMounted(() => {
+  queryBulletin()
   if (
     verCompare(
       import.meta.env.VITE_APP_VERSION,
@@ -285,6 +300,24 @@ onMounted(() => {
     </mdui-layout-main>
 
     <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" show-skip />
+    <mdui-dialog :open="showBulletin">
+      <div
+        slot="header"
+        class="flex flex-row justify-between items-center text-2xl"
+      >
+        <div>{{ bulletin?.title?.[store.settings.general.lang] }}</div>
+        <mdui-button-icon @click="showBulletin = false">
+          <mdui-icon-close--rounded></mdui-icon-close--rounded>
+        </mdui-button-icon>
+      </div>
+      <div
+        class="overflow-y-scroll max-h-[500px] w-[400px] scroll-wrapper-app-vue"
+      >
+        <div
+          v-html="marked(bulletin?.detail?.[store.settings.general.lang] || '')"
+        />
+      </div>
+    </mdui-dialog>
   </mdui-layout>
 </template>
 

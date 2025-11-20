@@ -6,6 +6,7 @@
     "servers": "Server List",
     "setup": "Setup Management",
     "bop": "LFM BoP",
+    "report": "HiPole Reporting",
     "settings": "Settings",
     "launchACC": "Launch ACC",
     "cancel": "Cancel",
@@ -331,7 +332,7 @@
       }
     }
   },
-  "bop":{
+  "bop": {
     "byCar": "By Car",
     "byTrack": "By Track",
     "car": "Car",

@@ -364,6 +364,10 @@
     "jsonSaved": "Saved to bop.json",
     "json1Saved": "Saved to bop_1.json"
   },
+  "report": {
+    "tip": "Due to HiPole Online Reporting Rules, only Simplified Chinese is supported in this page.",
+    "copySuccess": "Report content copied to clipboard."
+  },
   "settings": {
     "general": "General",
     "language": "Language",
@@ -407,7 +411,7 @@
     "donation2Title": "Damn Bro, You Mean for Real?!",
     "donation2Msg": "Many many many thanks for your support! All your donated money will be used for my playing Maimai DX!",
     "donation2Confirm": "It's MaiGO!!!!！",
-    "hipoleTooltip": " · ACC QQ Group: 799836434",
+    "hipoleTooltip": " · ACC QQ Group: 1073093591",
     "hmrTooltip": "HerMess Racing · QQ Group: 826527145",
     "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
   },

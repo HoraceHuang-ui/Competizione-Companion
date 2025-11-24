@@ -14,6 +14,59 @@ export interface OnlineRules {
   lastModified: string
 }
 
+export interface Person {
+  name: string
+  carNo: number
+}
+
+export enum RacePart {
+  P = '练习赛',
+  Q = '排位赛',
+  R = '正赛',
+}
+
+export interface ReportForm {
+  raceName: string
+  reporter: Person
+  reportee: Person
+  round?: number
+  series?: string
+  incidentDesc: string
+  incidentPlace: string
+  rules: OnlineRuleItem[]
+  racePart: RacePart
+}
+
+export const keywords = [
+  '准入',
+  '排位',
+  '飞行',
+  '编队',
+  '限速',
+  '暖胎',
+  '追尾',
+  '维修区',
+  '套圈',
+  '获利',
+  '并排',
+  '变线',
+  '阻挡',
+  '挤压',
+  '抽头',
+  '刹车',
+  '防守',
+  '进攻',
+  '超车',
+  '安全距离',
+  '内线',
+  '失控',
+  '返回赛道',
+  '蓝旗',
+  '让车',
+  '冒用',
+  '代替',
+]
+
 export const onlineRules: OnlineRules = {
   title: '嗨跑赛车线上联赛竞技规则',
   lastModified: '本规则最后更新于2025.11.05',
@@ -1220,35 +1273,30 @@ export const onlineRules: OnlineRules = {
               text: '处罚等级一：罚时5秒/10秒，扣除驾照分0分，如有重复违规可累加',
               layer: 3,
               children: [],
-              penalties: [1],
             },
             {
               id: '5.1.3',
               text: '处罚等级二：罚时5秒/10秒/25秒，扣除驾照分0-1分，如有重复违规可累加',
               layer: 3,
               children: [],
-              penalties: [2],
             },
             {
               id: '5.1.4',
               text: '处罚等级三：罚时25秒/50秒，扣除驾照分1-3分，2次重复违规提升处罚至处罚等级四',
               layer: 3,
               children: [],
-              penalties: [3, 4],
             },
             {
               id: '5.1.5',
               text: '处罚等级四：取消本站成绩，扣除驾照分2-8分',
               layer: 3,
               children: [],
-              penalties: [4],
             },
             {
               id: '5.1.6',
               text: '处罚等级五：取消本站成绩并禁赛一场新手级联赛，扣除驾照分3-12分',
               layer: 3,
               children: [],
-              penalties: [5],
             },
           ],
         },
@@ -1268,35 +1316,30 @@ export const onlineRules: OnlineRules = {
               text: '处罚等级一：罚时5秒/10秒，扣除驾照分0分，如有重复违规可累加',
               layer: 3,
               children: [],
-              penalties: [1],
             },
             {
               id: '5.2.3',
               text: '处罚等级二：罚时5秒/10秒/25秒，扣除驾照分1-2分，如有重复违规可累加',
               layer: 3,
               children: [],
-              penalties: [2],
             },
             {
               id: '5.2.4',
               text: '处罚等级三：罚时25秒/50秒，扣除驾照分2-4分，2次重复违规提升处罚至处罚等级四',
               layer: 3,
               children: [],
-              penalties: [3, 4],
             },
             {
               id: '5.2.5',
               text: '处罚等级四：取消本站成绩，扣除驾照分3-8分',
               layer: 3,
               children: [],
-              penalties: [4],
             },
             {
               id: '5.2.6',
               text: '处罚等级五：取消本站成绩并禁赛下一场同等级联赛，扣除驾照分4-12分',
               layer: 3,
               children: [],
-              penalties: [5],
             },
           ],
         },
@@ -1316,35 +1359,30 @@ export const onlineRules: OnlineRules = {
               text: '处罚等级一：罚时5秒/10秒/15秒，扣除驾照分1分，如有重复违规可累加',
               layer: 3,
               children: [],
-              penalties: [1],
             },
             {
               id: '5.3.3',
               text: '处罚等级二：罚时10秒/15秒/30秒，扣除驾照分2-3分，如有重复违规可累加',
               layer: 3,
               children: [],
-              penalties: [2],
             },
             {
               id: '5.3.4',
               text: '处罚等级三：罚时30秒/60秒/90秒，扣除驾照分3-5分，2次重复违规提升处罚至处罚等级四',
               layer: 3,
               children: [],
-              penalties: [3, 4],
             },
             {
               id: '5.3.5',
               text: '处罚等级四：取消本站成绩，扣除驾照分4-8分',
               layer: 3,
               children: [],
-              penalties: [4],
             },
             {
               id: '5.3.6',
               text: '处罚等级五：取消本站成绩并禁赛下一场同等级联赛，扣除驾照分5-12分',
               layer: 3,
               children: [],
-              penalties: [5],
             },
           ],
         },

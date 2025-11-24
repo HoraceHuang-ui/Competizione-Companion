@@ -3,22 +3,18 @@
     1. accordion: 启用手风琴模式（同级互斥）
     2. value: 绑定当前层级应该打开的 ID (字符串)
   -->
-  <mdui-collapse
-    accordion
-    :value="currentLevelOpenId"
-    @change="onCollapseChange"
-    class="w-full"
-  >
+  <mdui-collapse accordion :value="currentLevelOpenId" class="w-full">
     <template v-for="item in items" :key="item.id">
       <!-- 情况 A：有子节点 -> 渲染为折叠项 -->
       <mdui-collapse-item
         v-if="item.children && item.children.length > 0"
         :value="item.id"
-        :ref="el => registerRef(item.id, el)"
+        @click="onCollapseChange($event, item.id)"
       >
         <!-- Header -->
         <mdui-list-item
           slot="header"
+          :ref="el => registerRef(item.id, el)"
           :class="[
             layer === 1 ? 'list-header title my-2 rounded-full' : '',
             layer === 1 ? 'font-bold' : '',
@@ -37,13 +33,23 @@
             }"
           >
             <span
-              class="title font-bold mr-1"
+              class="title font-bold mr-1 align-top"
               v-if="!item.hideId"
               style="font-size: larger; color: rgb(var(--mdui-color-primary))"
             >
               {{ item.id }}
             </span>
             {{ item.text }}
+            <div
+              v-if="
+                selectedIds.findIndex((it: string) =>
+                  it.startsWith(item.id),
+                ) !== -1
+              "
+              class="inline-block ml-2 text-xs rounded-full px-2 py-[1px] bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]"
+            >
+              已选择子项
+            </div>
           </div>
 
           <!-- 罚判 Chips -->
@@ -57,14 +63,16 @@
                 paddingLeft: layer > 1 ? (layer - 1) * 1.2 + 'rem' : '0',
               }"
             >
-              <mdui-chip
-                v-for="p in item.penalties"
-                :key="p"
-                variant="input"
-                class="h-6 text-xs"
-              >
-                {{ getPenaltyText(p) }}
-              </mdui-chip>
+              <div v-for="p in item.penalties" :key="p">
+                <mdui-tooltip content="aaa">
+                  <mdui-chip class="h-6 text-xs">
+                    {{ getPenaltyText(p) }}
+                  </mdui-chip>
+                  <!--                  <div slot="content">-->
+                  <!--                    <PenaltyTable :level="p" />-->
+                  <!--                  </div>-->
+                </mdui-tooltip>
+              </div>
             </div>
           </div>
 
@@ -75,7 +83,7 @@
               transition: all var(--mdui-motion-duration-short4)
                 var(--mdui-motion-easing-standard);
             "
-            :class="{ 'rotate-180': props.curOpenItems.includes(item.id) }"
+            :style="`rotate: ${curOpenItems.includes(item.id) ? '180deg' : '0deg'}`"
           ></mdui-icon-keyboard-arrow-down>
         </mdui-list-item>
 
@@ -85,7 +93,7 @@
             :items="item.children"
             :layer="layer + 1"
             :cur-open-items="curOpenItems"
-            :selected-id="selectedId"
+            :selected-items="selectedItems"
             @path-change="$emit('path-change', $event)"
             @select="$emit('select', $event)"
             @register-ref="(id, el) => $emit('registerRef', id, el)"
@@ -97,15 +105,19 @@
       <div v-else class="w-full">
         <mdui-list-item
           :disabled="item.id.includes('desc')"
-          :active="selectedId === item.id"
-          @click.stop="$emit('select', item)"
+          :active="selectedIds.includes(item.id)"
+          @click.stop.prevent="
+            (function (e: Event) {
+              e.stopPropagation()
+              $emit('select', item)
+            })($event)
+          "
           :ref="el => registerRef(item.id, el)"
           class="cursor-pointer"
         >
           <div
             :style="{
-              paddingLeft:
-                layer > 1 ? (layer - 1) * 1.2 + 2.5 + 'rem' : '0.5rem',
+              paddingLeft: layer > 1 ? (layer - 1) * 1.2 + 'rem' : '0',
             }"
           >
             <span
@@ -147,7 +159,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { type OnlineRuleItem } from './onlineRules'
+import { type OnlineRuleItem } from '@/utils/onlineRules'
+import '@mdui/icons/keyboard-arrow-down.js'
+import PenaltyTable from '@/components/PenaltyTable.vue'
 
 defineOptions({ name: 'RuleTreeNode' })
 
@@ -155,8 +169,10 @@ const props = defineProps<{
   items: OnlineRuleItem[]
   layer: number
   curOpenItems: string[] // 注意：这是完整的路径数组 ['1', '1.2', '1.2.2']
-  selectedId: string
+  selectedItems: OnlineRuleItem[]
 }>()
+
+const selectedIds = computed(() => props.selectedItems.map(it => it.id))
 
 const emit = defineEmits<{
   // 变更：改为传回层级和ID
@@ -184,16 +200,17 @@ const getPenaltyText = (level: number) => {
   return map[level] || `等级${level}`
 }
 
-const onCollapseChange = (e: Event) => {
-  if (e.target !== e.currentTarget) {
-    return
+const onCollapseChange = (e: Event, id: string) => {
+  e.stopPropagation()
+
+  let newId = id
+  if (props.curOpenItems.includes(id)) {
+    newId = ''
   }
-  const target = e.target as any
-  const newVal = target.value as string
 
   emit('path-change', {
     layer: props.layer,
-    id: newVal || undefined,
+    id: newId,
   })
 }
 

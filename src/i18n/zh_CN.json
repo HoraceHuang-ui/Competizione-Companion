@@ -363,6 +363,10 @@
     "jsonSaved": "已保存至 bop.json",
     "json1Saved": "已保存至 bop_1.json"
   },
+  "report": {
+    "tip": "根据嗨跑赛车投诉规范，此页面仅支持简体中文。",
+    "copySuccess": "投诉文案已复制到剪贴板。"
+  },
   "settings": {
     "general": "通用",
     "language": "语言",
@@ -406,7 +410,7 @@
     "donation2Title": "卧槽你来真的啊？！",
     "donation2Msg": "谢谢金主爸爸！！！您的所有捐赠将全额用于开发者的舞萌事业！",
     "donation2Confirm": "一次mai够！",
-    "hipoleTooltip": " · ACC QQ群号：799836434",
+    "hipoleTooltip": " · ACC QQ群号：1073093591",
     "hmrTooltip": "HerMess Racing · QQ群号：826527145",
     "thanksMsg": "感谢嗨跑赛车 ACC 群的群友和众多热爱赛车的伙伴们，是你们的支持让这个项目越来越好"
   },

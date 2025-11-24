@@ -127,6 +127,19 @@ onMounted(() => {
     })
   }
 })
+
+const onBulletinClick = (e: Event) => {
+  var anchor = (e.target as HTMLElement).closest('a')
+  if (anchor) {
+    var targetHref = anchor.getAttribute('href')
+
+    if (targetHref) {
+      e.preventDefault()
+      var newUrl = anchor.href
+      window.electron.openExtLink(newUrl)
+    }
+  }
+}
 </script>
 <template>
   <Transition name="fade">
@@ -331,6 +344,7 @@ onMounted(() => {
         class="overflow-y-scroll max-h-[500px] w-[400px] scroll-wrapper-app-vue"
       >
         <div
+          @click="onBulletinClick"
           v-html="marked(bulletin?.detail?.[store.settings.general.lang] || '')"
         />
       </div>

@@ -1,15 +1,15 @@
 <template>
-  <div class="online-rules-container w-full">
+  <ScrollWrapper class="size-full" ref="scrollWrapperRef">
     <RuleTreeNode
       :items="rules.content"
       :layer="1"
       :cur-open-items="curOpenItems"
-      :selected-id="selectedId"
+      :selected-items="selectedItems"
       @path-change="handlePathChange"
       @select="handleSelect"
       @register-ref="handleRegisterRef"
     />
-  </div>
+  </ScrollWrapper>
 </template>
 
 <script setup lang="ts">
@@ -20,6 +20,7 @@ import {
   type OnlineRules,
 } from '@/utils/onlineRules'
 import RuleTreeNode from './RuleTreeNode.vue'
+import ScrollWrapper from '@/components/ScrollWrapper.vue'
 
 interface Props {
   rulesData?: OnlineRules
@@ -29,10 +30,11 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const rules = computed(() => props.rulesData)
 
-// --- 状态管理 ---
-// 现在的 curOpenItems 是一个有序路径，例如 ['1', '1.1', '1.1.1']
+const scrollWrapperRef = ref()
+
 const curOpenItems = ref<string[]>([])
-const selectedId = ref<string>('')
+const selectedItems = ref<OnlineRuleItem[]>([])
+const selectedIds = computed(() => selectedItems.value.map(it => it.id))
 const itemRefs = new Map<string, HTMLElement>()
 
 // --- 辅助索引 ---
@@ -74,7 +76,6 @@ const handlePathChange = ({
 
   // 3. 更新状态
   curOpenItems.value = newPath
-  console.log(curOpenItems.value)
 }
 
 const emit = defineEmits<{
@@ -82,17 +83,22 @@ const emit = defineEmits<{
 }>()
 
 const handleSelect = (item: OnlineRuleItem) => {
-  selectedId.value = item.id
-  emit('select', [item])
+  if (item.penalties?.length) {
+    if (!selectedIds.value.includes(item.id)) {
+      selectedItems.value.push(item)
+    } else {
+      selectedItems.value.splice(selectedItems.value.indexOf(item), 1)
+    }
+    emit('select', selectedItems.value)
+  }
 }
 
 // --- Expose 接口 ---
-const focusItem = (id: string, select: boolean): OnlineRuleItem | undefined => {
+const focusItem = (id: string, select: boolean): OnlineRuleItem[] => {
   const item = itemMap.get(id)
-  if (!item) return undefined
+  if (!item) return []
 
   // 1. 构建从根节点到当前节点的路径数组
-  const path: string[] = []
   let curr: string | undefined = id
 
   // 如果目标本身有子节点（是文件夹），它自己也应该在路径里被展开吗？
@@ -105,32 +111,46 @@ const focusItem = (id: string, select: boolean): OnlineRuleItem | undefined => {
 
   // 修正策略：按照题目示例 "展开到对应的项"，通常意味着展开所有父级。
   curr = parentMap.get(curr)
+  curOpenItems.value = []
 
   while (curr) {
-    path.unshift(curr) // 添加到数组头部
+    curOpenItems.value.unshift(curr) // 添加到数组头部
     curr = parentMap.get(curr)
   }
 
-  // 更新路径
-  curOpenItems.value = path
-
   // 2. 选中高亮
   if (select) {
-    selectedId.value = id
+    if (selectedIds.value.includes(id)) {
+      selectedItems.value.splice(selectedIds.value.indexOf(id), 1)
+    } else {
+      selectedItems.value.push(item)
+    }
   }
 
-  // 3. 滚动
+  // 3. 滚动 (增加调试和容错)
+  // 展开动画通常需要时间，MDUI collapse 动画约为 300ms
   nextTick(() => {
-    // 稍微延迟以等待 mdui 动画
     setTimeout(() => {
       const el = itemRefs.get(id)
+
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        // 打印确认元素获取成功
+
+        scrollWrapperRef.value?.scrollTo?.({
+          top: el.offsetTop - 200,
+          left: 0,
+          behavior: 'smooth',
+        })
+
+        // Hack: 如果 smooth 滚动在某些复杂容器中失效，可以尝试一次 auto 滚动
+        // el.scrollIntoView({ block: 'center' })
+      } else {
+        console.warn(`[OnlineRules] DOM element for ${id} not found in refs.`)
       }
-    }, 300)
+    }, 450) // 稍微增加一点延时，确保动画完全结束
   })
 
-  return item
+  return selectedItems.value
 }
 
 defineExpose({

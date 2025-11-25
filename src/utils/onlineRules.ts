@@ -69,7 +69,7 @@ export const keywords = [
 
 export const onlineRules: OnlineRules = {
   title: '嗨跑赛车线上联赛竞技规则',
-  lastModified: '本规则最后更新于2025.11.05',
+  lastModified: '更新于 2025.11.05，更新可能存在延迟。',
   maxLayer: 6,
   content: [
     {

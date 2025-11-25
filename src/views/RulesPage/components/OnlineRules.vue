@@ -9,6 +9,15 @@
       @select="handleSelect"
       @register-ref="handleRegisterRef"
     />
+    <div
+      style="font-size: smaller"
+      class="ml-1 text-[rgb(var(--mdui-color-outline))] mb-2"
+    >
+      * {{ onlineRules?.lastModified }}
+      <a href="https://www.hipole.com/kb/hipole-competition-rules/">
+        前往嗨跑查看
+      </a>
+    </div>
   </ScrollWrapper>
 </template>
 

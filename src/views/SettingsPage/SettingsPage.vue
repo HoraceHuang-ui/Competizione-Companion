@@ -546,7 +546,7 @@ const setBgImage = () => {
                   <div slot="content" class="select-text cursor-text">
                     <a
                       class="cursor-pointer"
-                      @click="openLink('https://www.hipole.com/')"
+                      href="https://www.hipole.com/"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -577,7 +577,7 @@ const setBgImage = () => {
                   <div slot="content">
                     <a
                       class="cursor-pointer"
-                      @click="openLink('https://acc-status.jonatan.net/')"
+                      href="https://acc-status.jonatan.net/"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -596,9 +596,7 @@ const setBgImage = () => {
                   <div slot="content">
                     <a
                       class="cursor-pointer"
-                      @click="
-                        openLink('https://lonemeow.github.io/acc-setup-diff/')
-                      "
+                      href="https://lonemeow.github.io/acc-setup-diff/"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));
                         text-decoration: underline;
@@ -607,9 +605,7 @@ const setBgImage = () => {
                     >
                     |
                     <a
-                      @click="
-                        openLink('https://github.com/lonemeow/acc-connector')
-                      "
+                      href="https://github.com/lonemeow/acc-connector"
                       class="cursor-pointer"
                       style="
                         color: rgb(var(--mdui-color-inverse-primary));

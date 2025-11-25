@@ -654,10 +654,7 @@ const retrieveHipoleServers = () => {
       class="absolute bottom-2 left-0 right-0 text-center text-gray-400 text-sm"
     >
       {{ $t('status.apiFrom') }}
-      <a
-        class="inline cursor-pointer"
-        @click="openExtUrl('https://acc-status.jonatan.net/servers')"
-      >
+      <a href="https://acc-status.jonatan.net/servers">
         acc-status.jonatan.net
       </a>
     </div>

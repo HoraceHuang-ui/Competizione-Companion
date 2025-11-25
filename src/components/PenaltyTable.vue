@@ -26,13 +26,13 @@ const penaltyLevels = [
     },
     {
       license: '2-8',
-      time: '取消本站成绩',
+      time: '取消成绩',
       note: '-',
     },
     {
       license: '3-12',
-      time: '取消本站成绩',
-      note: '禁赛一场新手级联赛',
+      time: '取消成绩',
+      note: '禁赛一场新手联赛',
     },
   ],
   [
@@ -53,13 +53,13 @@ const penaltyLevels = [
     },
     {
       license: '3-8',
-      time: '取消本站成绩',
+      time: '取消成绩',
       note: '-',
     },
     {
       license: '4-12',
-      time: '取消本站成绩',
-      note: '禁赛一场同等级联赛',
+      time: '取消成绩',
+      note: '禁赛一场同级联赛',
     },
   ],
   [
@@ -80,13 +80,13 @@ const penaltyLevels = [
     },
     {
       license: '4-8',
-      time: '取消本站成绩',
+      time: '取消成绩',
       note: '-',
     },
     {
       license: '5-12',
-      time: '取消本站成绩',
-      note: '禁赛一场同等级级联赛',
+      time: '取消成绩',
+      note: '禁赛一场同级联赛',
     },
   ],
 ]
@@ -114,4 +114,12 @@ const rowTitles = ['新手', '青铜/白银', '黄金/铂金']
   </table>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped>
+table,
+th,
+td {
+  border-collapse: collapse;
+  border: 1px solid rgb(var(--mdui-color-surface-bright));
+  padding: 4px;
+}
+</style>

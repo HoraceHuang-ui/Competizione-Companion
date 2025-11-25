@@ -64,13 +64,13 @@
               }"
             >
               <div v-for="p in item.penalties" :key="p">
-                <mdui-tooltip content="aaa">
+                <mdui-tooltip placement="left">
                   <mdui-chip class="h-6 text-xs">
                     {{ getPenaltyText(p) }}
                   </mdui-chip>
-                  <!--                  <div slot="content">-->
-                  <!--                    <PenaltyTable :level="p" />-->
-                  <!--                  </div>-->
+                  <div slot="content">
+                    <PenaltyTable :level="p" />
+                  </div>
                 </mdui-tooltip>
               </div>
             </div>
@@ -141,14 +141,16 @@
                   layer > 1 ? (layer - 1) * 1.2 + 2.5 + 'rem' : '0.5rem',
               }"
             >
-              <mdui-chip
-                v-for="p in item.penalties"
-                :key="p"
-                variant="filter"
-                class="h-6 text-xs"
-              >
-                {{ getPenaltyText(p) }}
-              </mdui-chip>
+              <div v-for="p in item.penalties" :key="p">
+                <mdui-tooltip placement="left">
+                  <mdui-chip variant="filter" class="h-6 text-xs">
+                    {{ getPenaltyText(p) }}
+                  </mdui-chip>
+                  <div slot="content">
+                    <PenaltyTable :level="p" />
+                  </div>
+                </mdui-tooltip>
+              </div>
             </div>
           </div>
         </mdui-list-item>

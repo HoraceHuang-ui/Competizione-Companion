@@ -146,12 +146,11 @@ onMounted(() => {
       <p>
         * {{ $t('bop.dialogDesc1Pref') }}
         <a
-          class="cursor-pointer"
           style="
             color: rgb(var(--mdui-color-primary));
             text-decoration: underline;
           "
-          @click="openLink('steam://launch/1430110')"
+          href="steam://launch/1430110"
         >
           ACC Dedicated Server (Steam)
         </a>
@@ -162,11 +161,7 @@ onMounted(() => {
             color: rgb(var(--mdui-color-primary));
             text-decoration: underline;
           "
-          @click="
-            openLink(
-              'https://www.overtake.gg/downloads/acc-dedicated-server-gui.32034/',
-            )
-          "
+          href="https://www.overtake.gg/downloads/acc-dedicated-server-gui.32034/"
         >
           ACC Dedicated Server GUI (Overtake.gg)
         </a>

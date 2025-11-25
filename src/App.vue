@@ -128,7 +128,7 @@ onMounted(() => {
   }
 })
 
-const onBulletinClick = (e: Event) => {
+const onHyperLinkClick = (e: Event) => {
   var anchor = (e.target as HTMLElement).closest('a')
   if (anchor) {
     var targetHref = anchor.getAttribute('href')
@@ -149,11 +149,11 @@ const onBulletinClick = (e: Event) => {
       :src="bgBase64"
     />
   </Transition>
-  <mdui-layout class="size-full overflow-hidden">
+  <mdui-layout class="size-full overflow-hidden" @click="onHyperLinkClick">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
-      class="py-1 pl-5 pr-4 drag bg-transparent"
+      class="py-1 pl-3 pr-4 h-14 drag bg-transparent"
     >
       <div class="absolute right-0 top-0 z-[9999] focus">
         <div class="traffic-lights focus no-drag py-3 px-2">
@@ -192,17 +192,15 @@ const onBulletinClick = (e: Event) => {
     <mdui-navigation-rail
       value="status"
       divider
-      class="pb-4 bg-transparent"
+      class="pb-4 bg-transparent w-16"
       contained
     >
       <mdui-tooltip :content="translate('general.status')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 0
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 0,
           }"
           @click="nav(0)"
         >
@@ -213,11 +211,9 @@ const onBulletinClick = (e: Event) => {
       <mdui-tooltip :content="translate('general.servers')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 1
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 1,
           }"
           @click="nav(1)"
         >
@@ -228,11 +224,9 @@ const onBulletinClick = (e: Event) => {
       <mdui-tooltip :content="translate('general.setup')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 2
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 2,
           }"
           @click="nav(2)"
         >
@@ -243,11 +237,9 @@ const onBulletinClick = (e: Event) => {
       <mdui-tooltip :content="translate('general.bop')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 3
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 3,
           }"
           @click="nav(3)"
         >
@@ -258,11 +250,9 @@ const onBulletinClick = (e: Event) => {
       <mdui-tooltip :content="translate('general.report')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 4
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 4,
           }"
           @click="nav(4)"
         >
@@ -276,17 +266,7 @@ const onBulletinClick = (e: Event) => {
         slot="bottom"
         v-if="mode !== 0"
       >
-        <mdui-button-icon
-          class="mb-2"
-          :style="{
-            background:
-              mode == 5
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
-          }"
-          @click="launchACC"
-          :disabled="launching"
-        >
+        <mdui-button-icon class="mb-2" @click="launchACC" :disabled="launching">
           <Transition name="fade" mode="out-in">
             <mdui-circular-progress
               v-if="launching"
@@ -303,11 +283,9 @@ const onBulletinClick = (e: Event) => {
         slot="bottom"
       >
         <mdui-button-icon
-          :style="{
-            background:
-              mode == 6
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 6,
           }"
           @click="nav(6)"
         >
@@ -344,7 +322,6 @@ const onBulletinClick = (e: Event) => {
         class="overflow-y-scroll max-h-[500px] w-[400px] scroll-wrapper-app-vue"
       >
         <div
-          @click="onBulletinClick"
           v-html="marked(bulletin?.detail?.[store.settings.general.lang] || '')"
         />
       </div>

@@ -220,6 +220,7 @@ const copyContent = () => {
                   :value="formData.racePart"
                   class="flex-1"
                   variant="outlined"
+                  @change="formData.racePart = $event.target.value"
                 >
                   <mdui-icon-keyboard-arrow-down--rounded
                     slot="end-icon"

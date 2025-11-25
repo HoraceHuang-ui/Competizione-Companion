@@ -407,7 +407,7 @@ const data = {
       rideHeightMinRear: 54,
     },
     lexus_rc_f_gt3: {
-      id: 1145,
+      id: 15,
       name: 'Lexus RC F GT3',
       shortName: 'RC F',
       manufacturer: 'lexus',

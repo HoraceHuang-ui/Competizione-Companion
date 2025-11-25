@@ -111,7 +111,7 @@ onMounted(() => {
       >
       <span
         >{{ $t('status.apiFrom') }}
-        <a class="inline cursor-pointer" @click="accStatusExt"
+        <a href="https://acc-status.jonatan.net"
           >acc-status.jonatan.net</a
         ></span
       >

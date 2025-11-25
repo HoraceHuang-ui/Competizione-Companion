@@ -6,6 +6,7 @@
     "servers": "Server List",
     "setup": "Setup Management",
     "bop": "LFM BoP",
+    "report": "HiPole Reporting",
     "settings": "Settings",
     "launchACC": "Launch ACC",
     "cancel": "Cancel",
@@ -171,8 +172,8 @@
       "steerRatio": {
         "name": "Steer Ratio",
         "sum": "The angle the steering wheel turns for each degree the wheels turn.",
-        "inc": "Makes steering more sensitive.",
-        "dec": "Requires turning the wheel more to make a corner.",
+        "inc": "Requires turning the wheel more to make a corner.",
+        "dec": "Makes steering more sensitive.",
         "notes": "Purely personal preference, set to what feels comfortable."
       },
       "fuel": {
@@ -331,7 +332,7 @@
       }
     }
   },
-  "bop":{
+  "bop": {
     "byCar": "By Car",
     "byTrack": "By Track",
     "car": "Car",
@@ -362,6 +363,10 @@
     "presetSaved": "Preset saved",
     "jsonSaved": "Saved to bop.json",
     "json1Saved": "Saved to bop_1.json"
+  },
+  "report": {
+    "tip": "Due to HiPole Online Reporting Rules, only Simplified Chinese is supported in this page.",
+    "copySuccess": "Report content copied to clipboard."
   },
   "settings": {
     "general": "General",
@@ -406,7 +411,7 @@
     "donation2Title": "Damn Bro, You Mean for Real?!",
     "donation2Msg": "Many many many thanks for your support! All your donated money will be used for my playing Maimai DX!",
     "donation2Confirm": "It's MaiGO!!!!！",
-    "hipoleTooltip": " · ACC QQ Group: 799836434",
+    "hipoleTooltip": " · ACC QQ Group: 1073093591",
     "hmrTooltip": "HerMess Racing · QQ Group: 826527145",
     "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
   },

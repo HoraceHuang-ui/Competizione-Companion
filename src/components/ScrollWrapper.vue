@@ -192,11 +192,7 @@ const scrollTo = (scrollProps: {
   left: number
   behavior: string
 }) => {
-  outerRef.value.scrollTo({
-    top: scrollProps.top,
-    left: scrollProps.left,
-    behavior: scrollProps.behavior,
-  })
+  outerRef.value.scrollTo(scrollProps.left, scrollProps.top)
 }
 
 defineExpose({

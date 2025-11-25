@@ -587,12 +587,8 @@ const openExtUrl = (url: string) => {
           <li>
             {{ $t('setup.generalTip5')
             }}<a
-              style="
-                color: rgb(var(--mdui-color-inverse-primary));
-                text-decoration: underline;
-                cursor: pointer;
-              "
-              @click="openExtUrl($t('setup.generalTipLink'))"
+              style="text-decoration: underline"
+              :href="$t('setup.generalTipLink')"
               >{{ $t('setup.generalTipLink') }}</a
             >
           </li>

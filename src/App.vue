@@ -5,6 +5,8 @@ import '@mdui/icons/display-settings--rounded.js'
 import '@mdui/icons/settings--rounded.js'
 import '@mdui/icons/send--rounded.js'
 import '@mdui/icons/balance--rounded.js'
+import '@mdui/icons/close--rounded.js'
+import '@mdui/icons/announcement.js'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
@@ -41,10 +43,11 @@ const modes = [
   'general.servers',
   'general.setup',
   'general.bop',
+  'general.report',
   'general.launchACC',
   'general.settings',
 ]
-const pages = ['status', 'list', 'setup', 'bop', '', 'settings']
+const pages = ['status', 'list', 'setup', 'bop', 'report', '', 'settings']
 const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
@@ -74,7 +77,21 @@ watch(
   },
 )
 
+const showBulletin = ref(false)
+const bulletin = ref(undefined)
+const queryBulletin = async () => {
+  showBulletin.value = false
+  // const res = await window.axios.get('http://0.0.0.0:5005/bulletin')
+  const res = await window.axios.get('http://120.55.52.240:5005/bulletin')
+  if (res.success && res.msgInfo.id > store.general.msgId) {
+    bulletin.value = res.msgInfo
+    showBulletin.value = true
+    store.general.msgId = res.msgInfo.id
+  }
+}
+
 onMounted(() => {
+  queryBulletin()
   if (
     verCompare(
       import.meta.env.VITE_APP_VERSION,
@@ -110,6 +127,19 @@ onMounted(() => {
     })
   }
 })
+
+const onHyperLinkClick = (e: Event) => {
+  var anchor = (e.target as HTMLElement).closest('a')
+  if (anchor) {
+    var targetHref = anchor.getAttribute('href')
+
+    if (targetHref) {
+      e.preventDefault()
+      var newUrl = anchor.href
+      window.electron.openExtLink(newUrl)
+    }
+  }
+}
 </script>
 <template>
   <Transition name="fade">
@@ -119,11 +149,11 @@ onMounted(() => {
       :src="bgBase64"
     />
   </Transition>
-  <mdui-layout class="size-full overflow-hidden">
+  <mdui-layout class="size-full overflow-hidden" @click="onHyperLinkClick">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
-      class="py-1 pl-5 pr-4 drag bg-transparent"
+      class="py-1 pl-3 pr-4 h-14 drag bg-transparent"
     >
       <div class="absolute right-0 top-0 z-[9999] focus">
         <div class="traffic-lights focus no-drag py-3 px-2">
@@ -162,17 +192,15 @@ onMounted(() => {
     <mdui-navigation-rail
       value="status"
       divider
-      class="pb-4 bg-transparent"
+      class="pb-4 bg-transparent w-16"
       contained
     >
       <mdui-tooltip :content="translate('general.status')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 0
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 0,
           }"
           @click="nav(0)"
         >
@@ -183,11 +211,9 @@ onMounted(() => {
       <mdui-tooltip :content="translate('general.servers')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 1
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 1,
           }"
           @click="nav(1)"
         >
@@ -198,11 +224,9 @@ onMounted(() => {
       <mdui-tooltip :content="translate('general.setup')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 2
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 2,
           }"
           @click="nav(2)"
         >
@@ -213,15 +237,26 @@ onMounted(() => {
       <mdui-tooltip :content="translate('general.bop')" placement="right">
         <mdui-button-icon
           class="mb-2"
-          :style="{
-            background:
-              mode == 3
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 3,
           }"
           @click="nav(3)"
         >
           <mdui-icon-balance--rounded></mdui-icon-balance--rounded>
+        </mdui-button-icon>
+      </mdui-tooltip>
+
+      <mdui-tooltip :content="translate('general.report')" placement="right">
+        <mdui-button-icon
+          class="mb-2"
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 4,
+          }"
+          @click="nav(4)"
+        >
+          <mdui-icon-announcement></mdui-icon-announcement>
         </mdui-button-icon>
       </mdui-tooltip>
 
@@ -231,17 +266,7 @@ onMounted(() => {
         slot="bottom"
         v-if="mode !== 0"
       >
-        <mdui-button-icon
-          class="mb-2"
-          :style="{
-            background:
-              mode == 4
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
-          }"
-          @click="launchACC"
-          :disabled="launching"
-        >
+        <mdui-button-icon class="mb-2" @click="launchACC" :disabled="launching">
           <Transition name="fade" mode="out-in">
             <mdui-circular-progress
               v-if="launching"
@@ -258,13 +283,11 @@ onMounted(() => {
         slot="bottom"
       >
         <mdui-button-icon
-          :style="{
-            background:
-              mode == 5
-                ? 'rgb(var(--mdui-color-secondary-container))'
-                : 'transparent',
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 6,
           }"
-          @click="nav(5)"
+          @click="nav(6)"
         >
           <mdui-icon-settings--rounded></mdui-icon-settings--rounded>
         </mdui-button-icon>
@@ -285,6 +308,24 @@ onMounted(() => {
     </mdui-layout-main>
 
     <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" show-skip />
+    <mdui-dialog :open="showBulletin">
+      <div
+        slot="header"
+        class="flex flex-row justify-between items-center text-2xl"
+      >
+        <div>{{ bulletin?.title?.[store.settings.general.lang] }}</div>
+        <mdui-button-icon @click="showBulletin = false">
+          <mdui-icon-close--rounded></mdui-icon-close--rounded>
+        </mdui-button-icon>
+      </div>
+      <div
+        class="overflow-y-scroll max-h-[500px] w-[400px] scroll-wrapper-app-vue"
+      >
+        <div
+          v-html="marked(bulletin?.detail?.[store.settings.general.lang] || '')"
+        />
+      </div>
+    </mdui-dialog>
   </mdui-layout>
 </template>
 

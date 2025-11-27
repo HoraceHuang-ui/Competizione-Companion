@@ -176,12 +176,8 @@ async function createWindow() {
   ipcMain.on('steam:launch', (_event, id: string) => {
     // const steamPath = require('steam-path')
     // const steamExecutable = path.join(steamPath, 'steam.exe')
-    if (os.platform() === 'win32') {
-      // shell.openPath(steamExecutable)
-      shell.openExternal(`steam://rungameid/${id}`)
-    } else {
-      console.warn('Steam launch is only supported on Windows.')
-    }
+    // shell.openPath(steamExecutable)
+    shell.openExternal(`steam://rungameid/${id}`)
   })
 
   ipcMain.on('elec:openExtLink', (_event, url) => {
@@ -416,6 +412,48 @@ async function createWindow() {
       throw err
     }
   })
+
+  const ACCNodeWrapper = require('acc-node-wrapper')
+  const wrapper = new ACCNodeWrapper()
+
+  /**
+   * @name initBroadcastSDK
+   * @comment This is the init function for the ACC Node Wrapper. This inits the Broadcast SDK.
+   * @param SERVER_DISPLAYNAME
+   * @param SERVER_IP
+   * @param SERVER_PORT
+   * @param SERVER_PASS
+   * @param SERVER_COMMANDPASS
+   * @param UPDATE_INTERVAL
+   * @param Logging
+   */
+  wrapper.initBroadcastSDK('Max', '127.0.0.1', 9000, '123', '123', 50, true)
+  const udpKeys = [
+    'REGISTRATION_RESULT',
+    'REALTIME_UPDATE',
+    'REALTIME_CAR_UPDATE',
+    'ENTRY_LIST',
+    'TRACK_DATA',
+    'ENTRY_LIST_CAR',
+    'BROADCASTING_EVENT',
+  ]
+  for (const udpKey of udpKeys) {
+    wrapper.on(udpKey, res => {
+      win?.webContents.send('main-process-message', udpKey, res)
+    })
+  }
+
+  wrapper.initSharedMemory(50, 50, 50, true)
+  const shMemoKeys = [
+    'M_PHYSICS_RESULT',
+    'M_GRAPHICS_RESULT',
+    'M_STATIC_RESULT',
+  ]
+  for (const shMemoKey of shMemoKeys) {
+    wrapper.on(shMemoKey, res => {
+      win?.webContents.send('main-process-message', shMemoKey, res)
+    })
+  }
 
   const contextMenu = Menu.buildFromTemplate([
     {

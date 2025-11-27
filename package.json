@@ -42,6 +42,7 @@
   "dependencies": {
     "@mdui/icons": "^1.0.3",
     "@tailwindcss/vite": "^4.1.11",
+    "acc-node-wrapper": "^1.0.6",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "ajv-keywords": "^5.1.0",

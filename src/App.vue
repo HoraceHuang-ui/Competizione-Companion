@@ -7,7 +7,7 @@ import '@mdui/icons/send--rounded.js'
 import '@mdui/icons/balance--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/announcement.js'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { setTheme } from 'mdui'
@@ -36,6 +36,12 @@ const winClose = () => {
     window.win.close()
   }
 }
+
+const telemetryInfo = ref<any>({})
+window.ipcRenderer.on('acc-info-update', (_event, key: string, val: string) => {
+  telemetryInfo.value[key] = JSON.parse(val)
+})
+provide('telemetry', telemetryInfo)
 
 const mode = ref(0) // 0: Server Status
 const modes = [

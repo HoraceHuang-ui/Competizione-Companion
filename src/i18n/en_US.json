@@ -195,7 +195,7 @@
         "sum": "Adjusts the intervention threshold of the traction control system, i.e., how much slip before it activates.",
         "inc": "Reduces wheel slip under acceleration, making dynamics more stable; but limits corner exit power.",
         "dec": "Allows more slip under acceleration, helping to establish rotation; but may cause loss of control. For low-speed corners, consider upshifting early.",
-        "notes": "Recommended: Ferrari 296 GT3 at 4-7, Ford Mustang GT3 at 4-6, BMW M4 GT3 at 2-3, AMR V8 GT3/AMG GT3 at 1-3, others at 1-2."
+        "notes": "Do NOT turn off electric assists in most cases, a proper amount makes you faster! Recommended: Ferrari 296 GT3 at 4-7, Ford Mustang GT3 at 4-6, BMW M4 GT3 at 2-3, AMR V8 GT3/AMG GT3 at 1-3, others at 1-2."
       },
       "tC2": {
         "name": "TC2",
@@ -209,7 +209,7 @@
         "sum": "Adjusts the intervention threshold of the anti-lock braking system.",
         "inc": "Reduces the chance of wheel lockup; but too high reduces braking efficiency.",
         "dec": "Improves braking efficiency to some extent; but too low makes the brakes overly sensitive.",
-        "notes": "Generally, Ferrari 296 GT3: 1-2 in dry, others 2-3; 1-2 in wet."
+        "notes": "Do NOT turn off electric assists in most cases, a proper amount makes you faster! Generally, Ferrari 296 GT3: 1-2 in dry, others 2-3; 1-2 in wet."
       },
       "eCUMap": {
         "name": "ECU Map",

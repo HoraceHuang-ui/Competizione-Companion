@@ -14,7 +14,6 @@ export default defineConfig(({ command }) => {
   const isServe = command === 'serve'
   const isBuild = command === 'build'
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG
-
   return {
     plugins: [
       Components(),

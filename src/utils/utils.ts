@@ -116,7 +116,7 @@ export const checkUpdate = async (
   try {
     const res = await window.axios
       // .get('http://0.0.0.0:5005/competizione')
-      .get('http://120.55.52.240:5005/competizione')
+      .get('https://api.hh17.top/competizione/competizione')
     if (res.success) {
       const resp = res.updInfo
       if (needsUpdate(resp.version)) {

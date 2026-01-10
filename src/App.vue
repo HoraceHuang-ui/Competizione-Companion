@@ -86,7 +86,9 @@ const bulletin = ref(undefined)
 const queryBulletin = async () => {
   showBulletin.value = false
   // const res = await window.axios.get('http://0.0.0.0:5005/bulletin')
-  const res = await window.axios.get('http://120.55.52.240:5005/bulletin')
+  const res = await window.axios.get(
+    'https://api.hh17.top/competizione/bulletin',
+  )
   if (res.success && res.msgInfo.id > store.general.msgId) {
     bulletin.value = res.msgInfo
     showBulletin.value = true

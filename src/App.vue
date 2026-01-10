@@ -193,7 +193,7 @@ watch(isDark, newVal => {
     <img
       class="w-screen h-screen absolute object-cover"
       v-else-if="store.settings.general.bgType === 'hime'"
-      :src="`../src/assets/asseconHime/ASSECON_HIME_${isDark ? 'dark' : 'light'}.png`"
+      :src="`../../src/assets/asseconHime/ASSECON_HIME_${isDark ? 'dark' : 'light'}.png`"
     />
   </Transition>
   <mdui-layout class="size-full overflow-hidden" @click="onHyperLinkClick">

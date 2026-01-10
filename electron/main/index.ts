@@ -415,48 +415,6 @@ async function createWindow() {
     }
   })
 
-  const ACCNodeWrapper = require('acc-node-wrapper')
-  const wrapper = new ACCNodeWrapper()
-
-  /**
-   * @name initBroadcastSDK
-   * @comment This is the init function for the ACC Node Wrapper. This inits the Broadcast SDK.
-   * @param SERVER_DISPLAYNAME
-   * @param SERVER_IP
-   * @param SERVER_PORT
-   * @param SERVER_PASS
-   * @param SERVER_COMMANDPASS
-   * @param UPDATE_INTERVAL
-   * @param Logging
-   */
-  wrapper.initBroadcastSDK('Max', '127.0.0.1', 9000, 'asd', 'asd', 50, true)
-  const udpKeys = [
-    'REGISTRATION_RESULT',
-    'REALTIME_UPDATE',
-    'REALTIME_CAR_UPDATE',
-    'ENTRY_LIST',
-    'TRACK_DATA',
-    'ENTRY_LIST_CAR',
-    'BROADCASTING_EVENT',
-  ]
-  for (const udpKey of udpKeys) {
-    wrapper.on(udpKey, res => {
-      win?.webContents.send('main-process-message', udpKey, res)
-    })
-  }
-
-  wrapper.initSharedMemory(50, 50, 50, true)
-  const shMemoKeys = [
-    'M_PHYSICS_RESULT',
-    'M_GRAPHICS_RESULT',
-    'M_STATIC_RESULT',
-  ]
-  for (const shMemoKey of shMemoKeys) {
-    wrapper.on(shMemoKey, res => {
-      win?.webContents.send('main-process-message', shMemoKey, res)
-    })
-  }
-
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Quit',

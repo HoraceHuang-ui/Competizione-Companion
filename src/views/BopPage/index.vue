@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { inject, onMounted, Ref, ref, watch } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { darkModeSettings, trackIndex } from '@/utils/enums'
 import {
@@ -55,18 +55,10 @@ watch(
   { immediate: true },
 )
 
-const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
-const isDark = ref(
-  store.settings.general.darkMode === darkModeSettings.AUTO
-    ? darkModePreference.matches
-    : store.settings.general.darkMode !== darkModeSettings.LIGHT,
-)
-darkModePreference.addEventListener('change', e => {
-  isDark.value =
-    store.settings.general.darkMode === darkModeSettings.AUTO
-      ? e.matches
-      : store.settings.general.darkMode !== darkModeSettings.LIGHT
-})
+const dark = inject('isDark') as {
+  isDark: Ref<boolean>
+  setDark: (val: boolean) => void
+}
 
 const queryData = () => {
   loading.value = true
@@ -237,8 +229,8 @@ onMounted(() => {
               <div
                 class="w-[15%]"
                 :class="{
-                  'text-orange-300': bop.restrictor > 0 && isDark,
-                  'text-orange-500': bop.restrictor > 0 && !isDark,
+                  'text-orange-300': bop.restrictor > 0 && dark.isDark.value,
+                  'text-orange-500': bop.restrictor > 0 && !dark.isDark.value,
                 }"
               >
                 {{ bop.restrictor ? `${bop.restrictor}%` : '-' }}
@@ -246,10 +238,10 @@ onMounted(() => {
               <div
                 class="w-[10%] text-right"
                 :class="{
-                  'text-red-400': bop.ballast > 0 && isDark,
-                  'text-red-500': bop.ballast > 0 && !isDark,
-                  'text-green-400': bop.ballast < 0 && isDark,
-                  'text-green-600': bop.ballast < 0 && !isDark,
+                  'text-red-400': bop.ballast > 0 && dark.isDark.value,
+                  'text-red-500': bop.ballast > 0 && !dark.isDark.value,
+                  'text-green-400': bop.ballast < 0 && dark.isDark.value,
+                  'text-green-600': bop.ballast < 0 && !dark.isDark.value,
                 }"
               >
                 {{ bop.ballast ? `${bop.ballast} kg` : '0' }}
@@ -305,8 +297,8 @@ onMounted(() => {
               <div
                 class="w-[15%]"
                 :class="{
-                  'text-orange-300': track.restrictor > 0 && isDark,
-                  'text-orange-500': track.restrictor > 0 && !isDark,
+                  'text-orange-300': track.restrictor > 0 && dark.isDark.value,
+                  'text-orange-500': track.restrictor > 0 && !dark.isDark.value,
                 }"
               >
                 {{ track.restrictor ? `${track.restrictor}%` : '-' }}
@@ -314,10 +306,10 @@ onMounted(() => {
               <div
                 class="w-[10%] text-right"
                 :class="{
-                  'text-red-400': track.ballast > 0 && isDark,
-                  'text-red-500': track.ballast > 0 && !isDark,
-                  'text-green-400': track.ballast < 0 && isDark,
-                  'text-green-600': track.ballast < 0 && !isDark,
+                  'text-red-400': track.ballast > 0 && dark.isDark.value,
+                  'text-red-500': track.ballast > 0 && !dark.isDark.value,
+                  'text-green-400': track.ballast < 0 && dark.isDark.value,
+                  'text-green-600': track.ballast < 0 && !dark.isDark.value,
                 }"
               >
                 {{ track.ballast ? `${track.ballast} kg` : '0' }}

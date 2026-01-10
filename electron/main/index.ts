@@ -406,6 +406,8 @@ async function createWindow() {
         return await fs.promises
           .readFile(filePath, 'base64')
           .then(data => `data:image/png;base64,${data}`)
+      } else {
+        throw new Error('Background image does not exist')
       }
     } catch (err) {
       console.error('Error reading background image:', err)

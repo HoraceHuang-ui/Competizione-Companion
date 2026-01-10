@@ -54,3 +54,10 @@ export const hipoleEventColors = {
   Gold: ['#ffd700', '#000'],
   Platinum: ['#1db0fd', '#fff'],
 }
+
+export const asseconHimeThemeColor = {
+  light: '#98d5fe',
+  dark: '#87637c',
+}
+
+export const bgType = ['hime', 'custom', 'none']

@@ -30,6 +30,8 @@ export const useStore = defineStore('userStore', {
         darkMode: '2',
         minToTray: false,
         themeColor: '#785abf',
+        customBgThemeColor: '#785abf',
+        bgType: 'hime',
         bgImg: '',
         bgImgPath: '',
         bgOpacity: 0.85,

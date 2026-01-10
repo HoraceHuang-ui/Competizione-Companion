@@ -9,9 +9,14 @@ import '@mdui/icons/update--rounded.js'
 import '@mdui/icons/image--rounded.js'
 import '@mdui/icons/undo--rounded.js'
 import '@mdui/icons/help-outline--rounded.js'
-import { computed, ref, watch } from 'vue'
+import { computed, inject, Ref, ref, watch } from 'vue'
 import { getColorFromImage, setColorScheme, setTheme, snackbar } from 'mdui'
-import { themeMap, darkModeSettings, trackCarDispSettings } from '@/utils/enums'
+import {
+  themeMap,
+  darkModeSettings,
+  trackCarDispSettings,
+  asseconHimeThemeColor,
+} from '@/utils/enums'
 import { availableLangCodes, switchLang, translate, langMap } from '@/i18n'
 import { ChromePicker } from 'vue-color'
 import UpdateDialog from '@/components/UpdateDialog.vue'
@@ -21,18 +26,6 @@ import FavDialog from '@/views/SettingsPage/components/FavDialog.vue'
 const showFavDialog = ref(false)
 
 const store = useStore()
-const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
-const isDark = ref(
-  store.settings.general.darkMode === darkModeSettings.AUTO
-    ? darkModePreference.matches
-    : store.settings.general.darkMode !== darkModeSettings.LIGHT,
-)
-darkModePreference.addEventListener('change', e => {
-  isDark.value =
-    store.settings.general.darkMode === darkModeSettings.AUTO
-      ? e.matches
-      : store.settings.general.darkMode !== darkModeSettings.LIGHT
-})
 
 const donationOpen1 = ref(false)
 const donationOpen2 = ref(false)
@@ -50,6 +43,11 @@ const dispItems = computed(() => {
   }
 })
 
+const dark = inject('isDark') as {
+  isDark: Ref<boolean>
+  setDark: (val: boolean) => void
+}
+
 const resetDialogOpen = ref(false)
 
 const resetSettings = () => {
@@ -66,15 +64,19 @@ const resetSettings = () => {
   }
 }
 
+const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
 const darkModeChange = (event: Event) => {
   const mode = event.target.value
   store.settings.general.darkMode = mode
   setTheme(themeMap[mode])
-  isDark.value =
+
+  dark.setDark(
     store.settings.general.darkMode === darkModeSettings.AUTO
       ? darkModePreference.matches
-      : store.settings.general.darkMode !== darkModeSettings.LIGHT
+      : store.settings.general.darkMode !== darkModeSettings.LIGHT,
+  )
 }
+
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
 }
@@ -168,6 +170,7 @@ const setBgImage = () => {
         getColorFromImage(img).then(color => {
           if (color) {
             store.settings.general.themeColor = color
+            store.settings.general.customBgThemeColor = color
             setColorScheme(color)
           }
           bgButtonLoading.value = false
@@ -240,39 +243,64 @@ const setBgImage = () => {
             </div>
             <div class="item">
               <div class="item-in">
-                <div>{{ $t('settings.colorScheme') }}</div>
+                <div>{{ $t('settings.bgType') }}</div>
                 <div class="flex flex-row items-center">
                   <div v-if="bgButtonLoading">
                     {{ $t('settings.extracting') }}
                   </div>
                   <mdui-tooltip
-                    :content="$t('settings.deleteBg')"
-                    placement="bottom"
-                    v-if="!bgButtonLoading && store.settings.general.bgImgPath"
-                  >
-                    <mdui-button-icon
-                      class="mr-2"
-                      @click="
-                        () => {
-                          store.settings.general.bgImgPath = ''
-                          store.settings.general.bgImg = ''
-                        }
-                      "
-                    >
-                      <mdui-icon-undo--rounded></mdui-icon-undo--rounded>
-                    </mdui-button-icon>
-                  </mdui-tooltip>
-                  <mdui-tooltip
                     :content="$t('settings.setBg')"
                     placement="bottom"
+                    v-if="store.settings.general.bgType === 'custom'"
                   >
                     <mdui-button-icon class="mr-1" @click="setBgImage">
                       <mdui-icon-image--rounded></mdui-icon-image--rounded>
                     </mdui-button-icon>
                   </mdui-tooltip>
+                  <div
+                    class="flex flex-row rounded-full border border-[rgb(var(--mdui-color-outline-variant))]"
+                  >
+                    <mdui-avatar
+                      v-if="store.settings.general.bgType === 'hime'"
+                      class="mr-2"
+                      :src="`../../src/assets/asseconHime/ASSECON_HIME_${dark.isDark.value ? 'dark' : 'light'}_profile.png`"
+                    ></mdui-avatar>
+                    <chip-select
+                      v-model="store.settings.general.bgType"
+                      :items="['hime', 'custom', 'none']"
+                      chip-class="rounded-full h-[40px]"
+                      :chip-style="{
+                        background:
+                          'rgba(var(--mdui-color-inverse-on-surface), 0.6)',
+                      }"
+                      :item-label="item => $t(`settings.bgType_${item}`)"
+                      :chip-label="item => $t(`settings.bgType_${item}`)"
+                      @select="
+                        item => {
+                          if (item === 'custom') {
+                            store.settings.general.themeColor =
+                              store.settings.general.customBgThemeColor ||
+                              '#785abf'
+                          } else if (item === 'hime') {
+                            store.settings.general.themeColor = dark.isDark
+                              .value
+                              ? asseconHimeThemeColor.dark
+                              : asseconHimeThemeColor.light
+                          }
+                          setColorScheme(store.settings.general.themeColor)
+                        }
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('settings.colorScheme') }}</div>
+                <div class="flex flex-row items-center">
                   <mdui-tooltip
                     placement="bottom"
-                    v-if="!bgButtonLoading && store.settings.general.bgImgPath"
                     variant="rich"
                     :headline="$t('settings.bgOpacity')"
                   >
@@ -448,7 +476,7 @@ const setBgImage = () => {
                 <div class="flex flex-row justify-end items-center">
                   <mdui-button-icon
                     class="mr-2"
-                    :class="{ invert: isDark }"
+                    :class="{ invert: dark.isDark.value }"
                     @click="
                       openLink(
                         'https://github.com/HoraceHuang-ui/Competizione-Companion',
@@ -555,7 +583,7 @@ const setBgImage = () => {
                     >{{ $t('settings.hipoleTooltip') }}
                   </div>
                   <img
-                    :src="`../../src/assets/hipole/${$t('langCode')}_${isDark ? 'dark' : 'light'}.png`"
+                    :src="`../../src/assets/hipole/${$t('langCode')}_${dark.isDark.value ? 'dark' : 'light'}.png`"
                     class="inline mx-4 opacity-55 hover:opacity-100 transition-all"
                     width="130"
                   />

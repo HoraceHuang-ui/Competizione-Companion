@@ -7,11 +7,15 @@ import '@mdui/icons/send--rounded.js'
 import '@mdui/icons/balance--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/announcement.js'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { setTheme } from 'mdui'
-import { themeMap } from '@/utils/enums'
+import { setColorScheme, setTheme } from 'mdui'
+import {
+  asseconHimeThemeColor,
+  darkModeSettings,
+  themeMap,
+} from '@/utils/enums'
 import { translate } from '@/i18n'
 import { marked } from 'marked'
 import { checkUpdate, verCompare } from '@/utils/utils'
@@ -116,6 +120,7 @@ onMounted(() => {
       .then(async path => {
         store.settings.general.bgImgPath = path
         bgBase64.value = await window.img.getBgBase64()
+        store.settings.general.bgType = 'custom'
       })
       .catch(() => {
         store.settings.general.bgImgPath = ''
@@ -125,6 +130,10 @@ onMounted(() => {
     window.img.getBgBase64().then(base64 => {
       bgBase64.value = base64
     })
+  }
+
+  if (!store.settings.general.bgType) {
+    store.settings.general.bgType = 'hime'
   }
 })
 
@@ -140,13 +149,49 @@ const onHyperLinkClick = (e: Event) => {
     }
   }
 }
+
+const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
+const isDark = ref(
+  store.settings.general.darkMode === darkModeSettings.AUTO
+    ? darkModePreference.matches
+    : store.settings.general.darkMode !== darkModeSettings.LIGHT,
+)
+darkModePreference.addEventListener('change', e => {
+  isDark.value =
+    store.settings.general.darkMode === darkModeSettings.AUTO
+      ? e.matches
+      : store.settings.general.darkMode !== darkModeSettings.LIGHT
+})
+provide('isDark', {
+  isDark,
+  setDark(val: boolean) {
+    isDark.value = val
+  },
+})
+watch(isDark, newVal => {
+  if (store.settings.general.bgType === 'hime') {
+    const newScheme = newVal
+      ? asseconHimeThemeColor.dark
+      : asseconHimeThemeColor.light
+    store.settings.general.themeColor = newScheme
+    setColorScheme(newScheme)
+  }
+})
 </script>
 <template>
   <Transition name="fade">
     <img
-      class="w-[100vw] h-[100vh] absolute object-cover"
-      v-if="store.settings.general.bgImgPath"
+      class="w-screen h-screen absolute object-cover"
+      v-if="
+        store.settings.general.bgImgPath &&
+        store.settings.general.bgType === 'custom'
+      "
       :src="bgBase64"
+    />
+    <img
+      class="w-screen h-screen absolute object-cover"
+      v-else-if="store.settings.general.bgType === 'hime'"
+      :src="`../src/assets/asseconHime/ASSECON_HIME_${isDark ? 'dark' : 'light'}.png`"
     />
   </Transition>
   <mdui-layout class="size-full overflow-hidden" @click="onHyperLinkClick">

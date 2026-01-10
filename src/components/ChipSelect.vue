@@ -38,6 +38,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  chipStyle: {
+    type: Object,
+    default: () => ({}),
+  },
   dropdownPlacement: {
     type: String,
     default: 'auto',
@@ -67,6 +71,7 @@ const onSelect = (item: any) => {
     <mdui-chip
       slot="trigger"
       :class="props.chipClass"
+      :style="props.chipStyle"
       :disabled="props.disabled"
     >
       {{ selection ? props.chipLabel(selection) : props.placeholder }}

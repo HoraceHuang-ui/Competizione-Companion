@@ -489,16 +489,20 @@ const openExtUrl = (url: string) => {
             @drop.prevent="handleDrop(side as Side, $event)"
           >
             <div v-if="!isDragging[side as Side]" class="flex flex-col w-max">
-              <mdui-button @click="triggerFileInput(side as Side)">
-                {{ $t('setup.chooseFile') }}
-              </mdui-button>
-              <mdui-button
-                @click="triggerFolderInput(side as Side)"
-                class="mt-3"
-                variant="outlined"
-              >
-                {{ $t('setup.chooseFolder') }}
-              </mdui-button>
+              <mdui-tooltip :content="$t('setup.supportedFileFormat')">
+                <mdui-button @click="triggerFileInput(side as Side)">
+                  {{ $t('setup.chooseFile') }}
+                </mdui-button>
+              </mdui-tooltip>
+              <mdui-tooltip :content="$t('setup.supportedFolderFormat')">
+                <mdui-button
+                  @click="triggerFolderInput(side as Side)"
+                  class="mt-3"
+                  variant="elevated"
+                >
+                  {{ $t('setup.chooseFolder') }}
+                </mdui-button>
+              </mdui-tooltip>
               <mdui-button
                 @click="codeShareOpen = side"
                 class="mt-3"

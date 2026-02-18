@@ -77,14 +77,14 @@
     }
   },
   "setup": {
-    "chooseFile": "Select a Setup File",
+    "chooseFile": "Select a Setup File/Archive",
     "chooseFolder": "Select a Setup Folder",
     "dragFile": "or drag and drop a file here",
     "releaseToLoad": "Release to load setup",
     "emptyFileName": "Please enter or select a setup file.",
     "invalidJSON": "Invalid JSON format, please check the file content.",
     "invalidSeries": "Please load a {series} car.",
-    "invalidFile": "Failed to read file, please drag a JSON-formatted ACC setup file.",
+    "invalidFile": "Failed to read file, please drag a JSON/ZIP/Folder.",
     "loadDocs": "Or read game documents",
     "carPlaceholder": "Select Car",
     "trackPlaceholder": "Select Track",
@@ -114,9 +114,9 @@
     "viewOnly": "View Only",
     "codeCopySuccess": "Setup code copied to clipboard",
     "codeCopyMsg": "Open the 「Competizione Companion」 app, turn to Setup Management page and paste this message to load and save the setup in one click.",
+    "codeCopyMsg2": "Or visit https://acc.hh17.top/ and export as a file",
     "techSupport": "Technical support from",
     "generalTip1": "First adjust the tire pressures, electronics, and other parameters with fixed windows to an appropriate level.",
-    "generalTip2": "Second, adjust the mechanical settings to balance personal driving preferences and pace.",
     "generalTip3": "Third, adjust the aerodynamics as needed, balancing grip and top speed.",
     "generalTip4": "Finally, fine-tune settings like damping that generally have small adjustment ranges.",
     "generalTip5": "For detailed setup guidance, please refer to: ",
@@ -342,7 +342,9 @@
         "dec": "Looser rear axle, more dynamic change when lifting off, weaker rotation response at initial throttle, and smoother dynamics; but can cause under-rotation on throttle, leading to understeer then snap oversteer on corner exit.",
         "notes": ""
       }
-    }
+    },
+    "supportedFileFormat": "Supported file formats: single JSON file, multiple JSON files, a ZIP archive with multiple JSON files, a ZIP archive with multiple ACC-track-named folders",
+    "supportedFolderFormat": "Supported folder structures: Folders with multiple JSON files, a folder with multiple ACC-track-named folders"
   },
   "bop": {
     "byCar": "By Car",

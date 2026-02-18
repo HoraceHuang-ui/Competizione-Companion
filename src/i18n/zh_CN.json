@@ -77,15 +77,15 @@
     }
   },
   "setup": {
-    "chooseFile": "选择调校 JSON 文件",
-    "chooseFolder": "选择调校文件夹",
+    "chooseFile": "选择调校文件/压缩包",
+    "chooseFolder": "选择文件夹",
     "dragFile": "或直接拖拽到此处",
-    "releaseToLoad": "松开鼠标以读取调校",
+    "releaseToLoad": "松开鼠标以读取",
     "loadDocs": "或读取游戏文档",
     "emptyFileName": "请输入或选择调校文件名。",
     "invalidJSON": "不是有效的调校文件，请检查文件内容。",
     "invalidSeries": "请选择 {series} 组别车型。",
-    "invalidFile": "文件读取失败，请拖入JSON类型的ACC调校文件。",
+    "invalidFile": "文件读取失败，请拖入JSON/ZIP/文件夹。",
     "carPlaceholder": "请选择车型",
     "trackPlaceholder": "请选择赛道",
     "inputPlaceholder": "请输入或选择调校文件名",
@@ -114,6 +114,7 @@
     "viewOnly": "仅查看",
     "codeCopySuccess": "调校码已复制到剪贴板",
     "codeCopyMsg": "打开「争锋小助手」，在调校管理页粘贴即可快速读取并载入游戏",
+    "codeCopyMsg2": "或访问 https://acc.hh17.top/ 并导出为文件",
     "techSupport": "调校技术支持来自",
     "generalTip1": "首先将胎压、电控等有固定窗口的参数调到合适。",
     "generalTip2": "其次改动机械以调整车辆动态至平衡个人偏好与速度。",
@@ -342,7 +343,9 @@
         "dec": "后轴更松弛、松油时动态变化更大，给油初段旋转反应会弱化，动态更柔和；但容易因给油的旋转不足而导致出弯先推后甩的情况。",
         "notes": ""
       }
-    }
+    },
+    "supportedFileFormat": "支持选择：单个 JSON 文件、多个 JSON 文件、包含多个 JSON 文件的 ZIP 压缩包、包含若干 ACC 赛道名称文件夹的 ZIP 压缩包",
+    "supportedFolderFormat": "支持选择：包含多个 JSON 文件的文件夹、包含若干 ACC 赛道名称文件夹的文件夹"
   },
   "bop": {
     "byCar": "按车型",

@@ -170,15 +170,21 @@ provide('isDark', {
     isDark.value = val
   },
 })
-watch(isDark, newVal => {
-  if (store.settings.general.bgType === 'hime') {
-    const newScheme = newVal
-      ? asseconHimeThemeColor.dark
-      : asseconHimeThemeColor.light
-    store.settings.general.themeColor = newScheme
-    setColorScheme(newScheme)
-  }
-})
+watch(
+  isDark,
+  newVal => {
+    if (store.settings.general.bgType === 'hime') {
+      const newScheme = newVal
+        ? asseconHimeThemeColor.dark
+        : asseconHimeThemeColor.light
+      store.settings.general.themeColor = newScheme
+      setColorScheme(newScheme)
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 <template>
   <Transition name="fade">

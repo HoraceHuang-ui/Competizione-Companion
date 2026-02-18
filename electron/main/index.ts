@@ -252,7 +252,7 @@ async function createWindow() {
 
   ipcMain.handle(
     'fs:setupFile',
-    async (_event, car, track, fileName, writeVal) => {
+    async (_event, car, track, fileName, writeVal, overwrite = false) => {
       const setupsDir = path.join(
         os.homedir(),
         'Documents',
@@ -265,12 +265,18 @@ async function createWindow() {
         track,
       )
       const setupPath = path.join(setupsDir, realCar, realTrack, fileName)
-      if (fs.existsSync(setupPath)) {
-        return fs.readFileSync(setupPath, 'utf-8')
-      } else {
-        fs.writeFileSync(setupPath, writeVal, 'utf-8')
-        return writeVal
+      if (writeVal === undefined) {
+        return fs.existsSync(setupPath)
+          ? fs.readFileSync(setupPath, 'utf-8')
+          : ''
       }
+
+      if (fs.existsSync(setupPath) && !overwrite) {
+        return fs.readFileSync(setupPath, 'utf-8')
+      }
+
+      fs.writeFileSync(setupPath, writeVal, 'utf-8')
+      return writeVal
     },
   )
 

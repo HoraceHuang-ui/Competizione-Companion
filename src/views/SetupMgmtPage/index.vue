@@ -17,15 +17,37 @@ import SetupCode from '@/views/SetupMgmtPage/components/SetupCode.vue'
 import CarSelector from '@/components/CarSelector.vue'
 import TrackSelector from '@/components/TrackSelector.vue'
 import { getCarByKey } from '../../utils/utils'
+import BatchImportDialog from '@/views/SetupMgmtPage/components/BatchImportDialog.vue'
+import TrackImportDialog from '@/views/SetupMgmtPage/components/TrackImportDialog.vue'
+import { useSetupImport } from '@/views/SetupMgmtPage/composables/useSetupImport'
 
 const store = useStore()
 
 const leftFileInput = ref<HTMLInputElement | null>(null)
 const rightFileInput = ref<HTMLInputElement | null>(null)
+const leftFolderInput = ref<HTMLInputElement | null>(null)
+const rightFolderInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref({ left: false, right: false })
 const setupScroll = ref(0)
 const setupOpenGroups = ref([])
 type Side = 'left' | 'right'
+
+const {
+  batchImportOpen,
+  batchImportItems,
+  batchImportSaving,
+  trackImportConfirmOpen,
+  trackImportGroups,
+  trackImportSaving,
+  closeBatchImportDialog,
+  closeTrackImportDialog,
+  saveBatchImport,
+  saveTrackImportGroups,
+  handleBatchImport,
+  fileEntryFromList,
+  collectDropEntries,
+  shouldUseBatchImport,
+} = useSetupImport()
 
 const counterSide = (side: Side) => {
   return side === 'left' ? 'right' : 'left'
@@ -162,6 +184,14 @@ const triggerFileInput = (side: 'left' | 'right') => {
   }
 }
 
+const triggerFolderInput = (side: 'left' | 'right') => {
+  if (side === 'left') {
+    leftFolderInput.value?.click()
+  } else {
+    rightFolderInput.value?.click()
+  }
+}
+
 const getCarSeries = (carName: string) => {
   for (const group of groups) {
     if (Object.keys(carData[group]).includes(carName)) {
@@ -174,103 +204,161 @@ const getCarSeries = (carName: string) => {
 const fileImportOpen = ref<String | undefined>(undefined)
 const curSaveTrack = ref(undefined)
 const handleFileSelect = async (side: 'left' | 'right', event: Event) => {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (file) {
-    const content = await file.text()
-    const jsonContent = JSON.parse(content)
-    if (!jsonContent.carName) {
-      snackbar({
-        message: translate('setup.invalidJSON'),
-        autoCloseDelay: 3000,
-      })
-      return
-    }
-    if (!files.value[counterSide(side)]) {
-      const carSeries = getCarSeries(jsonContent.carName)
-      if (carSeries) {
-        curGroup.value = carSeries
-        curCar.value[side] = {
-          value: jsonContent.carName,
-          label:
-            jsonContent.carName in carData[curGroup.value]
-              ? carData[curGroup.value][jsonContent.carName].name
-              : jsonContent.carName,
-        }
-        fileSearch.value[side] = file.name
-        files.value[side] = jsonContent
-        if (!store.settings.setup.alwaysViewOnly) {
-          fileImportOpen.value = side
-        }
+  const input = event.target as HTMLInputElement
+  const fileList = input.files
+  if (!fileList || !fileList.length) return
+
+  const entries = fileEntryFromList(fileList)
+  if (shouldUseBatchImport(entries)) {
+    await handleBatchImport(entries)
+    input.value = ''
+    return
+  }
+
+  const file = entries[0].file
+  if (!file.name.toLowerCase().endsWith('.json')) {
+    snackbar({
+      message: translate('setup.invalidFile'),
+      autoCloseDelay: 3000,
+    })
+    input.value = ''
+    return
+  }
+
+  const content = await file.text()
+  let jsonContent
+  try {
+    jsonContent = JSON.parse(content)
+  } catch (err) {
+    jsonContent = undefined
+  }
+  if (!jsonContent?.carName) {
+    snackbar({
+      message: translate('setup.invalidJSON'),
+      autoCloseDelay: 3000,
+    })
+    input.value = ''
+    return
+  }
+
+  if (!files.value[counterSide(side)]) {
+    const carSeries = getCarSeries(jsonContent.carName)
+    if (carSeries) {
+      curGroup.value = carSeries
+      curCar.value[side] = {
+        value: jsonContent.carName,
+        label:
+          jsonContent.carName in carData[curGroup.value]
+            ? carData[curGroup.value][jsonContent.carName].name
+            : jsonContent.carName,
       }
-    } else if (
-      !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
-    ) {
-      snackbar({
-        message: translate('setup.invalidSeries', {
-          series: curGroup.value,
-        }),
-        autoCloseDelay: 3000,
-      })
-    } else {
       fileSearch.value[side] = file.name
       files.value[side] = jsonContent
       if (!store.settings.setup.alwaysViewOnly) {
         fileImportOpen.value = side
       }
     }
-  }
-}
-
-const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
-  event.preventDefault()
-  isDragging.value[side] = false
-  const file = event.dataTransfer?.files?.[0]
-  if (file && file.type === 'application/json') {
-    const content = await file.text()
-    const jsonContent = JSON.parse(content)
-    if (!jsonContent.carName) {
-      snackbar({
-        message: translate('setup.invalidJSON'),
-        autoCloseDelay: 3000,
-      })
-      return
-    }
-    if (!files.value[counterSide(side)]) {
-      const carSeries = getCarSeries(jsonContent.carName)
-      if (carSeries) {
-        curGroup.value = carSeries
-        curCar.value[side] = {
-          value: jsonContent.carName,
-          label:
-            jsonContent.carName in carData[curGroup.value]
-              ? carData[curGroup.value][jsonContent.carName].name
-              : jsonContent.carName,
-        }
-        fileSearch.value[side] = file.name
-        files.value[side] = jsonContent
-        if (!store.settings.setup.alwaysViewOnly) {
-          fileImportOpen.value = side
-        }
-      }
-    } else if (
-      !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
-    ) {
-      snackbar({
-        message: translate('setup.invalidSeries', { series: curGroup.value }),
-        autoCloseDelay: 3000,
-      })
-      return
-    }
+  } else if (
+    !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
+  ) {
+    snackbar({
+      message: translate('setup.invalidSeries', {
+        series: curGroup.value,
+      }),
+      autoCloseDelay: 3000,
+    })
+  } else {
     fileSearch.value[side] = file.name
     files.value[side] = jsonContent
     if (!store.settings.setup.alwaysViewOnly) {
       fileImportOpen.value = side
     }
-  } else {
+  }
+
+  input.value = ''
+}
+
+const handleFolderSelect = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const fileList = input.files
+  if (!fileList || !fileList.length) return
+
+  const entries = fileEntryFromList(fileList)
+  await handleBatchImport(entries)
+  input.value = ''
+}
+
+const handleDrop = async (side: 'left' | 'right', event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value[side] = false
+  const entries = await collectDropEntries(event)
+  if (!entries.length) {
     snackbar({
       message: translate('setup.invalidFile'),
       autoCloseDelay: 3000,
     })
+    return
+  }
+
+  if (shouldUseBatchImport(entries)) {
+    await handleBatchImport(entries)
+    return
+  }
+
+  const file = entries[0].file
+  if (!file.name.toLowerCase().endsWith('.json')) {
+    snackbar({
+      message: translate('setup.invalidFile'),
+      autoCloseDelay: 3000,
+    })
+    return
+  }
+
+  const content = await file.text()
+  let jsonContent
+  try {
+    jsonContent = JSON.parse(content)
+  } catch (err) {
+    jsonContent = undefined
+  }
+  if (!jsonContent?.carName) {
+    snackbar({
+      message: translate('setup.invalidJSON'),
+      autoCloseDelay: 3000,
+    })
+    return
+  }
+
+  if (!files.value[counterSide(side)]) {
+    const carSeries = getCarSeries(jsonContent.carName)
+    if (carSeries) {
+      curGroup.value = carSeries
+      curCar.value[side] = {
+        value: jsonContent.carName,
+        label:
+          jsonContent.carName in carData[curGroup.value]
+            ? carData[curGroup.value][jsonContent.carName].name
+            : jsonContent.carName,
+      }
+      fileSearch.value[side] = file.name
+      files.value[side] = jsonContent
+      if (!store.settings.setup.alwaysViewOnly) {
+        fileImportOpen.value = side
+      }
+    }
+  } else if (
+    !Object.keys(carData[curGroup.value]).includes(jsonContent.carName)
+  ) {
+    snackbar({
+      message: translate('setup.invalidSeries', { series: curGroup.value }),
+      autoCloseDelay: 3000,
+    })
+    return
+  }
+  fileSearch.value[side] = file.name
+  files.value[side] = jsonContent
+  if (!store.settings.setup.alwaysViewOnly) {
+    fileImportOpen.value = side
   }
 }
 
@@ -331,17 +419,35 @@ const openExtUrl = (url: string) => {
   >
     <input
       type="file"
-      accept=".json"
+      accept=".json,.zip"
+      multiple
       class="hidden"
       ref="leftFileInput"
       @change="handleFileSelect('left', $event)"
     />
     <input
       type="file"
-      accept=".json"
+      accept=".json,.zip"
+      multiple
       class="hidden"
       ref="rightFileInput"
       @change="handleFileSelect('right', $event)"
+    />
+    <input
+      type="file"
+      webkitdirectory
+      directory
+      class="hidden"
+      ref="leftFolderInput"
+      @change="handleFolderSelect($event)"
+    />
+    <input
+      type="file"
+      webkitdirectory
+      directory
+      class="hidden"
+      ref="rightFolderInput"
+      @change="handleFolderSelect($event)"
     />
     <mdui-card
       variant="outlined"
@@ -385,6 +491,13 @@ const openExtUrl = (url: string) => {
             <div v-if="!isDragging[side as Side]" class="flex flex-col w-max">
               <mdui-button @click="triggerFileInput(side as Side)">
                 {{ $t('setup.chooseFile') }}
+              </mdui-button>
+              <mdui-button
+                @click="triggerFolderInput(side as Side)"
+                class="mt-3"
+                variant="outlined"
+              >
+                {{ $t('setup.chooseFolder') }}
               </mdui-button>
               <mdui-button
                 @click="codeShareOpen = side"
@@ -567,6 +680,22 @@ const openExtUrl = (url: string) => {
         }}</mdui-button>
       </div>
     </mdui-dialog>
+
+    <BatchImportDialog
+      v-model:open="batchImportOpen"
+      v-model:items="batchImportItems"
+      :saving="batchImportSaving"
+      @save="saveBatchImport"
+      @close="closeBatchImportDialog"
+    />
+
+    <TrackImportDialog
+      :open="trackImportConfirmOpen"
+      :groups="trackImportGroups"
+      :saving="trackImportSaving"
+      @confirm="() => saveTrackImportGroups(trackImportGroups)"
+      @close="closeTrackImportDialog"
+    />
 
     <div
       class="absolute bottom-2 left-0 right-0 text-center text-gray-400 text-sm"

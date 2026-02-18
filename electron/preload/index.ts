@@ -71,8 +71,16 @@ contextBridge.exposeInMainWorld('fs', {
     track: string,
     fileName: string,
     writeVal: string,
+    overwrite = false,
   ) => {
-    return ipcRenderer.invoke('fs:setupFile', car, track, fileName, writeVal)
+    return ipcRenderer.invoke(
+      'fs:setupFile',
+      car,
+      track,
+      fileName,
+      writeVal,
+      overwrite,
+    )
   },
   presetList: (exePath: string) => {
     return ipcRenderer.invoke('fs:presetList', exePath)

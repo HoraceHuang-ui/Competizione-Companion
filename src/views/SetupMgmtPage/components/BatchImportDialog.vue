@@ -119,7 +119,7 @@ const onClose = () => {
       >
         {{ $t('setup.batchImportSave') }}
       </mdui-button>
-      <mdui-button variant="text" class="mt-2" @click="onClose">
+      <mdui-button variant="text" class="mt-2" @click="open = false">
         {{ $t('general.cancel') }}
       </mdui-button>
     </div>

@@ -72,7 +72,7 @@ const onClose = () => {
   <mdui-dialog
     :headline="$t('setup.batchImportTitle')"
     :open="open"
-    @close="onClose"
+    @close="() => {}"
   >
     <div class="flex flex-col w-[520px] max-w-full">
       <div class="flex flex-row items-center">
@@ -102,13 +102,6 @@ const onClose = () => {
             <div class="text-xs opacity-70 truncate">
               {{ getCarLabel(item.setup) }}
             </div>
-            <mdui-chip
-              v-if="item.track"
-              class="mt-2"
-              style="font-family: Consolas, 'Harmony OS Sans SC', sans-serif"
-            >
-              {{ item.track.label }}
-            </mdui-chip>
           </div>
           <TrackSelector
             v-model="item.track"

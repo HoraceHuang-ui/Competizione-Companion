@@ -38,6 +38,7 @@ export const trackIndex = {
   SHORT: 1,
   FULL: 2,
   LFM: 3,
+  ID_NUM: 4,
 }
 
 export const hipoleEventMap = {

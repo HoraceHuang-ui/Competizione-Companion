@@ -376,7 +376,10 @@
     "fileSelectTitle": "请选择 accServer.exe",
     "presetSaved": "已保存至预设",
     "jsonSaved": "已保存至 bop.json",
-    "json1Saved": "已保存至 bop_1.json"
+    "json1Saved": "已保存至 bop_1.json",
+    "trackTargetLap": "目标圈速：",
+    "clickToView": "点击查看",
+    "bopLapPred": "预测 BoP 圈速"
   },
   "report": {
     "tip": "根据嗨跑赛车投诉规范，此页面仅支持简体中文。",

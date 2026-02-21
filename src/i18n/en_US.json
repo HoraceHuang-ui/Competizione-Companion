@@ -376,7 +376,10 @@
     "fileSelectTitle": "Select accServer.exe",
     "presetSaved": "Preset saved",
     "jsonSaved": "Saved to bop.json",
-    "json1Saved": "Saved to bop_1.json"
+    "json1Saved": "Saved to bop_1.json",
+    "trackTargetLap": "Target Lap:",
+    "clickToView": "Click to View",
+    "bopLapPred": "BoP Lap Pred."
   },
   "report": {
     "tip": "Due to HiPole Online Reporting Rules, only Simplified Chinese is supported in this page.",

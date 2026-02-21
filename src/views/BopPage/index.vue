@@ -41,6 +41,9 @@ const defaultGT4 = {
 const curGT3 = ref(defaultGT3)
 const curGT4 = ref(defaultGT4)
 
+const targetLap = ref('')
+const targetLapLoading = ref(false)
+
 watch(
   curSeries,
   newVal => {
@@ -58,6 +61,32 @@ watch(
 const dark = inject('isDark') as {
   isDark: Ref<boolean>
   setDark: (val: boolean) => void
+}
+
+const queryLap = () => {
+  targetLapLoading.value = true
+  fetch(
+    `https://api3.lowfuelmotorsport.com/api/hotlaps/getBopPrediction?track=${getTrack(curTrack.value?.value, trackIndex.LFM)?.[trackIndex.ID_NUM]}&class=${curSeries.value}&major=1.10`,
+  )
+    .then(resp => resp.json())
+    .then(data => {
+      targetLap.value = data?.bopdata?.target_time || ''
+      const relevant = (data?.laps_relevant ?? []) as []
+      const others = (data?.laps_others ?? []) as []
+      const bopItem = bopData.value?.find?.(
+        (it: any) => it.track_name === curTrack.value?.value,
+      )
+      ;[...relevant, ...others].forEach((it: any) => {
+        bopItem?.bop?.[curSeries.value]?.forEach((car: any) => {
+          if (car.car_model === it.car_id) {
+            car.target_lap = it.lap
+          }
+        })
+      })
+    })
+    .finally(() => {
+      targetLapLoading.value = false
+    })
 }
 
 const queryData = () => {
@@ -79,6 +108,10 @@ const queryData = () => {
 onMounted(() => {
   queryData()
 })
+
+watch([curTrack, curSeries], () => {
+  targetLap.value = ''
+})
 </script>
 
 <template>
@@ -90,7 +123,7 @@ onMounted(() => {
         background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
       }"
     >
-      <div class="flex flex-row justify-between items-center mx-6 mt-4 mb-4">
+      <div class="flex flex-row justify-between items-center mx-6 mt-4">
         <div class="flex flex-row items-center">
           <TrackSelector
             v-if="curCategoryMethod === 'byTrack'"
@@ -116,13 +149,30 @@ onMounted(() => {
           </mdui-radio-group>
         </div>
         <div class="flex flex-row items-center">
+          <div>{{ $t('bop.trackTargetLap') }}</div>
+          <mdui-button
+            variant="outlined"
+            v-if="!targetLap && !targetLapLoading"
+            @click="queryLap"
+            >{{ $t('bop.clickToView') }}</mdui-button
+          >
+          <mdui-circular-progress
+            v-if="targetLapLoading"
+            class="w-5 h-5 mx-3"
+          ></mdui-circular-progress>
+          <div
+            class="title font-bold text-lg ml-2"
+            v-if="targetLap && !targetLapLoading"
+          >
+            {{ targetLap }}
+          </div>
           <mdui-tooltip
             :content="$t('bop.saveToGUI')"
             placement="bottom"
             :disabled="loading"
           >
             <mdui-button-icon
-              class="mr-2"
+              class="mx-2"
               :disabled="loading"
               @click="saveDialogShow = true"
             >
@@ -160,9 +210,12 @@ onMounted(() => {
           }}
         </div>
         <div class="w-[20%]">
+          {{ curCategoryMethod === 'byTrack' ? $t('bop.bopLapPred') : '' }}
+        </div>
+        <div class="w-[10%]">
           {{ curCategoryMethod === 'byTrack' ? $t('bop.year') : '' }}
         </div>
-        <div class="w-[15%]">{{ $t('bop.restrictor') }}</div>
+        <div class="w-[10%]">{{ $t('bop.restrictor') }}</div>
         <div class="w-[10%] text-right">{{ $t('bop.ballast') }}</div>
       </div>
       <mdui-divider class="mt-4 mx-6"></mdui-divider>
@@ -225,9 +278,20 @@ onMounted(() => {
                   }}
                 </div>
               </div>
-              <div class="w-[20%]">{{ bop.car_year }}</div>
+              <div class="w-[20%]" v-if="targetLap || targetLapLoading">
+                {{ bop.target_lap || '-' }}
+              </div>
+              <div class="w-[20%]" v-else>
+                <a
+                  class="cursor-pointer"
+                  @click="queryLap"
+                  style="color: rgb(var(--mdui-color-primary))"
+                  >{{ $t('bop.clickToView') }}</a
+                >
+              </div>
+              <div class="w-[10%]">{{ bop.car_year }}</div>
               <div
-                class="w-[15%]"
+                class="w-[10%]"
                 :class="{
                   'text-orange-300': bop.restrictor > 0 && dark.isDark.value,
                   'text-orange-500': bop.restrictor > 0 && !dark.isDark.value,
@@ -293,9 +357,9 @@ onMounted(() => {
                   `${store.general.favTracks.includes(getTrack(track.name, trackIndex.LFM)?.[trackIndex.ID]) ? `★ ` : ''}${getTrackDisplay(track.name, trackIndex.LFM)}`
                 }}
               </div>
-              <div class="w-[20%]"></div>
+              <div class="w-[30%]"></div>
               <div
-                class="w-[15%]"
+                class="w-[10%]"
                 :class="{
                   'text-orange-300': track.restrictor > 0 && dark.isDark.value,
                   'text-orange-500': track.restrictor > 0 && !dark.isDark.value,

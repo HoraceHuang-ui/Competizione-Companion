@@ -149,22 +149,27 @@ watch([curTrack, curSeries], () => {
           </mdui-radio-group>
         </div>
         <div class="flex flex-row items-center">
-          <div>{{ $t('bop.trackTargetLap') }}</div>
-          <mdui-button
-            variant="outlined"
-            v-if="!targetLap && !targetLapLoading"
-            @click="queryLap"
-            >{{ $t('bop.clickToView') }}</mdui-button
-          >
-          <mdui-circular-progress
-            v-if="targetLapLoading"
-            class="w-5 h-5 mx-3"
-          ></mdui-circular-progress>
           <div
-            class="title font-bold text-lg ml-2"
-            v-if="targetLap && !targetLapLoading"
+            v-if="curCategoryMethod === 'byTrack'"
+            class="flex flex-row items-center"
           >
-            {{ targetLap }}
+            <div>{{ $t('bop.trackTargetLap') }}</div>
+            <mdui-button
+              variant="outlined"
+              v-if="!targetLap && !targetLapLoading"
+              @click="queryLap"
+              >{{ $t('bop.clickToView') }}</mdui-button
+            >
+            <mdui-circular-progress
+              v-if="targetLapLoading"
+              class="w-5 h-5 mx-3"
+            ></mdui-circular-progress>
+            <div
+              class="title font-bold text-lg ml-2"
+              v-if="targetLap && !targetLapLoading"
+            >
+              {{ targetLap }}
+            </div>
           </div>
           <mdui-tooltip
             :content="$t('bop.saveToGUI')"

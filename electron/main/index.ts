@@ -1,12 +1,4 @@
-import {
-  app,
-  BrowserWindow,
-  dialog,
-  ipcMain,
-  Menu,
-  shell,
-  Tray,
-} from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu, Tray } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -420,6 +412,8 @@ async function createWindow() {
       throw err
     }
   })
+
+  ipcMain.handle('os:platform', () => os.platform())
 
   const contextMenu = Menu.buildFromTemplate([
     {

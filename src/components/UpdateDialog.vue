@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { marked } from 'marked'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useStore } from '@/store'
 
 const store = useStore()
@@ -21,12 +21,13 @@ const show = defineModel({
 })
 
 const appVer = import.meta.env.VITE_APP_VERSION
+const platform = ref('')
 
 const skipVersion = ref(false)
 
 const confirmUpd = () => {
   show.value = false
-  window.electron.openExtLink(props.updInfo?.dlUrl)
+  window.electron.openExtLink(props.updInfo?.[`dlUrl${platform.value}`])
   window.win.close()
 }
 const onCancelUpd = () => {
@@ -35,6 +36,18 @@ const onCancelUpd = () => {
     store.general.targetVersion = props.updInfo?.version
   }
 }
+
+onMounted(() => {
+  window.os.platform().then((plt: string) => {
+    if (plt === 'win32') {
+      platform.value = ''
+    } else if (plt === 'darwin') {
+      platform.value = 'Mac'
+    } else {
+      platform.value = plt
+    }
+  })
+})
 </script>
 
 <template>
@@ -60,7 +73,9 @@ const onCancelUpd = () => {
     </div>
     <div class="text-red-600 dark:text-red-400">
       {{ $t('general.updSize')
-      }}{{ (props.updInfo?.size / 1024 / 1024).toFixed(1) }}MB
+      }}{{
+        ((props.updInfo?.[`size${platform}`] || 0) / 1024 / 1024).toFixed(1)
+      }}MB
     </div>
     <div
       class="w-full flex flex-row justify-between items-center"

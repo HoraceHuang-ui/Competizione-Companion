@@ -120,6 +120,12 @@ contextBridge.exposeInMainWorld('img', {
   },
 })
 
+contextBridge.exposeInMainWorld('os', {
+  platform: () => {
+    return ipcRenderer.invoke('os:platform')
+  },
+})
+
 // --------- Preload scripts loading ---------
 function domReady(
   condition: DocumentReadyState[] = ['complete', 'interactive'],

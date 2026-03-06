@@ -16,7 +16,7 @@ import { translate } from '@/i18n'
 import SetupCode from '@/views/SetupMgmtPage/components/SetupCode.vue'
 import CarSelector from '@/components/CarSelector.vue'
 import TrackSelector from '@/components/TrackSelector.vue'
-import { getCarByKey } from '../../utils/utils'
+import { getCarByKey, getCarSeriesByKey } from '../../utils/utils'
 import BatchImportDialog from '@/views/SetupMgmtPage/components/BatchImportDialog.vue'
 import TrackImportDialog from '@/views/SetupMgmtPage/components/TrackImportDialog.vue'
 import { useSetupImport } from '@/views/SetupMgmtPage/composables/useSetupImport'
@@ -54,7 +54,21 @@ const counterSide = (side: Side) => {
 }
 
 const groups = ['GT3', 'GT4', 'GTC', 'TCX']
-const curGroup = ref('GT3')
+
+const files = ref(
+  sessionStorage.setupFiles
+    ? JSON.parse(sessionStorage.setupFiles)
+    : {
+        left: undefined,
+        right: undefined,
+      },
+)
+const curGroup = ref(
+  files.value.left || files.value.right
+    ? getCarSeriesByKey((files.value.left || files.value.right).carName) ||
+        'GT3'
+    : 'GT3',
+)
 const setupList = ref({
   left: [],
   right: [],
@@ -76,14 +90,6 @@ const curTrack = ref({
   left: undefined,
   right: undefined,
 })
-const files = ref(
-  sessionStorage.setupFiles
-    ? JSON.parse(sessionStorage.setupFiles)
-    : {
-        left: undefined,
-        right: undefined,
-      },
-)
 
 const enableSearch = computed(() => {
   return {

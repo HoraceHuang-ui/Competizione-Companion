@@ -88,6 +88,17 @@ export const getCarDisplayById = (carId: number) => {
   return getCarDisplay(getCarById(carId) as [string, any])
 }
 
+export const getCarSeriesByKey = (carKey: string) => {
+  for (const [series, cars] of Object.entries(carData) as [string, any][]) {
+    for (const key of Object.keys(cars)) {
+      if (key === carKey) {
+        return series
+      }
+    }
+  }
+  return undefined
+}
+
 export const verCompare = (a: string, b: string) => {
   const arr1 = a.split('.')
   const arr2 = b.split('.')

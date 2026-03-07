@@ -509,5 +509,22 @@
     "laguna_seca": "Laguna Seca",
     "suzuka": "Suzuka",
     "kyalami": "Kyalami"
+  },
+  "tutorial": {
+    "title": "Welcome to Competizione Companion!",
+    "page1text": "Let's get started by setting up some basic preferences",
+    "pageDesc": "Features",
+    "page2desc": "On this page, you can check the status of the ACC lobby servers and quickly launch ACC via Steam.",
+    "page3desc": "On this page, you can query all available public ACC servers and follow the tutorial in the bottom-left corner to configure the ACC Connector for direct connection, even if the ACC lobby server is down. You can also quickly query all HiPole servers.",
+    "page4desc": "On this page, you can:",
+    "page4li1": "Select or drag and drop, or directly select a car model and track to read the game documentation and import/view setups;",
+    "page4li2": "Compare the differences between two setups with different parameters;",
+    "page4li3": "View the meaning and effects of each setup parameter to deepen your understanding of the vehicle;",
+    "page4li4": "Share setups as setup codes, or import from others' setup codes;",
+    "page4li5": "Import multiple json/folders/zip files and batch import them into the game.",
+    "page5desc": "On this page, you can view the LFM BoP for each track and car model, along with their BoP target lap times and predicted lap speeds. You can also export BoP data as bop.json or preset.pre for easy import into server settings.",
+    "page6desc": "On this page, you can input an accident description, and the assistant will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
+    "page7desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation!",
+    "page8desc": "Finally, thank you for using Competizione Companion! The continuous improvement of the assistant can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
   }
 }

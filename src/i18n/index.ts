@@ -59,7 +59,6 @@ export const translateWithLocale = (
   if (!key) {
     return ''
   }
-  console.log('asad', locale)
   return i18n.global.t(key, locale, bindings)
 }
 

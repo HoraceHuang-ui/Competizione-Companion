@@ -14,14 +14,14 @@ import { getColorFromImage, setColorScheme, setTheme, snackbar } from 'mdui'
 import {
   themeMap,
   darkModeSettings,
-  trackCarDispSettings,
   asseconHimeThemeColor,
 } from '@/utils/enums'
-import { availableLangCodes, switchLang, translate, langMap } from '@/i18n'
+import { translate } from '@/i18n'
 import { ChromePicker } from 'vue-color'
 import UpdateDialog from '@/components/UpdateDialog.vue'
 import { checkUpdate } from '@/utils/utils'
 import FavDialog from '@/views/SettingsPage/components/FavDialog.vue'
+import LanguageSelector from './components/LanguageSelector.vue'
 
 const showFavDialog = ref(false)
 
@@ -79,24 +79,6 @@ const darkModeChange = (event: Event) => {
 
 const openLink = (url: string) => {
   window.electron.openExtLink(url)
-}
-
-const onLangSelect = () => {
-  switchLang(lang.value)
-  if (
-    ['舞萌DX启动！', 'Time for maimai DX!'].includes(
-      store.settings.status.serverDownMsg,
-    )
-  ) {
-    store.settings.status.serverDownMsg = translate(
-      'settings.serverDownMsgDefault',
-    )
-  }
-
-  if (lang.value === 'en_US') {
-    store.settings.setup.carDisplay = trackCarDispSettings.EN_SHORT
-    store.settings.setup.trackDisplay = trackCarDispSettings.EN_SHORT
-  }
 }
 
 const changeTray = (checked: boolean) => {
@@ -200,15 +182,7 @@ const setBgImage = () => {
             <div class="item">
               <div class="item-in">
                 <div>{{ $t('settings.language') }}</div>
-                <ChipSelect
-                  v-model="lang"
-                  :items="availableLangCodes"
-                  chip-class="rounded-full"
-                  :chip-label="item => langMap[item]"
-                  :item-label="item => langMap[item]"
-                  @select="onLangSelect"
-                >
-                </ChipSelect>
+                <LanguageSelector v-model="lang" />
               </div>
             </div>
             <div class="item">

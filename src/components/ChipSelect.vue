@@ -2,6 +2,7 @@
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import '@mdui/icons/check--rounded.js'
 import '@mdui/icons/arrow-drop-down--rounded.js'
+import { nextTick } from 'vue'
 
 const emit = defineEmits(['select'])
 
@@ -59,7 +60,9 @@ const selection = defineModel({
 
 const onSelect = (item: any) => {
   selection.value = item
-  emit('select', item)
+  nextTick(() => {
+    emit('select', item)
+  })
 }
 </script>
 

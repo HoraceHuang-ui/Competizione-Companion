@@ -20,6 +20,7 @@ import { translate } from '@/i18n'
 import { marked } from 'marked'
 import { checkUpdate, verCompare } from '@/utils/utils'
 import UpdateDialog from '@/components/UpdateDialog.vue'
+import FirstSetup from './components/FirstSetup.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -96,17 +97,10 @@ const queryBulletin = async () => {
   }
 }
 
-onMounted(() => {
-  queryBulletin()
-  if (
-    verCompare(
-      import.meta.env.VITE_APP_VERSION,
-      store.general.targetVersion || '0.0.0',
-    ) > 0
-  ) {
-    store.general.targetVersion = import.meta.env.VITE_APP_VERSION
-  }
+const firstSetupShow = ref(false)
 
+const startup = () => {
+  queryBulletin()
   checkUpdate(
     store.general.targetVersion || import.meta.env.VITE_APP_VERSION,
   ).then(resp => {
@@ -115,6 +109,32 @@ onMounted(() => {
       updDialogShow.value = true
     }
   })
+}
+
+watch(
+  () => store.general.firstSetupFlag,
+  val => {
+    if (val) {
+      startup()
+    }
+  },
+)
+
+onMounted(() => {
+  if (!store.general.firstSetupFlag) {
+    firstSetupShow.value = true
+  } else {
+    startup()
+  }
+
+  if (
+    verCompare(
+      import.meta.env.VITE_APP_VERSION,
+      store.general.targetVersion || '0.0.0',
+    ) > 0
+  ) {
+    store.general.targetVersion = import.meta.env.VITE_APP_VERSION
+  }
 
   if (store.settings.general.bgImg !== '') {
     window.img
@@ -379,6 +399,8 @@ watch(
         />
       </div>
     </mdui-dialog>
+
+    <FirstSetup v-model="firstSetupShow" />
   </mdui-layout>
 </template>
 

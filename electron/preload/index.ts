@@ -48,11 +48,11 @@ contextBridge.exposeInMainWorld('win', {
 })
 
 contextBridge.exposeInMainWorld('axios', {
-  post: async (url: string, body: any) => {
-    return await ipcRenderer.invoke('axios:post', url, body)
+  post: async (url: string, body: any, config?: any) => {
+    return await ipcRenderer.invoke('axios:post', url, body, config)
   },
-  get: async (url: string) => {
-    return await ipcRenderer.invoke('axios:get', url)
+  get: async (url: string, config?: any) => {
+    return await ipcRenderer.invoke('axios:get', url, config)
   },
 })
 

@@ -527,5 +527,14 @@
     "page6desc": "On this page, you can input an accident description, and the assistant will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
     "page7desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation! If you encounter any problems when driving, feel free to ask her for advice; or you may just chat with her when feeling bored!",
     "page8desc": "Finally, thank you for using Competizione Companion! The continuous improvement of the assistant can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
+  },
+  "ai": {
+    "inputPlaceholder": "Try asking anything about racing!",
+    "welcomeMsg": "Hello there! I'm your assistant! If you're having issues while driving or want to improve your lap times but don't know where to start, feel free to ask me! I'll give you some suggestions on setup directions!",
+    "newConversation": "New Conversation",
+    "thinking": "Thinking...",
+    "disclaimer": "Companion uses gpt-oss-120b model and may make mistakes, please double-check",
+    "reasoningProcess": "Thinking Process",
+    "invalidResponse": "Reply failed, please try again later"
   }
 }

@@ -142,8 +142,9 @@ const innerResizeObserver = new ResizeObserver(() => {
   }
   if (outerRef.value) {
     if (props.stickBottom) {
-      outerRef.value.scrollTo({
+      scrollTo({
         top: wrapContentHeight.value,
+        left: 0,
         behavior: 'smooth',
       })
       translateY.value = wrapContentHeight.value
@@ -155,8 +156,9 @@ const outerResizeObserver = new ResizeObserver(() => {
     trackWidth.value = outerRef.value.clientWidth
     trackHeight.value = outerRef.value.clientHeight
     if (props.stickBottom) {
-      outerRef.value.scrollTo({
+      scrollTo({
         top: wrapContentHeight.value,
+        left: 0,
         behavior: 'smooth',
       })
       translateY.value = wrapContentHeight.value
@@ -192,7 +194,7 @@ const scrollTo = (scrollProps: {
   left: number
   behavior: string
 }) => {
-  outerRef.value.scrollTo(scrollProps.left, scrollProps.top)
+  outerRef.value.scroll(scrollProps.left, scrollProps.top)
 }
 
 defineExpose({

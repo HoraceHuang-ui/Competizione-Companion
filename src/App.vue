@@ -7,7 +7,9 @@ import '@mdui/icons/send--rounded.js'
 import '@mdui/icons/balance--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/announcement.js'
-import { computed, onMounted, provide, ref, watch } from 'vue'
+import '@mdui/icons/assistant--rounded.js'
+
+import { onMounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { setColorScheme, setTheme } from 'mdui'
@@ -21,6 +23,7 @@ import { marked } from 'marked'
 import { checkUpdate, verCompare } from '@/utils/utils'
 import UpdateDialog from '@/components/UpdateDialog.vue'
 import FirstSetup from './components/FirstSetup.vue'
+import AIDrawer from './components/AIDrawer.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -59,6 +62,8 @@ const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
 }
+
+const aiDrawerOpen = ref(false)
 
 const launching = ref(false)
 const launchACC = () => {
@@ -228,35 +233,13 @@ watch(
       :src="`../../src/assets/asseconHime/ASSECON_HIME_${isDark ? 'dark' : 'light'}.png`"
     />
   </Transition>
+
   <mdui-layout class="size-full overflow-hidden" @click="onHyperLinkClick">
     <mdui-top-app-bar
       variant="center-aligned"
       scroll-target="#mainRouterView"
       class="py-1 pl-3 pr-4 h-14 drag bg-transparent"
-      style="--z-index: 9999"
     >
-      <div
-        class="absolute top-0 z-9999 focus"
-        :class="platform === 'darwin' ? 'left-26' : 'right-0'"
-      >
-        <div
-          class="traffic-lights focus no-drag py-3 px-2"
-          :class="platform === 'darwin' ? 'flex-row-reverse' : 'flex-row'"
-        >
-          <div
-            class="traffic-light traffic-light-maximize"
-            @click="winMax"
-          ></div>
-          <div
-            class="traffic-light traffic-light-minimize"
-            @click="winMin"
-          ></div>
-          <div
-            class="traffic-light traffic-light-close"
-            @click="winClose"
-          ></div>
-        </div>
-      </div>
       <mdui-button-icon class="p-2 mr-5" v-if="platform !== 'darwin'">
         <img src="../build/icon.ico" />
       </mdui-button-icon>
@@ -353,6 +336,24 @@ watch(
       </mdui-tooltip>
 
       <mdui-tooltip
+        :content="'AI ' + $t('general.appNickName')"
+        placement="right"
+        slot="bottom"
+        class="relative"
+      >
+        <div class="relative">
+          <mdui-button-icon @click="aiDrawerOpen = true">
+            <mdui-icon-assistant--rounded></mdui-icon-assistant--rounded>
+          </mdui-button-icon>
+          <mdui-badge
+            class="absolute right-0 top-0 px-1"
+            v-if="store.general.msgId < 3"
+            >AI</mdui-badge
+          >
+        </div>
+      </mdui-tooltip>
+
+      <mdui-tooltip
         :content="translate('general.launchACC')"
         placement="right"
         slot="bottom"
@@ -421,6 +422,22 @@ watch(
 
     <FirstSetup v-model="firstSetupShow" />
   </mdui-layout>
+
+  <AIDrawer class="no-drag" v-model="aiDrawerOpen" :platform="platform" />
+
+  <div
+    class="absolute top-0 z-9999 focus no-drag"
+    :class="platform === 'darwin' ? 'left-26' : 'right-0'"
+  >
+    <div
+      class="traffic-lights focus no-drag py-4 px-2"
+      :class="platform === 'darwin' ? 'flex-row-reverse' : 'flex-row'"
+    >
+      <div class="traffic-light traffic-light-maximize" @click="winMax"></div>
+      <div class="traffic-light traffic-light-minimize" @click="winMin"></div>
+      <div class="traffic-light traffic-light-close" @click="winClose"></div>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -473,7 +490,25 @@ span {
 
   ul {
     list-style: disc inside;
-    margin-bottom: 0.5rem;
+    margin: 0.5rem 0;
+  }
+
+  ol {
+    list-style: decimal inside;
+    margin: 0.5rem 0;
+  }
+
+  table {
+    margin: 0.5rem 0;
+
+    thead {
+      border: 2px solid;
+    }
+    th,
+    td {
+      border: 1px solid;
+      padding: 0.25rem 0.5rem;
+    }
   }
 }
 

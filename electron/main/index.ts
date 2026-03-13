@@ -180,12 +180,12 @@ async function createWindow() {
   //   store.set(key, value)
   // })
 
-  ipcMain.handle('axios:post', async (_event, url, body) => {
-    const result = await axios.post(url, body)
+  ipcMain.handle('axios:post', async (_event, url, body, config?) => {
+    const result = await axios.post(url, body, config)
     return result.data
   })
-  ipcMain.handle('axios:get', async (_event, url) => {
-    const result = await axios.get(url)
+  ipcMain.handle('axios:get', async (_event, url, config?) => {
+    const result = await axios.get(url, config)
     return result.data
   })
 

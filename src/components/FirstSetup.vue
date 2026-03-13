@@ -108,20 +108,29 @@ const closeDialog = () => {
         </div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title font-bold">
-          {{ `「${$t('general.status')}」 ${$t('tutorial.pageDesc')}` }}
+        <div class="mb-4 text-left w-full title">
+          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+            {{ `「${$t('general.status')}」` }}</span
+          >
+          {{ $t('tutorial.pageDesc') }}
         </div>
         <div>{{ $t('tutorial.page2desc') }}</div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title font-bold">
-          {{ `「${$t('general.servers')}」 ${$t('tutorial.pageDesc')}` }}
+        <div class="mb-4 text-left w-full title">
+          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+            {{ `「${$t('general.servers')}」` }}</span
+          >
+          {{ $t('tutorial.pageDesc') }}
         </div>
         <div>{{ $t('tutorial.page3desc') }}</div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title font-bold">
-          {{ `「${$t('general.setup')}」 ${$t('tutorial.pageDesc')}` }}
+        <div class="mb-4 text-left w-full title">
+          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+            {{ `「${$t('general.setup')}」` }}</span
+          >
+          {{ $t('tutorial.pageDesc') }}
         </div>
         <div class="text-left w-full">{{ $t('tutorial.page4desc') }}</div>
         <ul class="list-disc list-inside">
@@ -131,14 +140,20 @@ const closeDialog = () => {
         </ul>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title font-bold">
-          {{ `「${$t('general.bop')}」 ${$t('tutorial.pageDesc')}` }}
+        <div class="mb-4 text-left w-full title">
+          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+            {{ `「${$t('general.bop')}」` }}</span
+          >
+          {{ $t('tutorial.pageDesc') }}
         </div>
         <div>{{ $t('tutorial.page5desc') }}</div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title font-bold">
-          {{ `「${$t('general.report')}」 ${$t('tutorial.pageDesc')}` }}
+        <div class="mb-4 text-left w-full title">
+          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+            {{ `「${$t('general.report')}」` }}</span
+          >
+          {{ $t('tutorial.pageDesc') }}
         </div>
         <div>{{ $t('tutorial.page6desc') }}</div>
       </div>

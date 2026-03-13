@@ -524,7 +524,7 @@
     "page4li5": "Import multiple json/folders/zip files and batch import them into the game.",
     "page5desc": "On this page, you can view the LFM BoP for each track and car model, along with their BoP target lap times and predicted lap speeds. You can also export BoP data as bop.json or preset.pre for easy import into server settings.",
     "page6desc": "On this page, you can input an accident description, and the assistant will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
-    "page7desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation!",
+    "page7desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation! If you encounter any problems when driving, feel free to ask her for advice; or you may just chat with her when feeling bored!",
     "page8desc": "Finally, thank you for using Competizione Companion! The continuous improvement of the assistant can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
   }
 }

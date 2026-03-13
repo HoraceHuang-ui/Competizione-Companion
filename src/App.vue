@@ -26,6 +26,8 @@ const router = useRouter()
 const store = useStore()
 setTheme(themeMap[store.settings.general.darkMode])
 
+const platform = ref('')
+
 const winMax = () => {
   window.win.max()
 }
@@ -121,11 +123,15 @@ watch(
 )
 
 onMounted(() => {
-  if (!store.general.firstSetupFlag) {
-    firstSetupShow.value = true
-  } else {
-    startup()
-  }
+  window.os.platform().then(plt => {
+    platform.value = plt
+  })
+  firstSetupShow.value = true
+  // if (!store.general.firstSetupFlag) {
+  //   firstSetupShow.value = true
+  // } else {
+  //   startup()
+  // }
 
   if (
     verCompare(
@@ -227,9 +233,16 @@ watch(
       variant="center-aligned"
       scroll-target="#mainRouterView"
       class="py-1 pl-3 pr-4 h-14 drag bg-transparent"
+      style="--z-index: 9999"
     >
-      <div class="absolute right-0 top-0 z-[9999] focus">
-        <div class="traffic-lights focus no-drag py-3 px-2">
+      <div
+        class="absolute top-0 z-9999 focus"
+        :class="platform === 'darwin' ? 'left-26' : 'right-0'"
+      >
+        <div
+          class="traffic-lights focus no-drag py-3 px-2"
+          :class="platform === 'darwin' ? 'flex-row-reverse' : 'flex-row'"
+        >
           <div
             class="traffic-light traffic-light-maximize"
             @click="winMax"
@@ -244,21 +257,27 @@ watch(
           ></div>
         </div>
       </div>
-      <mdui-button-icon class="p-2 mr-5">
+      <mdui-button-icon class="p-2 mr-5" v-if="platform !== 'darwin'">
         <img src="../build/icon.ico" />
       </mdui-button-icon>
       <mdui-top-app-bar-title class="text-xl mt-2">
-        <span class="title w-1/2 text-right">{{
-          translate('general.appName')
-        }}</span>
-        <span
-          class="mx-4 opacity-60"
-          style="font-family: 'Harmony OS Sans SC'; font-weight: 200"
-          >|</span
-        >
-        <span class="w-1/2" style="color: rgb(var(--mdui-color-primary))">{{
-          $t(modes[mode])
-        }}</span>
+        <div class="w-full flex flex-row items-center justify-center">
+          <mdui-button-icon class="p-2 mr-2" v-if="platform === 'darwin'">
+            <img src="../build/icon.ico" />
+          </mdui-button-icon>
+          <div class="title text-right">
+            {{ translate('general.appName') }}
+          </div>
+          <div
+            class="mx-4 opacity-60"
+            style="font-family: 'Harmony OS Sans SC'; font-weight: 200"
+          >
+            |
+          </div>
+          <div style="color: rgb(var(--mdui-color-primary))">
+            {{ $t(modes[mode]) }}
+          </div>
+        </div>
       </mdui-top-app-bar-title>
     </mdui-top-app-bar>
 

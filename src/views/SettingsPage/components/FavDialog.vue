@@ -31,7 +31,7 @@ const onSelectGroup = (group: string) => {
 watch(
   () => curCar.value,
   newCar => {
-    if (newCar) {
+    if (newCar?.value) {
       if (!store.general.favCars[curGroup.value].includes(newCar?.value)) {
         store.general.favCars[curGroup.value].push(newCar?.value)
       }
@@ -44,7 +44,7 @@ watch(
 watch(
   () => curTrack.value,
   newTrack => {
-    if (newTrack) {
+    if (newTrack?.value) {
       if (!store.general.favTracks.includes(newTrack?.value)) {
         store.general.favTracks.push(newTrack?.value)
       }

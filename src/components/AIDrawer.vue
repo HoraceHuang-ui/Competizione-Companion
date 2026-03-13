@@ -6,6 +6,8 @@ import { translate } from '@/i18n'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/maps-ugc--rounded.js'
 import '@mdui/icons/arrow-upward--rounded.js'
+import '@mdui/icons/content-copy--rounded.js'
+import '@mdui/icons/check--rounded.js'
 import ScrollWrapper from './ScrollWrapper.vue'
 
 const store = useStore()
@@ -13,6 +15,20 @@ const store = useStore()
 const userInput = ref('')
 const loading = ref(false)
 const isComposing = ref(false)
+const hoveredIdx = ref<number | null>(null)
+const checkedIdx = ref<number | null>(null)
+
+async function copyMessage(content: string, idx: number) {
+  try {
+    await navigator.clipboard.writeText(content ?? '')
+    checkedIdx.value = idx
+    setTimeout(() => {
+      checkedIdx.value = null
+    }, 2000)
+  } catch (error) {
+    // ignore clipboard failures
+  }
+}
 
 function onEnterKey(e: KeyboardEvent) {
   if (isComposing.value) return
@@ -159,7 +175,7 @@ watch(aiDrawerOpen, newVal => {
     <div class="ai-chat flex flex-col mt-2 px-4">
       <ScrollWrapper
         :stick-bottom="true"
-        class="chat-history mb-4 rounded-2xl p-1 bg-[rgb(var(--mdui-color-surface-container-lowest))]"
+        class="chat-history mb-4 rounded-2xl p-1 bg-[rgb(var(--mdui-color-surface-container-lowest))] select-text"
         style="height: calc(100vh - 56px - 8px - 12px - 56px - 16px - 20px)"
       >
         <div class="p-3">
@@ -169,8 +185,27 @@ watch(aiDrawerOpen, newVal => {
                 it => it.role !== 'system',
               )"
               :key="idx"
-              :class="msg.role === 'user' ? 'text-right' : 'text-left'"
+              class="message-row"
+              :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
+              @mouseenter="hoveredIdx = idx"
+              @mouseleave="hoveredIdx = null"
             >
+              <transition name="fade">
+                <mdui-button-icon
+                  class="inline opacity-60"
+                  v-if="hoveredIdx === idx && msg.role === 'user'"
+                  @click="copyMessage(msg.content, idx)"
+                >
+                  <transition name="fade" mode="out-in">
+                    <mdui-icon-check--rounded
+                      v-if="checkedIdx === idx"
+                    ></mdui-icon-check--rounded>
+                    <mdui-icon-content-copy--rounded
+                      v-else
+                    ></mdui-icon-content-copy--rounded>
+                  </transition>
+                </mdui-button-icon>
+              </transition>
               <div :class="msg.role === 'user' ? 'user-msg' : 'ai-msg'">
                 <template v-if="msg.role === 'assistant' && msg.reasoning">
                   <details
@@ -184,21 +219,37 @@ watch(aiDrawerOpen, newVal => {
                       {{ $t('ai.reasoningProcess') }}
                     </summary>
                     <div
-                      class="markdown-body marked opacity-60 pl-4 mb-4"
+                      class="markdown-body marked opacity-60 pl-4 mb-4 cursor-text"
                       v-html="marked(msg.reasoning ?? '')"
                     ></div>
                   </details>
                 </template>
                 <span
-                  class="markdown-body marked"
+                  class="markdown-body marked cursor-text"
                   v-html="marked(msg.content ?? '')"
                 ></span>
               </div>
+              <transition name="fade">
+                <mdui-button-icon
+                  class="inline opacity-60"
+                  v-if="hoveredIdx === idx && msg.role !== 'user'"
+                  @click="copyMessage(msg.content, idx)"
+                >
+                  <transition name="fade" mode="out-in">
+                    <mdui-icon-check--rounded
+                      v-if="checkedIdx === idx"
+                    ></mdui-icon-check--rounded>
+                    <mdui-icon-content-copy--rounded
+                      v-else
+                    ></mdui-icon-content-copy--rounded>
+                  </transition>
+                </mdui-button-icon>
+              </transition>
             </div>
           </TransitionGroup>
 
           <transition name="message-appear">
-            <div class="flex flex-row items-center" v-if="loading">
+            <div class="flex flex-row items-center select-none" v-if="loading">
               <div class="text-left ai-msg">
                 <div class="markdown-body marked">{{ $t('ai.thinking') }}</div>
               </div>
@@ -270,6 +321,40 @@ watch(aiDrawerOpen, newVal => {
   max-width: 80%;
 }
 
+.message-row {
+  width: 100%;
+  display: flex;
+  padding: 2px 8px;
+}
+
+.message-row-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px;
+  opacity: 0.75;
+  transition: opacity 0.1s ease;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+}
+
+.copy-left {
+  left: -32px;
+}
+
+.copy-right {
+  right: -32px;
+}
+
 .message-appear-enter-active {
   transition: all 0.5s ease;
 }
@@ -292,5 +377,15 @@ watch(aiDrawerOpen, newVal => {
 
 .message-appear-leave-to {
   opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  position: absolute;
 }
 </style>

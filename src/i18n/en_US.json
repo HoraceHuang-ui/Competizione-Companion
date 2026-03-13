@@ -2,6 +2,7 @@
   "langCode": "en_US",
   "general": {
     "appName": "Competizione Companion",
+    "appNickName": "Companion",
     "status": "Lobby Server Status",
     "servers": "Server List",
     "setup": "Setup Management",
@@ -518,7 +519,7 @@
     "page3desc": "On this page, you can query all available public ACC servers and follow the tutorial in the bottom-left corner to configure the ACC Connector for direct connection, even if the ACC lobby server is down. You can also quickly query all HiPole servers.",
     "page4desc": "On this page, you can:",
     "page4li1": "Select or drag and drop, or directly select a car model and track to read the game documentation and import/view setups;",
-    "page4li2": "Compare the differences between two setups with different parameters;",
+    "page4li2": "Compare the differences between two setups;",
     "page4li3": "View the meaning and effects of each setup parameter to deepen your understanding of the vehicle;",
     "page4li4": "Share setups as setup codes, or import from others' setup codes;",
     "page4li5": "Import multiple json/folders/zip files and batch import them into the game.",

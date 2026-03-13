@@ -126,12 +126,12 @@ onMounted(() => {
   window.os.platform().then(plt => {
     platform.value = plt
   })
-  firstSetupShow.value = true
-  // if (!store.general.firstSetupFlag) {
-  //   firstSetupShow.value = true
-  // } else {
-  //   startup()
-  // }
+
+  if (!store.general.firstSetupFlag) {
+    firstSetupShow.value = true
+  } else {
+    startup()
+  }
 
   if (
     verCompare(

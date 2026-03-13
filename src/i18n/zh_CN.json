@@ -2,6 +2,7 @@
   "langCode": "zh_CN",
   "general": {
     "appName": "争锋小助手",
+    "appNickName": "小助手",
     "status": "Lobby 服务器状态",
     "servers": "服务器列表",
     "setup": "调校管理",

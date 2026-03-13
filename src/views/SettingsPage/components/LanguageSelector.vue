@@ -2,8 +2,8 @@
 import { availableLangCodes, langMap, switchLang, translate } from '@/i18n'
 import { useStore } from '@/store'
 import { trackCarDispSettings } from '@/utils/enums'
-import { onMounted } from 'vue'
 import ChipSelect from '@/components/ChipSelect.vue'
+import { nextTick } from 'vue'
 
 const lang = defineModel({
   type: String,
@@ -12,7 +12,8 @@ const lang = defineModel({
 
 const store = useStore()
 
-const onLangSelect = () => {
+const onLangSelect = async () => {
+  await nextTick()
   switchLang(lang.value)
   if (
     ['舞萌DX启动！', 'Time for maimai DX!'].includes(

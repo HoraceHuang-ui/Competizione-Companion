@@ -7,7 +7,16 @@ import FavDialog from '@/views/SettingsPage/components/FavDialog.vue'
 import { computed, ref } from 'vue'
 
 import '@mdui/icons/help-outline--rounded.js'
+
+import '@mdui/icons/cell-tower--rounded.js'
+import '@mdui/icons/view-list--rounded.js'
+import '@mdui/icons/display-settings--rounded.js'
+import '@mdui/icons/settings--rounded.js'
+import '@mdui/icons/send--rounded.js'
+import '@mdui/icons/balance--rounded.js'
 import '@mdui/icons/close--rounded.js'
+import '@mdui/icons/announcement.js'
+import '@mdui/icons/assistant--rounded.js'
 
 const helpPage = ref(1)
 const helpDialogOpen = defineModel({ type: Boolean, default: false })
@@ -108,57 +117,93 @@ const closeDialog = () => {
         </div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title">
-          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
-            {{ `「${$t('general.status')}」` }}</span
-          >
-          {{ $t('tutorial.pageDesc') }}
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <mdui-icon-cell-tower--rounded
+            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
+          ></mdui-icon-cell-tower--rounded>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「${$t('general.status')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
         </div>
-        <div>{{ $t('tutorial.page2desc') }}</div>
+        <div class="ml-10">{{ $t('tutorial.page2desc') }}</div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title">
-          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
-            {{ `「${$t('general.servers')}」` }}</span
-          >
-          {{ $t('tutorial.pageDesc') }}
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <mdui-icon-view-list--rounded
+            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
+          ></mdui-icon-view-list--rounded>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「${$t('general.servers')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
         </div>
-        <div>{{ $t('tutorial.page3desc') }}</div>
+        <div class="ml-10">{{ $t('tutorial.page3desc') }}</div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title">
-          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
-            {{ `「${$t('general.setup')}」` }}</span
-          >
-          {{ $t('tutorial.pageDesc') }}
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <mdui-icon-display-settings--rounded
+            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
+          ></mdui-icon-display-settings--rounded>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「${$t('general.setup')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
         </div>
-        <div class="text-left w-full">{{ $t('tutorial.page4desc') }}</div>
-        <ul class="list-disc list-inside">
+        <div class="w-full text-left ml-18">{{ $t('tutorial.page4desc') }}</div>
+        <ul class="list-disc list-inside ml-10">
           <li v-for="i in [1, 2, 3, 4, 5]" :key="i">
             {{ $t(`tutorial.page4li${i}`) }}
           </li>
         </ul>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title">
-          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
-            {{ `「${$t('general.bop')}」` }}</span
-          >
-          {{ $t('tutorial.pageDesc') }}
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <mdui-icon-balance--rounded
+            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
+          ></mdui-icon-balance--rounded>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「${$t('general.bop')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
         </div>
-        <div>{{ $t('tutorial.page5desc') }}</div>
+        <div class="ml-10">{{ $t('tutorial.page5desc') }}</div>
       </div>
       <div class="help-item">
-        <div class="mb-4 text-left w-full title">
-          <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
-            {{ `「${$t('general.report')}」` }}</span
-          >
-          {{ $t('tutorial.pageDesc') }}
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <mdui-icon-announcement
+            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
+          ></mdui-icon-announcement>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「${$t('general.report')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
         </div>
-        <div>{{ $t('tutorial.page6desc') }}</div>
+        <div class="ml-10">{{ $t('tutorial.page6desc') }}</div>
       </div>
       <div class="help-item">
-        <div>{{ $t('tutorial.page7desc') }}</div>
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <mdui-icon-assistant--rounded
+            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
+          ></mdui-icon-assistant--rounded>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「AI ${$t('general.appNickName')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
+        </div>
+        <div class="ml-10">{{ $t('tutorial.page7desc') }}</div>
       </div>
       <div class="help-item">
         <div>{{ $t('tutorial.page8desc') }}</div>

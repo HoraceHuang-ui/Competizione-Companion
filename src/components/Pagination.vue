@@ -95,8 +95,8 @@ const changePage = (page: number) => {
   </div>
   <div v-else class="flex flex-row items-center justify-center wrapper">
     <mdui-button-icon
-      class="bg-[rgb(var(--mdui-color-secondary-container))]"
-      :disabled="curPage <= 1"
+      class="bg-none"
+      :class="{ disable: curPage <= 1 }"
       @click="changePage(curPage - 1)"
     >
       <mdui-icon-keyboard-arrow-left--rounded></mdui-icon-keyboard-arrow-left--rounded>
@@ -107,8 +107,8 @@ const changePage = (page: number) => {
     <div class="w-10 text-center">{{ props.total }}</div>
 
     <mdui-button-icon
-      class="bg-[rgb(var(--mdui-color-secondary-container))]"
-      :disabled="curPage >= totalPages"
+      class="bg-none"
+      :class="{ disable: curPage >= totalPages }"
       @click="changePage(curPage + 1)"
     >
       <mdui-icon-keyboard-arrow-right--rounded></mdui-icon-keyboard-arrow-right--rounded>
@@ -119,5 +119,10 @@ const changePage = (page: number) => {
 <style scoped lang="scss">
 .wrapper > * {
   margin: 0.25rem 0;
+}
+
+.disable {
+  opacity: 0.3;
+  pointer-events: none;
 }
 </style>

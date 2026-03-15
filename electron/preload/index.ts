@@ -206,10 +206,10 @@ function useLoading() {
   oDiv.innerHTML = `<div class="inner-wrapper">
     <img class="logo" src="../public/favicon.ico" />
     <div style="margin-top: 1rem; font-size: 22px">
-      <div class="below-text">争锋小助手</span>
-      <div class="append-text"> Competizione Companion</span>
+      <div class="below-text" style="font-family: sans-serif;">争锋小助手</span>
+      <div class="append-text" style="font-family: sans-serif;"> Competizione Companion</span>
     </div>
-    <div class="append-text" style="font-size: 14px; margin-top: 0.5rem;">by horacehuang17</div>
+    <div class="append-text" style="font-size: 14px; margin-top: 0.5rem; font-family: sans-serif;">by horacehuang17</div>
   </div>`
 
   const hideDom = () => {

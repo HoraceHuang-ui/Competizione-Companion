@@ -30,6 +30,9 @@ const store = useStore()
 const donationOpen1 = ref(false)
 const donationOpen2 = ref(false)
 
+const contactOpen = ref(false)
+const friendshipOpen = ref(false)
+
 if (!localStorage.lang) {
   localStorage.lang = 'en_US'
 }
@@ -531,6 +534,22 @@ const setBgImage = () => {
                 </mdui-dialog>
               </div>
             </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('general.contact') }}</div>
+                <mdui-button variant="tonal" @click="contactOpen = true">
+                  {{ $t('bop.clickToView') }}
+                </mdui-button>
+              </div>
+            </div>
+            <div class="item">
+              <div class="item-in">
+                <div>{{ $t('general.friendshipLink') }}</div>
+                <mdui-button variant="tonal" @click="friendshipOpen = true">
+                  {{ $t('bop.clickToView') }}
+                </mdui-button>
+              </div>
+            </div>
             <div class="larger mt-4">
               <div
                 class="w-full text-center text-[rgb(var(--mdui-color-outline))] flex flex-row justify-center items-center"
@@ -667,6 +686,66 @@ const setBgImage = () => {
     <UpdateDialog v-model="updDialogShow" :upd-info="updInfo" />
 
     <FavDialog v-model="showFavDialog" />
+
+    <mdui-dialog
+      :headline="$t('general.friendshipLink')"
+      :open="friendshipOpen"
+      @close="friendshipOpen = false"
+      close-on-esc
+      close-on-overlay-click
+      :description="$t('general.friendshipLinkMsg')"
+    >
+      <ul class="mt-3 list-disc list-inside">
+        <li>
+          <a href="https://www.fullpush.cn" target="_blank">FULLPUSH</a>
+          - ACC 个人开服管理与数据统计工具
+        </li>
+        <li>
+          <a href="https://docs.qq.com/doc/DZUxEdEh0YXFUSkRW" target="_blank"
+            >ACC 新手指南</a
+          >
+          - 嗨跑群友们共同维护的 ACC 游戏新手常见 Q&A
+        </li>
+      </ul>
+      <mdui-button
+        slot="action"
+        class="font-bold"
+        @click="friendshipOpen = false"
+        variant="tonal"
+        >{{ $t('general.close') }}</mdui-button
+      >
+    </mdui-dialog>
+
+    <mdui-dialog
+      :headline="$t('general.contact')"
+      :open="contactOpen"
+      :description="$t('general.contactMsg')"
+      @close="contactOpen = false"
+      close-on-esc
+      close-on-overlay-click
+    >
+      <ul class="mt-3 list-disc list-inside select-text cursor-text">
+        <li>QQ: 3214442497</li>
+        <li>{{ $t('general.wechat') }}: HoraceHYY</li>
+        <li>
+          {{ $t('general.email') }}:
+          <a href="mailto:horacehuang17@gmail.com">horacehuang17@gmail.com</a>
+        </li>
+        <li>
+          {{ $t('general.hipoleId') }}: horacehuang17
+          <div class="opacity-70 mt-1">
+            {{ $t('general.hipoleIdMsg') }}
+          </div>
+        </li>
+      </ul>
+      <mdui-button
+        slot="action"
+        class="font-bold"
+        @click="contactOpen = false"
+        variant="tonal"
+        >{{ $t('general.close') }}</mdui-button
+      >
+    </mdui-dialog>
   </div>
 </template>
 

@@ -22,7 +22,15 @@
     "checkUpdFail": "检查更新失败",
     "listSeparator": "、",
     "clickToSet": "点击设置",
-    "unknownFail": "出错了！请按Ctrl+Shift+i，在顶部切换到“控制台”，然后截图并在GitHub仓库创建一个 Issue 或联系开发者QQ：3214442497 反映情况，感谢理解！"
+    "unknownFail": "出错了！请按Ctrl+Shift+i，在顶部切换到“控制台”，然后截图并在GitHub仓库创建一个 Issue 或联系开发者QQ：3214442497 反映情况，感谢理解！",
+    "friendshipLink": "友情链接",
+    "friendshipLinkMsg": "来看看其他大佬的项目吧！如果你也有 ACC 相关的任何项目，也欢迎联系我添加友链！",
+    "contact": "联系开发者",
+    "contactMsg": "如果你在使用过程中遇到任何问题，或者有任何建议和想法，欢迎通过以下方式联系我：",
+    "wechat": "微信",
+    "email": "邮箱",
+    "hipoleId": "嗨跑ID",
+    "hipoleIdMsg": "在嗨跑ACC 1/2 群、AC 1群、CHN24、HEC、AC EVO、AC Rally、LMU群中均可搜索此ID找到我哦"
   },
   "status": {
     "goodNews": "喜报",

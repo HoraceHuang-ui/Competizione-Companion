@@ -22,7 +22,15 @@
     "checkUpdFail": "Failed to Check for Updates",
     "listSeparator": ", ",
     "clickToSet": "Click to Set",
-    "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!"
+    "unknownFail": "An error occured! Please press Ctrl+Shift+i and switch to 'Console' tab at the top, take a screenshot and create an Issue in GitHub, thanks for your understanding!",
+    "friendshipLink": "Friendship Links",
+    "friendshipLinkMsg": "Check out other awesome ACC related projects! If you have any ACC related projects, feel free to contact me to add a link!",
+    "contact": "Contact Dev",
+    "contactMsg": "If you encounter any issues while using Competizione Companion, or have any suggestions or ideas, feel free to contact me through the following methods:",
+    "wechat": "WeChat",
+    "email": "Email",
+    "hipoleId": "HiPole ID",
+    "hipoleIdMsg": "You can find me by searching this ID in HiPole ACC 1/2 groups, AC 1 group, CHN24, HEC, AC EVO, AC Rally, LMU groups"
   },
   "status": {
     "goodNews": "Good News",
@@ -434,7 +442,8 @@
     "donation2Confirm": "It's MaiGO!!!!!",
     "hipoleTooltip": " · ACC QQ Group: 1073093591",
     "hmrTooltip": "HerMess Racing · QQ Group: 826527145",
-    "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better"
+    "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better",
+    "contact": "Contact Developer"
   },
   "cars": {
     "amr_v12_vantage_gt3": "AMR V12",

@@ -132,6 +132,15 @@ onMounted(() => {
     platform.value = plt
   })
 
+  for (let i = 0; i < pages.length; i++) {
+    if (
+      pages[i] &&
+      window.location.hash.includes(pages[i] ?? 'nothing exists')
+    ) {
+      mode.value = i
+    }
+  }
+
   if (!store.general.firstSetupFlag) {
     firstSetupShow.value = true
   } else {

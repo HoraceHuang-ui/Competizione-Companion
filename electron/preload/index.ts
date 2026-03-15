@@ -163,41 +163,59 @@ const safeDOM = {
  * https://matejkustec.github.io/SpinThatShit
  */
 function useLoading() {
-  const className = `loaders-css__square-spin`
   const styleContent = `
-@keyframes square-spin {
-  25% { transform: perspective(100px) rotateX(180deg) rotateY(0); }
-  50% { transform: perspective(100px) rotateX(180deg) rotateY(180deg); }
-  75% { transform: perspective(100px) rotateX(0) rotateY(180deg); }
-  100% { transform: perspective(100px) rotateX(0) rotateY(0); }
-}
-.${className} > div {
-  animation-fill-mode: both;
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
-}
-.app-loading-wrap {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #282c34;
-  z-index: 9;
-}
-    `
+    .logo {
+      width: 80px;
+      height: 80px;
+      filter: drop-shadow(0 0 1rem crimson);
+    }
+    .app-loading-wrap {
+      position: fixed;
+      color: #eee;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #222;
+      z-index: 9999;
+      transition: all 1s ease;
+    }
+    .inner-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .below-text {
+      text-align: center;
+      font-weight: bold;
+    }
+    .append-text {
+      text-align: center;
+      opacity: 0.6;
+    }
+  `
   const oStyle = document.createElement('style')
   const oDiv = document.createElement('div')
-
   oStyle.id = 'app-loading-style'
   oStyle.innerHTML = styleContent
   oDiv.className = 'app-loading-wrap'
-  oDiv.innerHTML = `<div class="${className}"><div></div></div>`
+  oDiv.innerHTML = `<div class="inner-wrapper">
+    <img class="logo" src="../public/favicon.ico" />
+    <div style="margin-top: 1rem; font-size: 22px">
+      <div class="below-text">争锋小助手</span>
+      <div class="append-text"> Competizione Companion</span>
+    </div>
+    <div class="append-text" style="font-size: 14px; margin-top: 0.5rem;">by horacehuang17</div>
+  </div>`
+
+  const hideDom = () => {
+    oDiv.style.opacity = '0'
+    oDiv.style.filter = 'blur(20px)'
+  }
 
   return {
     appendLoading() {
@@ -205,8 +223,12 @@ function useLoading() {
       safeDOM.append(document.body, oDiv)
     },
     removeLoading() {
-      safeDOM.remove(document.head, oStyle)
-      safeDOM.remove(document.body, oDiv)
+      hideDom()
+
+      setTimeout(() => {
+        safeDOM.remove(document.head, oStyle)
+        safeDOM.remove(document.body, oDiv)
+      }, 1000)
     },
   }
 }
@@ -217,7 +239,7 @@ const { appendLoading, removeLoading } = useLoading()
 domReady().then(appendLoading)
 
 window.onmessage = ev => {
-  ev.data.payload === 'removeLoading' && removeLoading()
+  ev.data.payload === 'removeLoading' && setTimeout(removeLoading, 500)
 }
 
 setTimeout(removeLoading, 4999)

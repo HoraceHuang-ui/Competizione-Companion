@@ -587,10 +587,53 @@ const setBgImage = () => {
                     {{ $t('settings.hmrTooltip') }}
                   </div>
                   <div
-                    class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
+                    class="flex flex-row items-center mx-4 opacity-55 transition-all hover:opacity-100"
                   >
                     <img src="../../assets/HerMess.png" width="40" />
                     <img src="../../assets/HerMess_text.png" width="90" />
+                  </div>
+                </mdui-tooltip>
+
+                <mdui-tooltip placement="top" class="credits">
+                  <div slot="content">
+                    <div>{{ $t('settings.illust') }}</div>
+                    <div>
+                      {{ $t('settings.xhs') }}
+                      <a
+                        href="https://xhslink.com/m/32eQI42uSqq"
+                        class="cursor-pointer"
+                        style="
+                          color: rgb(var(--mdui-color-inverse-primary));
+                          text-decoration: underline;
+                        "
+                        >@灵均子美
+                      </a>
+                      &nbsp;| Pixiv
+                      <a
+                        href="https://www.pixiv.net/users/121727636"
+                        class="cursor-pointer"
+                        style="
+                          color: rgb(var(--mdui-color-inverse-primary));
+                          text-decoration: underline;
+                        "
+                      >
+                        @霊均</a
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-row items-center mx-4 opacity-55 transition-all hover:opacity-100"
+                  >
+                    <img
+                      src="../../assets/asseconHime/LJZM_profile.png"
+                      width="36"
+                      class="rounded-full mr-2"
+                    />
+                    <img
+                      src="../../assets/asseconHime/LJZM.png"
+                      width="70"
+                      :class="{ invert: dark.isDark.value }"
+                    />
                   </div>
                 </mdui-tooltip>
 
@@ -636,7 +679,7 @@ const setBgImage = () => {
                     >
                   </div>
                   <div
-                    class="flex flex-row items-center mx-4 opacity-55 hover:opacity-100"
+                    class="flex flex-row items-center mx-4 opacity-55 transition-all hover:opacity-100"
                   >
                     <img
                       src="../../assets/lonemeow.png"

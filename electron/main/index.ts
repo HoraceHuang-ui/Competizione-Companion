@@ -152,10 +152,18 @@ async function createWindow() {
     win.setSkipTaskbar(true)
   })
   ipcMain.on('win:max', (_event, toMax: boolean) => {
-    if (win.isMaximized()) {
-      win.unmaximize()
+    if (os.platform() === 'darwin') {
+      if (win.isFullScreen()) {
+        win.setFullScreen(false)
+      } else {
+        win.setFullScreen(true)
+      }
     } else {
-      win.maximize()
+      if (win.isMaximized()) {
+        win.unmaximize()
+      } else {
+        win.maximize()
+      }
     }
   })
   ipcMain.on('win:relaunch', () => {

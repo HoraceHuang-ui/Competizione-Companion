@@ -36,5 +36,6 @@
     'src/assets/hipole/*',
     'src/assets/carLogos/*',
     'src/assets/asseconHime/*',
+    'build/icon.ico',
   ],
 }

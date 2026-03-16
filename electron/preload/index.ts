@@ -204,7 +204,7 @@ function useLoading() {
   oStyle.innerHTML = styleContent
   oDiv.className = 'app-loading-wrap'
   oDiv.innerHTML = `<div class="inner-wrapper">
-    <img class="logo" src="../public/favicon.ico" />
+    <img class="logo" src="../../build/icon.ico" />
     <div style="margin-top: 1rem; font-size: 22px">
       <div class="below-text" style="font-family: sans-serif;">争锋小助手</span>
       <div class="append-text" style="font-family: sans-serif;"> Competizione Companion</span>

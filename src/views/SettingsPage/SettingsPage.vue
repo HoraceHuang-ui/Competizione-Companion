@@ -128,6 +128,9 @@ watch(
       if (lastThemeColor !== newColor) {
         setColorScheme(newColor)
         lastThemeColor = newColor
+        if (store.settings.general.bgType === 'custom') {
+          store.settings.general.customBgThemeColor = newColor
+        }
       }
     }, 100)
   },
@@ -315,6 +318,8 @@ const setBgImage = () => {
                     <ChromePicker
                       slot="content"
                       v-model="store.settings.general.themeColor"
+                      disable-alpha
+                      :formats="['hex', 'rgb']"
                     />
                     <div
                       class="flex flex-row items-center rounded-full h-10 p-1 bg-[rgb(var(--mdui-color-inverse-on-surface))]"

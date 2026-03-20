@@ -111,7 +111,6 @@
     "batchImportSave": "保存并导入",
     "batchImportEmpty": "未找到有效的调校文件。",
     "batchImportTrackRequired": "请为所有调校选择赛道。",
-    "trackImportConfirmTitle": "确认导入赛道调校",
     "trackImportConfirmCar": "车型：",
     "trackImportConfirmTracks": "赛道：",
     "trackImportConfirmAction": "确认导入",

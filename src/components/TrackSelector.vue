@@ -4,7 +4,7 @@ import { getTrackDisplay, sortTracks } from '@/utils/utils'
 import { trackIndex } from '@/utils/enums'
 import { useStore } from '@/store'
 import '@mdui/icons/location-on--rounded.js'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import '@mdui/icons/search--rounded.js'
 import { translateWithLocale } from '@/i18n'
 
@@ -33,9 +33,13 @@ const props = defineProps({
   },
 })
 
+const searchBoxRef = ref<HTMLElement | null>(null)
 const sortedTracks = ref(sortTracks())
 const updateSortedTracks = () => {
   sortedTracks.value = sortTracks()
+  nextTick(() => {
+    searchBoxRef.value?.focus?.()
+  })
 }
 
 const trackSearch = ref('')
@@ -93,9 +97,9 @@ const searchFilter = (track: [string, string, string, string]) => {
     </template>
     <template #suffix>
       <mdui-text-field
+        ref="searchBoxRef"
         class="cursor-text"
         variant="filled"
-        autofocus
         :value="trackSearch"
         @input="trackSearch = $event.target.value"
       >

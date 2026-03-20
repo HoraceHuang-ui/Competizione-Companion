@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import TrackSelector from '@/components/TrackSelector.vue'
 import carData from '@/utils/carData'
+import ScrollWrapper from '@/components/ScrollWrapper.vue'
 
 type BatchImportItem = {
   fileName: string
@@ -81,7 +82,7 @@ const onClose = () => {
         </div>
         <TrackSelector
           v-model="allTrack"
-          dropdown-placement="right"
+          dropdown-placement="bottom"
           chip-class="mt-1 w-max"
         />
       </div>
@@ -89,27 +90,29 @@ const onClose = () => {
         {{ $t('setup.batchImportTip') }}
       </div>
 
-      <div class="mt-4 max-h-[360px] overflow-auto pr-2">
-        <div
-          v-for="(item, idx) in items"
-          :key="`${item.fileName}-${idx}`"
-          class="flex flex-row items-center justify-between py-2 border-b border-[rgb(var(--mdui-color-surface-container-highest))]"
-        >
-          <div class="flex flex-col min-w-0 pr-4">
-            <div class="text-sm font-medium truncate">
-              {{ item.fileName }}
+      <ScrollWrapper class="mt-4" height="360px">
+        <div class="mt-4 px-4">
+          <div
+            v-for="(item, idx) in items"
+            :key="`${item.fileName}-${idx}`"
+            class="flex flex-row items-center justify-between py-2 border-b border-[rgb(var(--mdui-color-surface-container-highest))]"
+          >
+            <div class="flex flex-col min-w-0 pr-4">
+              <div class="text-sm font-medium truncate">
+                {{ item.fileName }}
+              </div>
+              <div class="text-xs opacity-70 truncate">
+                {{ getCarLabel(item.setup) }}
+              </div>
             </div>
-            <div class="text-xs opacity-70 truncate">
-              {{ getCarLabel(item.setup) }}
-            </div>
+            <TrackSelector
+              v-model="item.track"
+              dropdown-placement="right"
+              chip-class="mt-1 w-max"
+            />
           </div>
-          <TrackSelector
-            v-model="item.track"
-            dropdown-placement="right"
-            chip-class="mt-1 w-max"
-          />
         </div>
-      </div>
+      </ScrollWrapper>
 
       <mdui-button
         variant="filled"

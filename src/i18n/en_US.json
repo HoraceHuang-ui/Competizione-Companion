@@ -111,7 +111,6 @@
     "batchImportSave": "Save and Import",
     "batchImportEmpty": "No valid setup files found.",
     "batchImportTrackRequired": "Please select a track for all setups.",
-    "trackImportConfirmTitle": "Confirm Track Import",
     "trackImportConfirmCar": "Car:",
     "trackImportConfirmTracks": "Tracks:",
     "trackImportConfirmAction": "Import",

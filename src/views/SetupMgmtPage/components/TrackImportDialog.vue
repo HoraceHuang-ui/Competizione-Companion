@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import carData from '@/utils/carData'
 import { getTrackDisplay } from '@/utils/utils'
+import ScrollWrapper from '@/components/ScrollWrapper.vue'
 
 type TrackImportGroup = {
   trackKey: string
@@ -63,7 +64,7 @@ const onConfirm = () => {
 
 <template>
   <mdui-dialog
-    :headline="$t('setup.trackImportConfirmTitle')"
+    :headline="$t('setup.batchImportTitle')"
     :open="open"
     @close="onClose"
   >
@@ -81,16 +82,18 @@ const onConfirm = () => {
       <div class="text-sm opacity-80 mt-3">
         {{ $t('setup.trackImportConfirmTracks') }}
       </div>
-      <div class="text-sm mt-2 max-h-[220px] overflow-auto pr-2 flex flex-wrap">
-        <mdui-chip
-          v-for="trackKey in trackKeys"
-          :key="trackKey"
-          class="mr-2 mb-2"
-          style="font-family: Consolas, 'Harmony OS Sans SC', sans-serif"
-        >
-          {{ getTrackLabel(trackKey) }}
-        </mdui-chip>
-      </div>
+      <scroll-wrapper class="mt-2" height="220px">
+        <div class="text-sm pr-2 flex flex-wrap">
+          <mdui-chip
+            v-for="trackKey in trackKeys"
+            :key="trackKey"
+            class="mr-2 mb-2"
+            style="font-family: Consolas, 'Harmony OS Sans SC', sans-serif"
+          >
+            {{ getTrackLabel(trackKey) }}
+          </mdui-chip>
+        </div>
+      </scroll-wrapper>
       <div class="text-xs text-amber-500 mt-3">
         {{ $t('setup.batchImportTip') }}
       </div>

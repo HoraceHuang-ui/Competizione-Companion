@@ -4,7 +4,7 @@ import { getCarDisplay, sortCars } from '@/utils/utils'
 import '@mdui/icons/directions-car--rounded.js'
 import { useStore } from '@/store'
 import '@mdui/icons/search--rounded.js'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { translateWithLocale } from '@/i18n'
 
 const store = useStore()
@@ -32,9 +32,13 @@ const curCar = defineModel({
   required: true,
 })
 
+const searchBoxRef = ref<HTMLElement | null>(null)
 const sortedCars = ref(sortCars(props.group))
 const updateSortedCars = () => {
   sortedCars.value = sortCars(props.group)
+  nextTick(() => {
+    searchBoxRef.value?.focus?.()
+  })
 }
 
 const carSearch = ref('')
@@ -89,9 +93,9 @@ const searchFilter = (car: [string, any]) => {
     </template>
     <template #suffix>
       <mdui-text-field
+        ref="searchBoxRef"
         class="cursor-text"
         variant="filled"
-        autofocus
         :value="carSearch"
         @input="carSearch = $event.target.value"
       >

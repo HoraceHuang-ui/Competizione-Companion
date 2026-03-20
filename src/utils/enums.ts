@@ -58,7 +58,7 @@ export const hipoleEventColors = {
 }
 
 export const asseconHimeThemeColor = {
-  light: '#98d5fe',
+  light: '#e7a1ff',
   dark: '#87637c',
 }
 

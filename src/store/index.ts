@@ -35,7 +35,7 @@ export const useStore = defineStore('userStore', {
         bgType: 'hime',
         bgImg: '',
         bgImgPath: '',
-        bgOpacity: 0.85,
+        bgOpacity: 0.75,
       },
       status: {
         serverDownMsg: 'Time for maimai DX!',

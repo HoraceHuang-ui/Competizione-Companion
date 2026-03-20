@@ -120,7 +120,7 @@ watch([curTrack, curSeries], () => {
       variant="outlined"
       class="size-full border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex flex-col"
       :style="{
-        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.75)) / 0.75})`,
       }"
     >
       <div class="flex flex-row justify-between items-center mx-6 mt-4">

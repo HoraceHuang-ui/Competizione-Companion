@@ -239,7 +239,7 @@ watch(
     <img
       class="w-screen h-screen absolute object-cover"
       v-else-if="store.settings.general.bgType === 'hime'"
-      :src="`../../src/assets/asseconHime/ASSECON_HIME_${isDark ? 'dark' : 'light'}.png`"
+      :src="`../../src/assets/asseconHime/ASSECON_HIME_${isDark ? 'dark' : 'light'}.jpg`"
     />
   </Transition>
 
@@ -399,7 +399,7 @@ watch(
     <mdui-layout-main
       class="overflow-hidden transition-all"
       :style="{
-        background: `rgba(var(--mdui-color-surface), ${store.settings.general.bgOpacity || 0.85})`,
+        background: `rgba(var(--mdui-color-surface), ${store.settings.general.bgOpacity || 0.75})`,
       }"
     >
       <router-view id="mainRouterView" v-slot="{ Component }">

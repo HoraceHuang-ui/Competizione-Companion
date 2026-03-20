@@ -178,7 +178,7 @@ const setBgImage = () => {
       variant="outlined"
       class="size-full transition-all border border-[rgb(var(--mdui-color-inverse-primary-dark))] mx-4 mb-4 flex"
       :style="{
-        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.85)) / 0.85})`,
+        background: `rgba(var(--mdui-color-surface-container-lowest), ${(0.65 * (store.settings.general.bgOpacity || 0.75)) / 0.75})`,
       }"
     >
       <ScrollWrapper class="pl-2 pr-1">
@@ -287,7 +287,7 @@ const setBgImage = () => {
                     <div slot="content" class="w-[300px]">
                       <mdui-slider
                         class="px-4"
-                        :value="store.settings.general.bgOpacity || 0.85"
+                        :value="store.settings.general.bgOpacity || 0.75"
                         :min="0.5"
                         :step="0.05"
                         :max="1"
@@ -308,7 +308,7 @@ const setBgImage = () => {
                     >
                       {{
                         (
-                          (store.settings.general.bgOpacity || 0.85) * 100
+                          (store.settings.general.bgOpacity || 0.75) * 100
                         ).toFixed(0)
                       }}%
                     </div>

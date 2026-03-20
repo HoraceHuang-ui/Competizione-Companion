@@ -30,7 +30,8 @@
     "wechat": "WeChat",
     "email": "Email",
     "hipoleId": "HiPole ID",
-    "hipoleIdMsg": "You can find me by searching this ID in HiPole ACC 1/2 groups, AC 1 group, CHN24, HEC, AC EVO, AC Rally, LMU groups"
+    "hipoleIdMsg": "You can find me by searching this ID in HiPole ACC 1/2 groups, AC 1 group, CHN24, HEC, AC EVO, AC Rally, LMU groups",
+    "pleaseSelect": "Please Select"
   },
   "status": {
     "goodNews": "Good News",

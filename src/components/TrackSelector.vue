@@ -4,6 +4,9 @@ import { getTrackDisplay, sortTracks } from '@/utils/utils'
 import { trackIndex } from '@/utils/enums'
 import { useStore } from '@/store'
 import '@mdui/icons/location-on--rounded.js'
+import { ref } from 'vue'
+import '@mdui/icons/search--rounded.js'
+import { translateWithLocale } from '@/i18n'
 
 const store = useStore()
 
@@ -29,6 +32,20 @@ const props = defineProps({
     default: [],
   },
 })
+
+const sortedTracks = ref(sortTracks())
+const updateSortedTracks = () => {
+  sortedTracks.value = sortTracks()
+}
+
+const trackSearch = ref('')
+
+const searchFilter = (track: [string, string, string, string]) => {
+  const searchLower = trackSearch.value.toLowerCase()
+  return `${track[0]} ${track[1]} ${track[2]} ${track[3]} ${translateWithLocale('tracks.' + track[trackIndex.ID], 'zh_CN')}`
+    .toLowerCase()
+    .includes(searchLower)
+}
 </script>
 
 <template>
@@ -37,11 +54,14 @@ const props = defineProps({
     :placeholder="$t('setup.trackPlaceholder')"
     :dropdown-placement="props.dropdownPlacement"
     :items="
-      sortTracks().filter(
-        (track: [string, string, string, string]) =>
-          !props.excludeIds.includes(track?.[trackIndex.ID]),
-      )
+      sortedTracks
+        .filter(
+          (track: [string, string, string, string]) =>
+            !props.excludeIds.includes(track?.[trackIndex.ID]),
+        )
+        .filter(searchFilter)
     "
+    :max-items="7"
     :chip-class="props.chipClass"
     :for-key="
       (track: [string, string, string, string]) => track?.[props.keyIdx]
@@ -64,11 +84,23 @@ const props = defineProps({
         }
       }
     "
+    @open="updateSortedTracks"
   >
     <template #icon>
       <mdui-icon-location-on--rounded
-        class="h-[1.125rem]"
+        class="h-4.5"
       ></mdui-icon-location-on--rounded>
+    </template>
+    <template #suffix>
+      <mdui-text-field
+        class="cursor-text"
+        variant="filled"
+        autofocus
+        :value="trackSearch"
+        @input="trackSearch = $event.target.value"
+      >
+        <mdui-icon-search--rounded slot="icon"></mdui-icon-search--rounded>
+      </mdui-text-field>
     </template>
   </ChipSelect>
 </template>

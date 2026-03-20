@@ -80,6 +80,17 @@ const searchFilter = (track: [string, string, string, string]) => {
       }
     "
     :chip-label="(track: any) => track?.label"
+    :fixed-height="
+      Math.min(
+        sortedTracks.filter(
+          (track: [string, string, string, string]) =>
+            !props.excludeIds.includes(track?.[trackIndex.ID]),
+        ).length,
+        7,
+      ) *
+        48 +
+      6
+    "
     @select="
       item => {
         curTrack = {

@@ -76,6 +76,16 @@ const searchFilter = (car: [string, any]) => {
     "
     :chip-label="(car: any) => car?.label"
     :max-items="7"
+    :fixed-height="
+      Math.min(
+        sortedCars.filter(
+          (car: [string, any]) => !props.excludeKeys.includes(car?.[0]),
+        ).length,
+        7,
+      ) *
+        48 +
+      6
+    "
     @select="
       item => {
         curCar = {

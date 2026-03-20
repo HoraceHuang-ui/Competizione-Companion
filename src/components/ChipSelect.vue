@@ -56,6 +56,9 @@ const props = defineProps({
     type: Number,
     default: 8,
   },
+  fixedHeight: {
+    type: Number,
+  },
 })
 
 const selection = defineModel({
@@ -95,9 +98,11 @@ const onSelect = (item: any) => {
       <slot name="suffix"></slot>
       <ScrollWrapper
         :height="
-          props.items.length > props.maxItems
-            ? `${props.maxItems * 48 + 6}px`
-            : '100%'
+          props.fixedHeight
+            ? `${props.fixedHeight}px`
+            : props.items.length > props.maxItems
+              ? `${props.maxItems * 48 + 6}px`
+              : '100%'
         "
         class="no-drag"
       >

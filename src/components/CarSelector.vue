@@ -101,7 +101,7 @@ const searchFilter = (car: [string, any]) => {
         class="h-[1.125rem]"
       ></mdui-icon-directions-car--rounded>
     </template>
-    <template #suffix>
+    <template #prefix>
       <mdui-text-field
         ref="searchBoxRef"
         class="cursor-text"

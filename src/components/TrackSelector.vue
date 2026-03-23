@@ -106,7 +106,7 @@ const searchFilter = (track: [string, string, string, string]) => {
         class="h-4.5"
       ></mdui-icon-location-on--rounded>
     </template>
-    <template #suffix>
+    <template #prefix>
       <mdui-text-field
         ref="searchBoxRef"
         class="cursor-text"

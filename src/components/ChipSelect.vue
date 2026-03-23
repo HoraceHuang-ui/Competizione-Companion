@@ -95,7 +95,7 @@ const onSelect = (item: any) => {
       ></mdui-icon-arrow-drop-down--rounded>
     </mdui-chip>
     <mdui-menu>
-      <slot name="suffix"></slot>
+      <slot name="prefix"></slot>
       <ScrollWrapper
         :height="
           props.fixedHeight

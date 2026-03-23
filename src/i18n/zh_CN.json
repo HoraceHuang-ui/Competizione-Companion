@@ -31,7 +31,8 @@
     "email": "邮箱",
     "hipoleId": "嗨跑ID",
     "hipoleIdMsg": "在嗨跑ACC 1/2 群、AC 1群、CHN24、HEC、AC EVO、AC Rally、LMU群中均可搜索此ID找到我哦",
-    "pleaseSelect": "请选择"
+    "pleaseSelect": "请选择",
+    "livery": "嗨跑涂装"
   },
   "status": {
     "goodNews": "喜报",

@@ -8,6 +8,7 @@ import '@mdui/icons/balance--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/announcement.js'
 import '@mdui/icons/assistant--rounded.js'
+import '@mdui/icons/format-paint--rounded.js'
 
 import { onMounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -24,6 +25,7 @@ import { checkUpdate, verCompare } from '@/utils/utils'
 import UpdateDialog from '@/components/UpdateDialog.vue'
 import FirstSetup from './components/FirstSetup.vue'
 import AIDrawer from './components/AIDrawer.vue'
+import HipoleLogoSvg from '@/assets/hipole/logo_svg.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -54,10 +56,20 @@ const modes = [
   'general.setup',
   'general.bop',
   'general.report',
+  'general.livery',
   'general.launchACC',
   'general.settings',
 ]
-const pages = ['status', 'list', 'setup', 'bop', 'report', '', 'settings']
+const pages = [
+  'status',
+  'list',
+  'setup',
+  'bop',
+  'report',
+  '',
+  'livery',
+  'settings',
+]
 const nav = (index: number) => {
   mode.value = index
   router.push({ name: pages[index] })
@@ -331,18 +343,51 @@ watch(
         </mdui-button-icon>
       </mdui-tooltip>
 
-      <mdui-tooltip :content="translate('general.report')" placement="right">
+      <mdui-dropdown placement="right" trigger="hover">
+        <mdui-menu class="ml-2">
+          <mdui-menu-item
+            @click="nav(4)"
+            :class="{
+              'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
+                mode == 4,
+            }"
+          >
+            <div slot="icon" class="pt-2">
+              <mdui-icon-announcement></mdui-icon-announcement>
+            </div>
+            {{ $t('general.report') }}
+          </mdui-menu-item>
+          <mdui-menu-item
+            @click="nav(5)"
+            :class="{
+              'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
+                mode == 5,
+            }"
+          >
+            <div slot="icon" class="pt-1">
+              <mdui-icon-format-paint--rounded></mdui-icon-format-paint--rounded>
+            </div>
+            {{ $t('general.livery') }}
+          </mdui-menu-item>
+        </mdui-menu>
+
         <mdui-button-icon
+          slot="trigger"
           class="mb-2"
           :class="{
-            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
-              mode == 4,
+            'bg-[rgb(var(--mdui-color-primary))]': mode == 4 || mode == 5,
           }"
-          @click="nav(4)"
         >
-          <mdui-icon-announcement></mdui-icon-announcement>
+          <HipoleLogoSvg
+            class="size-6"
+            :fill="
+              mode === 4 || mode === 5
+                ? 'rgb(var(--mdui-color-on-primary))'
+                : 'rgb(var(--mdui-color-on-surface-variant))'
+            "
+          />
         </mdui-button-icon>
-      </mdui-tooltip>
+      </mdui-dropdown>
 
       <mdui-tooltip
         :content="'AI ' + $t('general.appNickName')"
@@ -387,9 +432,9 @@ watch(
         <mdui-button-icon
           :class="{
             'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
-              mode == 6,
+              mode == 7,
           }"
-          @click="nav(6)"
+          @click="nav(7)"
         >
           <mdui-icon-settings--rounded></mdui-icon-settings--rounded>
         </mdui-button-icon>

@@ -41,7 +41,9 @@ const copyCode = async () => {
     })
   if (name.value !== '' && code) {
     navigator.clipboard
-      .writeText(`${name.value}\n#${translate('setup.codeCopyMsg')}\n#${code}`)
+      .writeText(
+        `${name.value}\n#${translate('setup.codeCopyMsg')}\n#${translate('setup.codeCopyMsg2')}\n#${code}`,
+      )
       .then(() => {
         snackbar({
           message: translate('setup.codeCopySuccess'),

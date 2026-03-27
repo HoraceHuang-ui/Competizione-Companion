@@ -66,8 +66,8 @@ const pages = [
   'setup',
   'bop',
   'report',
-  '',
   'livery',
+  '',
   'settings',
 ]
 const nav = (index: number) => {

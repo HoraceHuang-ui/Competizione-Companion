@@ -306,7 +306,7 @@ async function createWindow() {
 
       if (writeVal) {
         const buffer = Buffer.from('\uFEFF' + writeVal, 'utf16le')
-        fs.writeFileSync(presetPath, buffer)
+        fs.writeFileSync(presetPath, buffer as Uint8Array)
         return writeVal
       } else {
         if (fs.existsSync(presetPath)) {
@@ -341,13 +341,13 @@ async function createWindow() {
 
   ipcMain.handle('brotli:compress', async (_event, input) => {
     const buf = Buffer.from(input, 'utf-8')
-    const compressed = await brotli.compress(buf, { quality: 5 })
+    const compressed = await brotli.compress(buf as any, { quality: 5 })
     return Buffer.from(compressed).toString('base64')
   })
 
   ipcMain.handle('brotli:decompress', async (_event, input) => {
     const buf = Buffer.from(input, 'base64')
-    const decompressed = await brotli.decompress(buf)
+    const decompressed = await brotli.decompress(buf as any)
     return Buffer.from(decompressed).toString('utf-8')
   })
 
@@ -387,7 +387,7 @@ async function createWindow() {
     const userDataPath = app.getPath('userData')
     const filePath = path.join(userDataPath, 'bg.png')
     try {
-      await fsPromises.writeFile(filePath, buffer)
+      await fsPromises.writeFile(filePath, buffer as any)
       return filePath
     } catch (err) {
       console.error('Failed to write image file:', err)
@@ -420,6 +420,96 @@ async function createWindow() {
       throw err
     }
   })
+
+  ipcMain.handle(
+    'fs:clearUserDataDirectory',
+    async (_event, relativeDir: string) => {
+      const userDataPath = app.getPath('userData')
+      const targetDir = path.join(userDataPath, relativeDir)
+
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true })
+        return true
+      }
+
+      const files = fs.readdirSync(targetDir)
+      for (const file of files) {
+        const curPath = path.join(targetDir, file)
+        fs.rmSync(curPath, { recursive: true, force: true })
+      }
+      return true
+    },
+  )
+
+  ipcMain.handle(
+    'fs:saveFileToPath',
+    async (
+      _event,
+      pathToFile: string,
+      data: string | ArrayBuffer | Uint8Array,
+    ) => {
+      const dir = path.dirname(pathToFile)
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+      }
+
+      let buffer: Buffer
+      if (typeof data === 'string') {
+        buffer = Buffer.from(data, 'utf-8')
+      } else if (data instanceof ArrayBuffer) {
+        buffer = Buffer.from(data)
+      } else if (data instanceof Uint8Array) {
+        buffer = Buffer.from(data)
+      } else {
+        buffer = Buffer.from(String(data), 'utf-8')
+      }
+
+      await fs.promises.writeFile(pathToFile, buffer as Uint8Array)
+      return pathToFile
+    },
+  )
+
+  ipcMain.handle(
+    'shell:openDirectory',
+    async (_event, directoryPath: string) => {
+      const shell = require('electron').shell
+      return shell.openPath(directoryPath)
+    },
+  )
+
+  ipcMain.handle(
+    'fs:saveUserDataFile',
+    async (
+      _event,
+      relativePath: string,
+      data: string | ArrayBuffer | Uint8Array,
+    ) => {
+      const userDataPath = app.getPath('userData')
+      const targetPath = path.join(userDataPath, relativePath)
+      const targetDir = path.dirname(targetPath)
+
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true })
+      }
+
+      let buffer: Buffer
+      if (typeof data === 'string') {
+        // Keep backward compatibility: data may be text content or base64 string
+        // detect base64 form: if contains non-printable chars? We'll assume plain text is preferred.
+        buffer = Buffer.from(data, 'utf8')
+      } else if (data instanceof ArrayBuffer) {
+        buffer = Buffer.from(data)
+      } else if (data instanceof Uint8Array) {
+        buffer = Buffer.from(data)
+      } else {
+        // fallback
+        buffer = Buffer.from(String(data), 'utf8')
+      }
+
+      await fs.promises.writeFile(targetPath, buffer as Uint8Array)
+      return targetPath
+    },
+  )
 
   ipcMain.handle('os:platform', () => os.platform())
 

@@ -17,6 +17,10 @@ import '@mdui/icons/balance--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/announcement.js'
 import '@mdui/icons/assistant--rounded.js'
+import '@mdui/icons/format-paint--rounded.js'
+import '@mdui/icons/chevron-right--rounded.js'
+
+import HipoleLogoSvg from '@/assets/hipole/logo_svg.vue'
 
 const helpPage = ref(1)
 const helpDialogOpen = defineModel({ type: Boolean, default: false })
@@ -47,7 +51,7 @@ const closeDialog = () => {
       class="w-full flex flex-row justify-between items-center"
     >
       <div>{{ $t('tutorial.title') }}</div>
-      <mdui-button-icon v-if="helpPage === 8" @click="closeDialog">
+      <mdui-button-icon v-if="helpPage === 9" @click="closeDialog">
         <mdui-icon-close--rounded></mdui-icon-close--rounded>
       </mdui-button-icon>
     </div>
@@ -179,9 +183,17 @@ const closeDialog = () => {
       </div>
       <div class="help-item">
         <div class="mb-2 text-left w-full title flex flex-row items-center">
-          <mdui-icon-announcement
-            class="bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full size-8 p-1"
-          ></mdui-icon-announcement>
+          <div
+            class="flex flex-row bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full"
+          >
+            <HipoleLogoSvg
+              class="size-7 py-1.5 pl-2 mr-2"
+              fill="rgb(var(--mdui-color-on-primary))"
+            />
+            <mdui-icon-announcement
+              class="size-8 py-1 pr-2"
+            ></mdui-icon-announcement>
+          </div>
           <div>
             <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
               {{ `「${$t('general.report')}」` }}</span
@@ -190,6 +202,28 @@ const closeDialog = () => {
           </div>
         </div>
         <div class="ml-10">{{ $t('tutorial.page6desc') }}</div>
+      </div>
+      <div class="help-item">
+        <div class="mb-2 text-left w-full title flex flex-row items-center">
+          <div
+            class="flex flex-row bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))] rounded-full"
+          >
+            <HipoleLogoSvg
+              class="size-7 py-1.5 pl-2"
+              fill="rgb(var(--mdui-color-on-primary))"
+            />
+            <mdui-icon-format-paint--rounded
+              class="size-8 p-1"
+            ></mdui-icon-format-paint--rounded>
+          </div>
+          <div>
+            <span class="text-[rgb(var(--mdui-color-primary))] font-bold">
+              {{ `「${$t('general.livery')}」` }}</span
+            >
+            {{ $t('tutorial.pageDesc') }}
+          </div>
+        </div>
+        <div class="ml-10">{{ $t('tutorial.page7desc') }}</div>
       </div>
       <div class="help-item">
         <div class="mb-2 text-left w-full title flex flex-row items-center">
@@ -203,16 +237,16 @@ const closeDialog = () => {
             {{ $t('tutorial.pageDesc') }}
           </div>
         </div>
-        <div class="ml-10">{{ $t('tutorial.page7desc') }}</div>
+        <div class="ml-10">{{ $t('tutorial.page8desc') }}</div>
       </div>
       <div class="help-item">
-        <div>{{ $t('tutorial.page8desc') }}</div>
+        <div>{{ $t('tutorial.page9desc') }}</div>
       </div>
     </MyCarousel>
     <Pagination
       type="horizontal"
       v-model="helpPage"
-      :total="8"
+      :total="9"
       :page-size="1"
     ></Pagination>
   </mdui-dialog>

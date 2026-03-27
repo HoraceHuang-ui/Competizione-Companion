@@ -29,6 +29,11 @@ const router = VueRouter.createRouter({
       component: () => import('../views/RulesPage/index.vue'),
     },
     {
+      name: 'livery',
+      path: '/livery',
+      component: () => import('../views/LiveryPage/index.vue'),
+    },
+    {
       name: 'settings',
       path: '/settings',
       component: () => import('../views/SettingsPage/SettingsPage.vue'),

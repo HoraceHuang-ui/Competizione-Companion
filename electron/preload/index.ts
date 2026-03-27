@@ -91,6 +91,27 @@ contextBridge.exposeInMainWorld('fs', {
   bopJsonFile: (exePath: string, writeVal: string, overwrite: boolean) => {
     return ipcRenderer.invoke('fs:bopJsonFile', exePath, writeVal, overwrite)
   },
+  saveUserDataFile: (
+    relativePath: string,
+    data: string | ArrayBuffer | Uint8Array,
+  ) => {
+    return ipcRenderer.invoke('fs:saveUserDataFile', relativePath, data)
+  },
+  clearUserDataDirectory: (relativeDir: string) => {
+    return ipcRenderer.invoke('fs:clearUserDataDirectory', relativeDir)
+  },
+  saveFileToPath: (
+    pathToFile: string,
+    data: string | ArrayBuffer | Uint8Array,
+  ) => {
+    return ipcRenderer.invoke('fs:saveFileToPath', pathToFile, data)
+  },
+})
+
+contextBridge.exposeInMainWorld('shell', {
+  openDirectory: (directoryPath: string) => {
+    return ipcRenderer.invoke('shell:openDirectory', directoryPath)
+  },
 })
 
 contextBridge.exposeInMainWorld('brotli', {

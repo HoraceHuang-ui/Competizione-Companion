@@ -91,7 +91,7 @@
     "chooseFile": "Select a Setup File/Archive",
     "chooseFolder": "Select a Setup Folder",
     "dragFile": "or drag and drop a file here",
-    "releaseToLoad": "Release to load setup",
+    "releaseToLoad": "Release to load",
     "emptyFileName": "Please enter or select a setup file.",
     "invalidJSON": "Invalid JSON format, please check the file content.",
     "invalidSeries": "Please load a {series} car.",
@@ -536,17 +536,38 @@
     "page4li4": "Share setups as setup codes, or import from others' setup codes;",
     "page4li5": "Import multiple json/folders/zip files and batch import them into the game.",
     "page5desc": "On this page, you can view the LFM BoP for each track and car model, along with their BoP target lap times and predicted lap speeds. You can also export BoP data as bop.json or preset.pre for easy import into server settings.",
-    "page6desc": "On this page, you can input an accident description, and the assistant will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
-    "page7desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation! If you encounter any problems when driving, feel free to ask her for advice; or you may just chat with her when feeling bored!",
-    "page8desc": "Finally, thank you for using Competizione Companion! The continuous improvement of the assistant can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
+    "page6desc": "On this page, you can input an accident description, and Competizione Companion will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
+    "page7desc": "On this page, you can import your custom livery files and fill in HiPole race info, and Competizione Companion will generate a compressed zip that totally meets HiPole custom livery standards.",
+    "page8desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation! If you encounter any problems when driving, feel free to ask her for advice; or you may just chat with her when feeling bored!",
+    "page9desc": "Finally, thank you for using Competizione Companion! The continuous improvement of the app can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
   },
   "ai": {
     "inputPlaceholder": "Try asking anything about racing!",
-    "welcomeMsg": "Hello there! I'm your assistant! If you're having issues while driving or want to improve your lap times but don't know where to start, feel free to ask me! I'll give you some suggestions on setup directions!",
+    "welcomeMsg": "Hello there! I'm ASSECON HIME! If you're having issues while driving or want to improve your lap times but don't know where to start, feel free to ask me! I'll give you some suggestions on setup directions!",
     "newConversation": "New Conversation",
     "thinking": "Thinking...",
     "disclaimer": "Companion uses gpt-oss-120b model and may make mistakes, please double-check",
     "reasoningProcess": "Thinking Process",
     "invalidResponse": "Reply failed, please try again later"
+  },
+  "livery": {
+    "racePrefix": "Race Prefix",
+    "raceNumber": "Car Num",
+    "driverName": "Driver Name",
+    "teamShortName": "Team Abbr.",
+    "personal": "Individual",
+    "team": "Team",
+    "teamFullName": "Team Full Name *",
+    "dragAndDrop": "Drag & drop folder/zip/files of the livery here",
+    "tipDesc": "Having imported all 5 files above, what Competizione Companion will do:",
+    "tip1": "Change customSkinName value within {fileName}.json, to: ",
+    "tip2": "Change teamName value within {fileName}.json, to: ",
+    "tip3": "Change raceNumber value within {fileName}.json, to: ",
+    "tip4": "Refactor directory structures to: Cars\\{fileName}.json, Liveries\\{fileName}\\[decals/sponsors].[png/json], and compress into: {fileName}.zip",
+    "export": "Export Normalized Livery",
+    "hipoleMail": "Having exported the livery, please refer to the official documents and attach it to KOOK Channel or send via email: ",
+    "invalidFile": "Invalid file, please ensure that livery-related files are included.",
+    "unsupportedCar": "Unsupported car, please import a newer GT3 car",
+    "selectExpPath": "Select Path to Export"
   }
 }

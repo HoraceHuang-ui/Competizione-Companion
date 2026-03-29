@@ -558,7 +558,7 @@
     "team": "团队赛",
     "teamFullName": "车队全称 *",
     "dragAndDrop": "拖拽涂装文件夹/压缩包/内部文件到此处",
-    "tipDesc": "上述五个文件全部导入后，小助手会进行以下操作：",
+    "tipDesc": "上述五个文件中，所有 .json 和至少一个 .png 导入后，小助手会进行以下操作：",
     "tip1": "将 {fileName}.json 中的 customSkinName 设为：",
     "tip2": "将 {fileName}.json 中的 teamName 设为：",
     "tip3": "将 {fileName}.json 中的 raceNumber 设为：",

@@ -559,7 +559,7 @@
     "team": "Team",
     "teamFullName": "Team Full Name *",
     "dragAndDrop": "Drag & drop folder/zip/files of the livery here",
-    "tipDesc": "Having imported all 5 files above, what Competizione Companion will do:",
+    "tipDesc": "Among above 5 files, having imported all .json files and at least one .png file, what Competizione Companion will do:",
     "tip1": "Change customSkinName value within {fileName}.json, to: ",
     "tip2": "Change teamName value within {fileName}.json, to: ",
     "tip3": "Change raceNumber value within {fileName}.json, to: ",

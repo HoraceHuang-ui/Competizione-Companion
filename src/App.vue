@@ -266,7 +266,10 @@ watch(
       </mdui-button-icon>
       <mdui-top-app-bar-title class="text-xl mt-2">
         <div class="w-full flex flex-row items-center justify-center">
-          <mdui-button-icon class="p-2 mr-2" v-if="platform === 'darwin'">
+          <mdui-button-icon
+            class="p-2 mb-0.5 mr-2"
+            v-if="platform === 'darwin'"
+          >
             <img src="../build/icon.ico" />
           </mdui-button-icon>
           <div class="title text-right">

@@ -59,7 +59,7 @@ export const hipoleEventColors = {
 
 export const asseconHimeThemeColor = {
   light: '#e7a1ff',
-  dark: '#87637c',
+  dark: '#4b53ad',
 }
 
 export const bgType = ['hime', 'custom', 'none']

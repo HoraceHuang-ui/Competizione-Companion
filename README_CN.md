@@ -1,5 +1,4 @@
-<img width="100%" alt="title_pic" src="https://github.com/user-attachments/assets/e4829e64-56d2-483d-bc55-9b8d36a62ff8" />
-
+<img width="100%" alt="title image" src="https://github.com/user-attachments/assets/a3ad7d05-4f42-40e8-9724-ab36a4753e85" />
 
 [English Doc](/README.md)
 

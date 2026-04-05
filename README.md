@@ -1,4 +1,4 @@
-<img width="2554" height="1000" alt="banner" src="https://github.com/user-attachments/assets/eeb25fb2-9da1-4b40-8f48-9d69119a9e20" />
+<img width="100%" alt="title_pic" src="https://github.com/user-attachments/assets/b8ce492f-235a-404b-af82-3169c2916138" />
 
 [简体中文文档](/README_CN.md)
 
@@ -16,11 +16,14 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 - ☑️ Offers comprehensive summay, effects on increase/decrease, and general suggestions for each setup parameter, helping those who want to improves further to step forward. Technical support from DEA @AlvinW52610.
 - ☑️ Available to view latest LFM BoPs for GT3/GT4 series, categorized by track or by car.
 - ☑️ LFM BoPs can be exported in ACC Dedicated Server GUI format.
+- ☑️ HiPole Reporting page: having filled in race info & incident description, corresponding rules can be recommended, and reporting text can be generated quickly.
+- ☑️ HiPole Livery page: having filled in race info & imported livery files, a HiPole-standard livery zip can be exported in one click.
 - ☑️ Available to favorite cars & tracks, which will be moved to the top of all related lists.
 - ☑️ Chinese / English supported.
 - ☑️ Light/dark mode & following system supported.
 - ☑️ Available to set car display preferences between full name & short name, e.g. `Lamborghini Huracán GT3 EVO2`/`Lambo Evo2`.
 - ☑️ Available to set track display preferences between full name & short name, e.g. `Autodromo Enzo e Dino Ferrari`/`Imola`.
+- ☑️ Available to search tracks / cars conveniently.
 - ☑️ Available to set the theme color, with support for extracting colors from a custom background image.
 - 🔳 To support setting up executable paths to retrieve along with launching ACC (telemetry, accelerator, etc.).
 - 🔳 To support importing a folder or a zip file and batch loading setups.

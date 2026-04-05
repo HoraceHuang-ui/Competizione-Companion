@@ -1,4 +1,5 @@
-<img width="2554" height="1000" alt="banner" src="https://github.com/user-attachments/assets/eeb25fb2-9da1-4b40-8f48-9d69119a9e20" />
+<img width="100%" alt="title_pic" src="https://github.com/user-attachments/assets/e4829e64-56d2-483d-bc55-9b8d36a62ff8" />
+
 
 [English Doc](/README.md)
 
@@ -16,11 +17,14 @@
 - ☑️ 每项参数均有清晰易懂的概述、调高/调低效果及一般建议，帮助想要进步的车手进一步提升。技术支持来自 DEA @AlvinW52610。
 - ☑️ 可查看 GT3/GT4 组别的最新 LFM BoP，可按赛道或按车型查看。
 - ☑️ 可将 LFM BoP 一键导出为 ACC Dedicated Server GUI Preset 格式。
+- ☑️ 嗨跑投诉页面：可在填写赛事信息、事故简介后，快速匹配投诉条款，便捷生成投诉文案。
+- ☑️ 嗨跑涂装页面：可在填写赛事信息、导入涂装文件后，一键生成符合嗨跑规范的涂装压缩包。
 - ☑️ 可收藏车型/赛道并在所有列表中置顶。
 - ☑️ 支持中文/英文显示。
 - ☑️ 支持设置亮暗色或跟随系统。
 - ☑️ 可设置车型显示偏好为英文全写/英文简写/中文简写，对应示例：`Lamborghini Huracán GT3 EVO2`/`Lambo Evo2`/`兰博 Evo2`。
 - ☑️ 可设置赛道显示偏好为英文全写/英文简写/中文简写，对应示例：`Autodromo Enzo e Dino Ferrari`/`Imola`/`伊莫拉`。
+- ☑️ 可便捷搜索赛道/车型方面快速选择。
 - ☑️ 支持自定义主题色，及用户自定义背景图片并自动提取主题色。
 - 🔳 可导入文件夹或压缩包并批量载入游戏。
 - 🔳 设置要与 ACC 一同启动的程序路径列表（如遥测、加速器等）。

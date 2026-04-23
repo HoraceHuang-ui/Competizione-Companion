@@ -11,6 +11,7 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 - ☑️ Queries multiplayer server list, automatically retrieves and configures ACC Connector to help you connect to the multiplayer server directly when Lobby servers are down.
 - ☑️ Built-in with a comprehensive tutorial for ACC Connector.
 - ☑️ Car setup management: import a setup file by \[selecting the file; dragging and dropping the file; pasting a Setup Code; directly reading game Documents after choosing car and track\].
+- ☑️ Supports importing a folder or a zip file and batch loading setups.
 - ☑️ Compares two setups with clear indications on differences.
 - ☑️ Supports sharing a setup via a Setup Code.
 - ☑️ Offers comprehensive summay, effects on increase/decrease, and general suggestions for each setup parameter, helping those who want to improves further to step forward. Technical support from DEA @AlvinW52610.
@@ -26,7 +27,6 @@ A free and easy-to-access Assetto Corsa Competizione (ACC) toolbox, aiming to br
 - ☑️ Available to search tracks / cars conveniently.
 - ☑️ Available to set the theme color, with support for extracting colors from a custom background image.
 - 🔳 To support setting up executable paths to retrieve along with launching ACC (telemetry, accelerator, etc.).
-- 🔳 To support importing a folder or a zip file and batch loading setups.
 - 🔳 (Too difficult to implement in a short period) To support editing & saving of the setups.
 - 🔳 (No plans in a short period) To support management of liveries.
 - 🔳 (No plans in a long period) To implement in-game overlays.

@@ -156,20 +156,28 @@ const collectZipEntryFiles = async (
     }
 
     if (name.toLowerCase().endsWith('.json')) {
+      const uint8Array = await entry.async('uint8array')
       let content: string
-      if (
-        name.toLowerCase() === 'decals.json' ||
-        name.toLowerCase() === 'sponsors.json'
-      ) {
-        content = await entry.async('string') // UTF-8
-      } else {
-        const uint8Array = await entry.async('uint8array')
-        content = new TextDecoder('utf-16le').decode(uint8Array) // UTF-16 LE for cars.json etc.
+
+      // Try UTF-8 first, then UTF-16LE if JSON parsing fails
+      try {
+        const utf8Text = new TextDecoder('utf-8')
+          .decode(uint8Array)
+          .replace(/^\uFEFF/, '')
+        JSON.parse(utf8Text) // Validate if valid JSON
+        content = utf8Text
+      } catch {
+        // If UTF-8 parsing fails, try UTF-16LE
+        const utf16Text = new TextDecoder('utf-16le')
+          .decode(uint8Array)
+          .replace(/^\uFEFF/, '')
+        content = utf16Text
       }
+
       result.push({
         path: fullPath,
         name,
-        content: content.replace(/^\uFEFF/, ''),
+        content,
       })
       continue
     }
@@ -210,12 +218,30 @@ const handleDrop = async (event: DragEvent) => {
     }
 
     if (name.toLowerCase().endsWith('.json')) {
-      const text = await entry.file.text()
+      let text: string
+      const buffer = await entry.file.arrayBuffer()
+      const uint8Array = new Uint8Array(buffer)
+
+      // Try UTF-8 first, then UTF-16LE if JSON parsing fails
+      try {
+        const utf8Text = new TextDecoder('utf-8')
+          .decode(uint8Array)
+          .replace(/^\uFEFF/, '')
+        JSON.parse(utf8Text) // Validate if valid JSON
+        text = utf8Text
+      } catch {
+        // If UTF-8 parsing fails, try UTF-16LE
+        const utf16Text = new TextDecoder('utf-16le')
+          .decode(uint8Array)
+          .replace(/^\uFEFF/, '')
+        text = utf16Text
+      }
+
       allFiles.push({
         path: normalizedPath,
         name,
         file: entry.file,
-        content: text.replace(/^\uFEFF/, ''),
+        content: text,
       })
       continue
     }
@@ -260,10 +286,14 @@ const handleDrop = async (event: DragEvent) => {
     if (f.name.toLowerCase() === 'sponsors.json') return false
     if (!f.content) return false
 
+    console.log(f)
+
     try {
       const parsed = JSON.parse(f.content)
+      console.log(isValidLiveryJson(parsed))
       return isValidLiveryJson(parsed)
-    } catch {
+    } catch (err) {
+      console.log(err)
       return false
     }
   })
@@ -358,7 +388,20 @@ const handleDrop = async (event: DragEvent) => {
     await writeConversion(customJsonCandidate, 'cars.json')
   }
 
-  droppedFiles.value = allFiles
+  // Merge new imports with previously imported files, keeping existing files
+  // unless a new drop replaces the same filename.
+  const mergedFiles = [...droppedFiles.value]
+  for (const file of allFiles) {
+    const index = mergedFiles.findIndex(
+      item => item.name.toLowerCase() === file.name.toLowerCase(),
+    )
+    if (index >= 0) {
+      mergedFiles[index] = file
+    } else {
+      mergedFiles.push(file)
+    }
+  }
+  droppedFiles.value = mergedFiles
 
   return targetFileNames
 }

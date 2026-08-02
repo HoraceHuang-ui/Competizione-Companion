@@ -192,7 +192,7 @@ onMounted(() => {
 const scrollTo = (scrollProps: {
   top: number
   left: number
-  behavior: string
+  behavior: ScrollBehavior
 }) => {
   outerRef.value.scroll(scrollProps.left, scrollProps.top)
 }

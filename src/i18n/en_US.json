@@ -546,9 +546,11 @@
     "welcomeMsg": "Hello there! I'm ASSECON HIME! If you're having issues while driving or want to improve your lap times but don't know where to start, feel free to ask me! I'll give you some suggestions on setup directions!",
     "newConversation": "New Conversation",
     "thinking": "Thinking...",
-    "disclaimer": "Companion uses gpt-oss-120b model and may make mistakes, please double-check",
+    "disclaimer": "Companion uses AI and may make mistakes, please double-check",
     "reasoningProcess": "Thinking Process",
-    "invalidResponse": "Reply failed, please try again later"
+    "invalidResponse": "Reply failed, please try again later",
+    "tokenUsageTooltip": "Daily Token Usage: {used} / {limit}",
+    "tokenLimitExceeded": "You've used up all your tokens for today. Switch to another model to continue chatting!"
   },
   "livery": {
     "racePrefix": "Race Prefix",

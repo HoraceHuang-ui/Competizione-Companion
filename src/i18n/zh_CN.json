@@ -545,9 +545,11 @@
     "welcomeMsg": "你好呀，我是助手娘！如果你在驾驶过程中感觉车辆有点问题，或者想要提升圈速但又不知道从哪里入手的话，可以问我哦！我会给你一些调校方向上的建议！",
     "newConversation": "新会话",
     "thinking": "助手娘思考中……",
-    "disclaimer": "小助手使用 gpt-oss-120b 模型，可能产生错误，请仔细甄别哦",
+    "disclaimer": "小助手使用 AI 生成，可能产生错误，请仔细甄别哦",
     "reasoningProcess": "思考过程",
-    "invalidResponse": "回复失败，请稍后重试"
+    "invalidResponse": "回复失败，请稍后重试",
+    "tokenUsageTooltip": "今日Token用量：{used} / {limit}",
+    "tokenLimitExceeded": "今日的Token用完了哦，换个模型再接着聊吧！"
   },
   "livery": {
     "racePrefix": "赛事前缀",

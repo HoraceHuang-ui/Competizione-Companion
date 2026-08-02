@@ -18,6 +18,7 @@ export const useStore = defineStore('userStore', {
       },
       msgId: 0,
       firstSetupFlag: false,
+      aiModel: 'deepseek-v4-pro',
     },
     servers: {
       listView: false,
@@ -52,6 +53,10 @@ export const useStore = defineStore('userStore', {
       content: string
       reasoning?: string
     }>,
+    tokenUsage: {
+      pro: { date: '', token: 0 },
+      flash: { date: '', token: 0 },
+    },
   }),
   actions: {
     clear() {

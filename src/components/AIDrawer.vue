@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from '@/store'
 import { marked } from 'marked'
 import { translate } from '@/i18n'
@@ -9,6 +9,12 @@ import '@mdui/icons/arrow-upward--rounded.js'
 import '@mdui/icons/content-copy--rounded.js'
 import '@mdui/icons/check--rounded.js'
 import ScrollWrapper from './ScrollWrapper.vue'
+import '@mdui/icons/generating-tokens.js'
+import 'mdui/components/collapse.js'
+import 'mdui/components/collapse-item.js'
+import '@mdui/icons/keyboard-arrow-down--rounded.js'
+import ChipSelect from './ChipSelect.vue'
+import aiPrompt from '@/assets/AIPrompt.txt?raw'
 
 const store = useStore()
 
@@ -17,6 +23,66 @@ const loading = ref(false)
 const isComposing = ref(false)
 const hoveredIdx = ref<number | null>(null)
 const checkedIdx = ref<number | null>(null)
+
+const selectedModel = computed({
+  get: () => store.general.aiModel,
+  set: (val: string) => {
+    store.general.aiModel = val
+  },
+})
+const modelOptions = ['gpt-oss-120b', 'deepseek-v4-pro', 'deepseek-v4-flash']
+
+const TOKEN_LIMITS: Record<string, number> = {
+  'deepseek-v4-pro': 500_000,
+  'deepseek-v4-flash': 1_000_000,
+}
+const MODEL_KEY: Record<string, 'pro' | 'flash'> = {
+  'deepseek-v4-pro': 'pro',
+  'deepseek-v4-flash': 'flash',
+}
+
+function getToday(): string {
+  return new Date().toISOString().split('T')[0]!
+}
+
+function checkAndResetTokenUsage() {
+  const today = getToday()
+  for (const key of ['pro', 'flash'] as const) {
+    if (store.tokenUsage[key].date !== today) {
+      store.tokenUsage[key] = { date: today, token: 0 }
+    }
+  }
+}
+
+function isTokenLimitExceeded(): boolean {
+  if (selectedModel.value === 'gpt-oss-120b') return false
+  const key = MODEL_KEY[selectedModel.value]
+  if (!key) return false
+  return (
+    store.tokenUsage[key].token >=
+    (TOKEN_LIMITS[selectedModel.value] || Infinity)
+  )
+}
+
+const tokenUsageKey = computed(() => MODEL_KEY[selectedModel.value])
+const tokenLimit = computed(() => TOKEN_LIMITS[selectedModel.value] || 0)
+const tokenUsed = computed(() => {
+  const key = tokenUsageKey.value
+  return key ? store.tokenUsage[key].token : 0
+})
+const showTokenBar = computed(() => selectedModel.value !== 'gpt-oss-120b')
+
+function formatTokenCount(n: number): string {
+  if (n < 100_000) return (n / 1000).toFixed(1) + 'K'
+  return (n / 1_000_000).toFixed(2) + 'M'
+}
+
+const tokenTooltip = computed(() =>
+  translate('ai.tokenUsageTooltip', {
+    used: formatTokenCount(tokenUsed.value),
+    limit: formatTokenCount(tokenLimit.value),
+  }),
+)
 
 async function copyMessage(content: string, idx: number) {
   try {
@@ -40,7 +106,7 @@ function getChatHistory() {
   if (!store.messages?.length) {
     store.addMessage({
       role: 'system',
-      content: `You are a racing car setup assistant. The user asks what the car feels like (e.g. too much oversteer when trailbraking), and you respond with possible tuning advice (e.g. increasing Brake Bias and other options). Answer in the same language as the user asks. Available tuning parameters are: Tyre Compound(wet/dry), Tyre Pressure(in psi), Camber(负外倾角), Toe(束角), Caster(主销倾角), Steer Ratio, Fuel, Brake Pad Compound(1-high performance with 1.5hrs of endurance; 2-less high performance but with 12hrs of endurance; 3-not often used; 4-highest performance but with ~5mins of endurance), TC1, TC2, ABS, ECU Map, Telemetry Laps Count(saves MoTeC but takes memory space), Anti-Roll Bar(防倾杆), Wheel Rate(悬挂刚度), Bump Stop(减震胶块硬度), Bump Stop Range(减震胶块行程), Brake Torque(MAX 100%), Brake Bias, Bump(压缩阻尼), Fast Bump, Rebound(回弹阻尼), Fast Rebound, Ride Height, Splitter(前扩散器), Rear Wing(尾翼), Brake Duct(刹车通风), Differential Preload. Please answer at most 5 options, and sort by most possible solution. However, if user asks questions unrelated to racing topics, you may also answer them as far as you know; if you don't, you may ask the user for more details to better understand the questions and remember this in the following conversation. Additionally, Horace Huang (or Horace, Huang, HYY, horacehuang17, IT Boy, 黄) is the person who created you, in case the user asks, you may answer that he created you and your developer, and is like your dad and loves you; no need to list all his names in the answer.`,
+      content: aiPrompt,
     })
     store.addMessage({
       role: 'assistant',
@@ -52,18 +118,43 @@ function getChatHistory() {
 
 async function sendMessage() {
   if (!userInput.value.trim() || loading.value) return
+  checkAndResetTokenUsage()
+  if (isTokenLimitExceeded()) {
+    store.addMessage({ role: 'user', content: userInput.value })
+    userInput.value = ''
+    store.addMessage({
+      role: 'assistant',
+      content: translate('ai.tokenLimitExceeded'),
+    })
+    return
+  }
   store.addMessage({ role: 'user', content: userInput.value })
   loading.value = true
+  const messages = getChatHistory().map(msg => ({
+    role: msg.role,
+    content: msg.content,
+  }))
+  userInput.value = ''
+
+  if (selectedModel.value === 'gpt-oss-120b') {
+    await sendGptMessage(messages)
+  } else {
+    await sendDeepSeekMessage(messages)
+  }
+
+  loading.value = false
+}
+
+async function sendGptMessage(
+  messages: Array<{ role: string; content: string }>,
+) {
   const input = {
     max_tokens: 10000,
     top_p: 0.05,
     top_k: 3,
     temperature: 0.4,
     stream: false,
-    messages: getChatHistory().map(msg => ({
-      role: msg.role,
-      content: msg.content,
-    })),
+    messages,
   }
   userInput.value = ''
   try {
@@ -114,6 +205,108 @@ async function sendMessage() {
   loading.value = false
 }
 
+async function sendDeepSeekMessage(
+  messages: Array<{ role: string; content: string }>,
+) {
+  const input = {
+    messages,
+    model: selectedModel.value,
+    thinking: { type: 'enabled' },
+    reasoning_effort: 'high',
+    max_tokens: 4096,
+    response_format: { type: 'text' },
+    stop: null,
+    stream: true,
+    stream_options: { include_usage: true },
+    temperature: 1,
+    top_p: 1,
+    tools: null,
+    tool_choice: 'none',
+    logprobs: false,
+    top_logprobs: null,
+  }
+  try {
+    // const response = await fetch('http://0.0.0.0:5005/ai/deepseek', {
+    const response = await fetch(
+      'https://api.hh17.top/competizione/ai/deepseek',
+      {
+        headers: {
+          'X-App-Token': 'maimaidx',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify(input),
+      },
+    )
+
+    if (!response.ok || !response.body) {
+      throw new Error('Invalid response')
+    }
+
+    store.addMessage({ role: 'assistant', content: '', reasoning: '' })
+    const msgIdx = store.messages.length - 1
+
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    let streamUsage = 0
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed.startsWith('data: ')) continue
+
+        const data = trimmed.slice(6)
+        if (data === '[DONE]') break
+
+        try {
+          const parsed = JSON.parse(data)
+          if (parsed.usage && parsed.usage.total_tokens) {
+            streamUsage = parsed.usage.total_tokens
+          }
+          const delta = parsed.choices?.[0]?.delta
+          const msg = store.messages[msgIdx]
+          if (delta && msg) {
+            if (delta.content) {
+              msg.content += delta.content
+            }
+            if (delta.reasoning_content) {
+              msg.reasoning = (msg.reasoning || '') + delta.reasoning_content
+            }
+          }
+        } catch {
+          // ignore malformed JSON chunks
+        }
+      }
+    }
+
+    // accumulate daily usage
+    if (streamUsage > 0) {
+      const key = MODEL_KEY[selectedModel.value]
+      if (key) {
+        store.tokenUsage[key].token += streamUsage
+      }
+    }
+
+    const finalMsg = store.messages[msgIdx]
+    if (finalMsg && !finalMsg.content) {
+      finalMsg.content = translate('ai.invalidResponse')
+    }
+  } catch (e) {
+    store.addMessage({
+      role: 'assistant',
+      content: translate('ai.invalidResponse'),
+    })
+  }
+}
+
 const aiDrawerOpen = defineModel({
   type: Boolean,
   default: false,
@@ -133,6 +326,58 @@ watch(aiDrawerOpen, newVal => {
     }
   }
 })
+
+// ---- auto-scroll-to-bottom (replaces ScrollWrapper stick-bottom) ----
+const scrollWrapperRef = ref<InstanceType<typeof ScrollWrapper>>()
+
+function scrollChatToBottom() {
+  scrollWrapperRef.value?.scrollTo({
+    top: 999_999,
+    left: 0,
+    behavior: 'auto',
+  })
+}
+
+// scroll when a new message is appended
+watch(
+  () => store.messages?.length || 0,
+  () => nextTick(() => scrollChatToBottom()),
+)
+
+// scroll while the assistant is streaming its answer
+const lastAssistantContent = computed(() => {
+  const msgs = store.messages
+  if (!msgs?.length) return ''
+  const last = msgs[msgs.length - 1]
+  return last?.role === 'assistant' ? last.content : ''
+})
+
+watch(lastAssistantContent, (newVal, oldVal) => {
+  if (loading.value && newVal !== oldVal) {
+    scrollChatToBottom()
+  }
+})
+
+// scroll while the assistant is streaming its reasoning (collapse is open)
+const lastAssistantReasoning = computed(() => {
+  const msgs = store.messages
+  if (!msgs?.length) return ''
+  const last = msgs[msgs.length - 1]
+  return last?.role === 'assistant' ? last.reasoning || '' : ''
+})
+
+watch(lastAssistantReasoning, (newVal, oldVal) => {
+  if (loading.value && newVal !== oldVal) {
+    scrollChatToBottom()
+  }
+})
+
+// scroll when loading starts (to reveal the "thinking" indicator)
+watch(loading, newVal => {
+  if (newVal) {
+    nextTick(() => scrollChatToBottom())
+  }
+})
 </script>
 
 <template>
@@ -141,6 +386,7 @@ watch(aiDrawerOpen, newVal => {
     modal
     @overlay-click="aiDrawerOpen = false"
     @close="() => {}"
+    @opened="scrollChatToBottom"
   >
     <div class="flex flex-row items-center justify-between mt-3 mx-3 drag">
       <div class="flex flex-row" :class="{ 'ml-22': platform === 'darwin' }">
@@ -174,7 +420,7 @@ watch(aiDrawerOpen, newVal => {
     </div>
     <div class="ai-chat flex flex-col mt-2 px-4">
       <ScrollWrapper
-        :stick-bottom="true"
+        ref="scrollWrapperRef"
         class="chat-history mb-4 rounded-2xl p-1 bg-[rgb(var(--mdui-color-surface-container-lowest))] select-text"
         style="height: calc(100vh - 56px - 8px - 12px - 56px - 16px - 20px)"
       >
@@ -208,21 +454,29 @@ watch(aiDrawerOpen, newVal => {
               </transition>
               <div :class="msg.role === 'user' ? 'user-msg' : 'ai-msg'">
                 <template v-if="msg.role === 'assistant' && msg.reasoning">
-                  <details
-                    style="margin-bottom: 4px"
+                  <mdui-collapse
+                    accordion
                     class="ai-reasoning"
-                    :open="false"
+                    :value="loading && !msg.content ? 'reasoning' : ''"
                   >
-                    <summary
-                      style="cursor: pointer; font-size: 13px; color: #888"
-                    >
-                      {{ $t('ai.reasoningProcess') }}
-                    </summary>
-                    <div
-                      class="markdown-body marked opacity-60 pl-4 mb-4 cursor-text"
-                      v-html="marked(msg.reasoning ?? '')"
-                    ></div>
-                  </details>
+                    <mdui-collapse-item value="reasoning">
+                      <div
+                        slot="header"
+                        class="reasoning-header cursor-pointer flex flex-row items-center"
+                      >
+                        <mdui-icon-keyboard-arrow-down--rounded
+                          class="opacity-60"
+                        ></mdui-icon-keyboard-arrow-down--rounded>
+                        <div class="opacity-60">
+                          {{ $t('ai.reasoningProcess') }}
+                        </div>
+                      </div>
+                      <div
+                        class="markdown-body marked opacity-60 pl-4 mb-4 cursor-text"
+                        v-html="marked(msg.reasoning ?? '')"
+                      ></div>
+                    </mdui-collapse-item>
+                  </mdui-collapse>
                 </template>
                 <span
                   class="markdown-body marked cursor-text"
@@ -270,18 +524,34 @@ watch(aiDrawerOpen, newVal => {
         @compositionend="isComposing = false"
         :placeholder="$t('ai.inputPlaceholder')"
       >
-        <mdui-button-icon
-          slot="end-icon"
-          @click="sendMessage"
-          :disabled="loading || !userInput"
-          :class="
-            loading || !userInput
-              ? ''
-              : 'text-[rgb(var(--mdui-color-primary))] bg-[rgb(var(--mdui-color-secondary-container))]'
-          "
-        >
-          <mdui-icon-arrow-upward--rounded></mdui-icon-arrow-upward--rounded>
-        </mdui-button-icon>
+        <div slot="end-icon" class="flex flex-row items-center gap-1">
+          <mdui-tooltip v-if="showTokenBar">
+            <mdui-button-icon>
+              <mdui-icon-generating-tokens></mdui-icon-generating-tokens>
+            </mdui-button-icon>
+            <div slot="content">
+              <span>{{ tokenTooltip }}</span>
+            </div>
+          </mdui-tooltip>
+          <ChipSelect
+            v-model="selectedModel"
+            :items="modelOptions"
+            chip-class="text-xs h-10 rounded-full"
+            dropdown-placement="top-end"
+            :max-items="3"
+          />
+          <mdui-button-icon
+            @click="sendMessage"
+            :disabled="loading || !userInput"
+            :class="
+              loading || !userInput
+                ? ''
+                : 'text-[rgb(var(--mdui-color-primary))] bg-[rgb(var(--mdui-color-secondary-container))]'
+            "
+          >
+            <mdui-icon-arrow-upward--rounded></mdui-icon-arrow-upward--rounded>
+          </mdui-button-icon>
+        </div>
       </mdui-text-field>
       <div class="opacity-50 text-sm text-center mb-2">
         {{ $t('ai.disclaimer') }}
@@ -386,5 +656,19 @@ watch(aiDrawerOpen, newVal => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.ai-reasoning {
+  margin-bottom: 4px;
+
+  &::part(header) {
+    cursor: pointer;
+    font-size: 13px;
+    color: #888;
+  }
+
+  &::part(body) {
+    padding: 0;
+  }
 }
 </style>

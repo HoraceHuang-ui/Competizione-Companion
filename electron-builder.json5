@@ -3,7 +3,7 @@
   $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
   appId: 'com.horacehyy.competizione-companion',
   asar: true,
-  productName: 'Competizione Companion',
+  productName: 'Competizione Companion x PXN',
   directories: {
     output: 'release/${version}',
   },
@@ -34,6 +34,7 @@
   },
   extraResources: [
     'src/assets/hipole/*',
+    'src/assets/pxn/*',
     'src/assets/carLogos/*',
     'src/assets/asseconHime/*',
     'build/icon.ico',

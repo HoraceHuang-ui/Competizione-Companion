@@ -231,6 +231,7 @@ function useLoading() {
       <div class="append-text" style="font-family: sans-serif;"> Competizione Companion</span>
     </div>
     <div class="append-text" style="font-size: 14px; margin-top: 0.5rem; font-family: sans-serif;">by horacehuang17</div>
+      <div class="append-text" style="font-size: 14px; font-family: sans-serif;"> Sponsored by PXN</span>
   </div>`
 
   const hideDom = () => {

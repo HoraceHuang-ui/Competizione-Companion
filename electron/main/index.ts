@@ -9,14 +9,14 @@ import fs, { promises as fsPromises } from 'fs'
 
 const i18n = {
   en: {
-    appName: 'Competizione Companion',
-    trayTooltip: 'Competizione Companion',
-    windowTitle: 'Competizione Companion',
+    appName: 'Competizione Companion x PXN',
+    trayTooltip: 'Competizione Companion x PXN',
+    windowTitle: 'Competizione Companion x PXN',
   },
   'zh-CN': {
-    appName: '争锋小助手',
-    trayTooltip: '争锋小助手',
-    windowTitle: '争锋小助手',
+    appName: '争锋小助手 x PXN',
+    trayTooltip: '争锋小助手 x PXN',
+    windowTitle: '争锋小助手 x PXN',
   },
 }
 

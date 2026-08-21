@@ -556,6 +556,27 @@ const setBgImage = () => {
               </div>
             </div>
             <div class="larger mt-4">
+              <div class="w-full text-center opacity-50 text-sm">
+                {{ $t('settings.sponsor') }}
+              </div>
+              <div
+                class="w-full text-center flex flex-row justify-center flex-wrap gap-3 items-center mb-6"
+              >
+                <mdui-tooltip placement="top" class="credits">
+                  <div slot="content" class="select-text cursor-text">
+                    {{ $t('settings.pxnTooltip') }}
+                  </div>
+                  <img
+                    :src="`../../src/assets/pxn/trans6${dark.isDark.value ? 'dark' : 'light'}.png`"
+                    class="inline opacity-55 hover:opacity-100 transition-all"
+                    width="200"
+                  />
+                </mdui-tooltip>
+              </div>
+
+              <div class="w-full text-center opacity-50 text-sm">
+                {{ $t('settings.thanks') }}
+              </div>
               <div
                 class="w-full text-center text-[rgb(var(--mdui-color-outline))] flex flex-row justify-center items-center"
               >

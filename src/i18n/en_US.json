@@ -1,7 +1,7 @@
 {
   "langCode": "en_US",
   "general": {
-    "appName": "Competizione Companion",
+    "appName": "Competizione Companion x PXN",
     "appNickName": "Companion",
     "status": "Lobby Server Status",
     "servers": "Server List",
@@ -26,7 +26,7 @@
     "friendshipLink": "Friendship Links",
     "friendshipLinkMsg": "Check out other awesome ACC related projects! If you have any ACC related projects, feel free to contact me to add a link!",
     "contact": "Contact Dev",
-    "contactMsg": "If you encounter any issues while using Competizione Companion, or have any suggestions or ideas, feel free to contact me through the following methods:",
+    "contactMsg": "If you encounter any issues while using Competizione Companion x PXN, or have any suggestions or ideas, feel free to contact me through the following methods:",
     "wechat": "WeChat",
     "email": "Email",
     "hipoleId": "HiPole ID",
@@ -75,7 +75,7 @@
       "2_3": "You can open the installation directory as shown above, then click the address bar at the top of the Explorer window and copy it.",
       "2_4": "Paste the full address, then click 'Save'.",
       "2_5": "If you have already configured this before, you can skip this step.",
-      "3_1": "With ACC not running, select a server in Competizione Companion and click '>>'.",
+      "3_1": "With ACC not running, select a server in Competizione Companion x PXN and click '>>'.",
       "3_2": "ACC Connector will be automatically launched and configured.",
       "3_3": "Select the server you just chose, click 'Install hook' at the bottom right, and launch ACC.",
       "4_1": "Enter Multiplayer mode in ACC.",
@@ -123,7 +123,7 @@
     "saveAndView": "Save and View",
     "viewOnly": "View Only",
     "codeCopySuccess": "Setup code copied to clipboard",
-    "codeCopyMsg": "Open the 「Competizione Companion」 app, turn to Setup Management page and paste this message to load and save the setup in one click.",
+    "codeCopyMsg": "Open the 「Competizione Companion x PXN」 app, turn to Setup Management page and paste this message to load and save the setup in one click.",
     "codeCopyMsg2": "Or visit https://acc.hh17.top/ and export as a file",
     "techSupport": "Technical support from",
     "generalTip1": "First adjust the tire pressures, electronics, and other parameters with fixed windows to an appropriate level.",
@@ -446,7 +446,10 @@
     "thanksMsg": "Sincere thanks to  the HiPole ACC group members and those racing enthusiasts, your support makes this project better and better",
     "contact": "Contact Developer",
     "illust": "Illustrator of ASSECON HIME",
-    "xhs": "XHS"
+    "xhs": "XHS",
+    "sponsor": "Title Sponsor",
+    "pxnTooltip": "PXN - Professional Game Accessories",
+    "thanks": "Special Thanks"
   },
   "cars": {
     "amr_v12_vantage_gt3": "AMR V12",
@@ -524,7 +527,7 @@
     "kyalami": "Kyalami"
   },
   "tutorial": {
-    "title": "Welcome to Competizione Companion!",
+    "title": "Welcome to Competizione Companion x PXN!",
     "page1text": "Let's get started by setting up some basic preferences",
     "pageDesc": "Features",
     "page2desc": "On this page, you can check the status of the ACC lobby servers and quickly launch ACC via Steam.",
@@ -536,10 +539,10 @@
     "page4li4": "Share setups as setup codes, or import from others' setup codes;",
     "page4li5": "Import multiple json/folders/zip files and batch import them into the game.",
     "page5desc": "On this page, you can view the LFM BoP for each track and car model, along with their BoP target lap times and predicted lap speeds. You can also export BoP data as bop.json or preset.pre for easy import into server settings.",
-    "page6desc": "On this page, you can input an accident description, and Competizione Companion will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
-    "page7desc": "On this page, you can import your custom livery files and fill in HiPole race info, and Competizione Companion will generate a compressed zip that totally meets HiPole custom livery standards.",
+    "page6desc": "On this page, you can input an accident description, and Competizione Companion x PXN will automatically match it with entries in the 「HiPole Racing Online League Competition Rules」to help you efficiently draft complaint messages.",
+    "page7desc": "On this page, you can import your custom livery files and fill in HiPole race info, and Competizione Companion x PXN will generate a compressed zip that totally meets HiPole custom livery standards.",
     "page8desc": "Competizione Companion has implemented AI! Now click the AI button in the bottom-left corner to start a conversation! If you encounter any problems when driving, feel free to ask her for advice; or you may just chat with her when feeling bored!",
-    "page9desc": "Finally, thank you for using Competizione Companion! The continuous improvement of the app can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
+    "page9desc": "Finally, thank you for using Competizione Companion x PXN! The continuous improvement of the app can't be realized without the community. If you encounter any issues while using it, feel free to provide feedback in the various HiPole groups (horacehuang17). If you like this project, please consider making a donation on the settings page to support its development!"
   },
   "ai": {
     "inputPlaceholder": "Try asking anything about racing!",
@@ -561,7 +564,7 @@
     "team": "Team",
     "teamFullName": "Team Full Name *",
     "dragAndDrop": "Drag & drop folder/zip/files of the livery here",
-    "tipDesc": "Among above 5 files, having imported all .json files and at least one .png file, what Competizione Companion will do:",
+    "tipDesc": "Among above 5 files, having imported all .json files and at least one .png file, what Competizione Companion x PXN will do:",
     "tip1": "Change customSkinName value within {fileName}.json, to: ",
     "tip2": "Change teamName value within {fileName}.json, to: ",
     "tip3": "Change raceNumber value within {fileName}.json, to: ",

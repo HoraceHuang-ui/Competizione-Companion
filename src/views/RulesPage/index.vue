@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import OnlineRules from '@/views/RulesPage/components/OnlineRules.vue'
+import aiReportPrompt from '@/assets/AIReportPrompt.txt?raw'
 import {
   findRules,
   keywords,
@@ -45,6 +46,12 @@ const previewRule = ref<OnlineRuleItem | undefined>(undefined)
 // 定义扩展类型，包含匹配次数
 interface MatchedRuleItem extends OnlineRuleItem {
   matchCnt: number
+}
+
+// 菜单展示项：AI 置顶的条款带 aiPinned 标记，matchCnt 可选
+interface DisplayRuleItem extends OnlineRuleItem {
+  matchCnt?: number
+  aiPinned?: boolean
 }
 
 // 假设 formData 是通过 props 传入或者定义的 ref
@@ -102,12 +109,235 @@ const getTop2Parents = (id: string) => {
   return [findRules(it => it.id === p1)[0], findRules(it => it.id === p2)[0]]
 }
 
+// ---------- AI 条款分析 ----------
+const aiAnalyzing = ref(false)
+const aiReasoning = ref('')
+const aiPinnedIds = ref<string[]>([])
+const hoveringAi = ref(false)
+let aiAbortController: AbortController | null = null
+// 上一次发起 AI 分析时使用的“事故简介”内容
+let lastAiDesc: string | null = null
+
+const allRuleIds = new Set(findRules(() => true).map(it => it.id))
+
+// 解析 AI 返回内容中的条款编号数组（最多 3 个有效条款）
+const parseAiClauses = (content: string): string[] => {
+  let parsed: unknown
+  const arrMatch = content.match(/\[[\s\S]*\]/)
+  if (arrMatch) {
+    try {
+      parsed = JSON.parse(arrMatch[0])
+    } catch {
+      parsed = undefined
+    }
+  }
+  if (parsed === undefined || parsed === null) {
+    try {
+      parsed = JSON.parse(content)
+    } catch {
+      return []
+    }
+  }
+
+  let ids: unknown[] = []
+  if (Array.isArray(parsed)) {
+    ids = parsed
+  } else if (parsed && typeof parsed === 'object') {
+    const arrVal = Object.values(parsed as Record<string, unknown>).find(v =>
+      Array.isArray(v),
+    )
+    if (arrVal) ids = arrVal as unknown[]
+  }
+
+  return [...new Set(ids.map(it => String(it).trim()))]
+    .filter(id => id && allRuleIds.has(id))
+    .slice(0, 3)
+}
+
+// 中断上一次 AI 请求（若未完成），并清空 AI 结果
+const cancelAiAnalysis = () => {
+  if (aiAbortController) {
+    aiAbortController.abort()
+    aiAbortController = null
+  }
+  aiAnalyzing.value = false
+  aiReasoning.value = ''
+  // 清除 AI 生成结果：置空后 aiDedupedIds 同步变空，
+  // 原先去重的条款会自动加回关键词匹配列表（displayedRules 派生计算）
+  aiPinnedIds.value = []
+  // 内容已变更，旧的分析结果失效，下次打开菜单需重新分析
+  lastAiDesc = null
+}
+
+// 以“事故简介”为提示词调用 AI，分析可能符合的投诉条款
+const runAiAnalysis = async () => {
+  const desc = (formData.value.incidentDesc || '').trim()
+  if (!desc) return
+
+  // 内容与上一次发起分析时一致：不重复触发（进行中的请求继续等待其完成）
+  if (lastAiDesc === desc) return
+
+  // 内容有变更：中断上一次未完成的请求，开始新一轮分析
+  if (aiAbortController) {
+    aiAbortController.abort()
+    aiAbortController = null
+  }
+
+  lastAiDesc = desc
+  const controller = new AbortController()
+  aiAbortController = controller
+  aiAnalyzing.value = true
+  aiReasoning.value = ''
+  aiPinnedIds.value = []
+
+  const messages: Array<{ role: string; content: string }> = []
+  if (aiReportPrompt.trim()) {
+    messages.push({ role: 'system', content: aiReportPrompt })
+  }
+  messages.push({ role: 'user', content: desc })
+
+  const input = {
+    messages,
+    model: 'deepseek-v4-flash',
+    thinking: { type: 'enabled' },
+    max_tokens: 100000,
+    stream: true,
+    stream_options: { include_usage: true },
+    temperature: 1,
+    top_p: 1,
+    tools: null,
+    tool_choice: 'none',
+  }
+
+  try {
+    const response = await fetch(
+      'https://api.hh17.top/competizione/ai/deepseek',
+      {
+        headers: {
+          'X-App-Token': 'maimaidx',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify(input),
+        signal: controller.signal,
+      },
+    )
+
+    if (!response.ok || !response.body) {
+      throw new Error('Invalid response')
+    }
+
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    let content = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed.startsWith('data: ')) continue
+        const data = trimmed.slice(6)
+        if (data === '[DONE]') break
+
+        try {
+          const parsed = JSON.parse(data)
+          const delta = parsed.choices?.[0]?.delta
+          if (delta) {
+            if (delta.reasoning_content) {
+              aiReasoning.value += delta.reasoning_content
+            }
+            if (delta.content) {
+              content += delta.content
+            }
+          }
+        } catch {
+          // ignore malformed chunks
+        }
+      }
+    }
+    aiPinnedIds.value = parseAiClauses(content)
+  } catch {
+    // 若为当前请求自身失败（非被中断），清空标记，下次打开菜单时允许重试；
+    // 被中断时 aiAbortController 已被取消或替换，此处不会误清。
+    if (aiAbortController === controller) {
+      lastAiDesc = null
+    }
+  } finally {
+    if (aiAbortController === controller) {
+      aiAbortController = null
+      aiAnalyzing.value = false
+    }
+  }
+}
+
+// 当前因 AI 置顶而从关键词匹配列表（非 AI 列表）中去重的条款 id
+// 该集合完全由 aiPinnedIds 派生：清除 AI 结果（aiPinnedIds 置空）时自动变空，
+// 原先去重的条款即随之加回关键词匹配列表
+const aiDedupedIds = computed(() => {
+  const matchedIds = new Set(matchedRules.value.map(it => it.id))
+  return aiPinnedIds.value.filter(id => matchedIds.has(id))
+})
+
+// 展示列表：AI 推断的条款置顶；关键词匹配列表（非 AI 列表）去除与置顶项重复的内容
+const displayedRules = computed<DisplayRuleItem[]>(() => {
+  const pinned: DisplayRuleItem[] = []
+  for (const id of aiPinnedIds.value) {
+    const inMatched = matchedRules.value.find(it => it.id === id)
+    const item = inMatched ?? findRules(it => it.id === id)[0]
+    if (!item) continue
+    pinned.push({ ...item, aiPinned: true })
+  }
+  // 去重集合仅包含当前仍处于置顶状态的条款：AI 结果清除后集合为空，
+  // 此前被去重的条款全部回到关键词匹配列表原位置
+  const deduped = new Set(aiDedupedIds.value)
+  const rest = matchedRules.value.filter(it => !deduped.has(it.id))
+  return [...pinned, ...rest]
+})
+
+const previewScrollRef = ref()
+
+const onAiItemEnter = () => {
+  hoveringAi.value = true
+  nextTick(() => {
+    previewScrollRef.value?.scrollTo({
+      top: 999_999_999,
+      left: 0,
+      behavior: 'auto',
+    })
+  })
+}
+
+const onAiItemLeave = () => {
+  hoveringAi.value = false
+}
+
+// 思考过程流式更新时，右侧面板实时滚动到底部
+watch(aiReasoning, () => {
+  if (!hoveringAi.value) return
+  nextTick(() => {
+    previewScrollRef.value?.scrollTo({
+      top: 999_999_999,
+      left: 0,
+      behavior: 'auto',
+    })
+  })
+})
+
 const keywordDialogShow = ref(false)
 
 // 监听 incidentDesc 变化，防抖 300ms
 watch(
   () => formData.value.incidentDesc,
   () => {
+    // 事故简介变化：中断上一次 AI 请求（若未完成），或清空 AI 结果（若已完成）
+    cancelAiAnalysis()
     if (searchTimer) clearTimeout(searchTimer)
     searchTimer = setTimeout(() => {
       performSearch()
@@ -285,7 +515,7 @@ const copyContent = () => {
                 </mdui-tooltip>
               </div>
               <div class="flex-1 flex flex-row gap-2 flex-wrap">
-                <mdui-dropdown placement="bottom-start">
+                <mdui-dropdown placement="bottom-start" @open="runAiAnalysis">
                   <mdui-chip
                     slot="trigger"
                     class="h-[36px] rounded-full border border-[rgb(var(--mdui-color-outline))]"
@@ -299,13 +529,22 @@ const copyContent = () => {
                     <div
                       class="flex flex-row bg-[rgb(var(--mdui-color-background))] w-[500px] shadow-md"
                       :style="{
-                        height: matchedRules.length > 6 ? '293px' : '100%',
+                        height: displayedRules.length > 6 ? '293px' : '100%',
                       }"
                     >
                       <ScrollWrapper width="50%">
                         <mdui-menu-item
-                          v-for="rule in matchedRules"
-                          :key="rule.id"
+                          v-if="aiAnalyzing"
+                          value="__ai-analyzing__"
+                          @mouseenter="onAiItemEnter"
+                          @mouseleave="onAiItemLeave"
+                          @click.prevent.stop="() => {}"
+                        >
+                          AI分析中……
+                        </mdui-menu-item>
+                        <mdui-menu-item
+                          v-for="rule in displayedRules"
+                          :key="(rule.aiPinned ? 'ai-' : '') + rule.id"
                           :value="rule.id"
                           :class="{
                             'bg-[rgb(var(--mdui-color-primary-container))] text-[rgb(var(--mdui-color-primary))]':
@@ -329,8 +568,27 @@ const copyContent = () => {
                             }
                           "
                         >
-                          {{ rule.id }}（匹配到{{ rule.matchCnt }}个关键词）
+                          <template v-if="rule.aiPinned">
+                            {{ rule.id }}
+                          </template>
+                          <template v-else>
+                            {{ rule.id }}（匹配到{{ rule.matchCnt }}个关键词）
+                          </template>
 
+                          <div
+                            class="ai-badge"
+                            slot="icon"
+                            v-if="rule.aiPinned"
+                            :style="
+                              formData.rules.findIndex(
+                                (it: OnlineRuleItem) => it.id === rule.id,
+                              ) !== -1
+                                ? 'background: rgb(var(--mdui-color-primary)); color: rgb(var(--mdui-color-primary-container))'
+                                : ''
+                            "
+                          >
+                            AI
+                          </div>
                           <mdui-icon-check--rounded
                             slot="end-icon"
                             v-if="
@@ -342,29 +600,43 @@ const copyContent = () => {
                         </mdui-menu-item>
                       </ScrollWrapper>
                       <ScrollWrapper
+                        ref="previewScrollRef"
                         width="50%"
                         class="p-2 h-full border-l border-[rgb(var(--mdui-color-surface-container-highest))]"
                       >
                         <div
-                          v-if="previewRule"
-                          class="pb-2 mb-2 border-b border-b-[rgb(var(--mdui-color-surface-container-highest))]"
+                          v-if="hoveringAi && aiAnalyzing"
+                          class="select-text"
                         >
-                          <div v-for="p in getTop2Parents(previewRule?.id)">
-                            <div>
-                              <span
-                                class="text-[rgb(var(--mdui-color-primary))]"
-                                >{{ p.id }}</span
-                              >
-                              {{ p.text }}
-                            </div>
+                          <div
+                            class="whitespace-pre-wrap break-words text-sm leading-relaxed opacity-80"
+                          >
+                            {{ aiReasoning || 'AI 正在分析事故简介…' }}
                           </div>
                         </div>
-                        <div>
-                          <span class="text-[rgb(var(--mdui-color-primary))]">{{
-                            previewRule?.id
-                          }}</span>
-                          {{ previewRule?.text }}
-                        </div>
+                        <template v-else>
+                          <div
+                            v-if="previewRule"
+                            class="pb-2 mb-2 border-b border-b-[rgb(var(--mdui-color-surface-container-highest))]"
+                          >
+                            <div v-for="p in getTop2Parents(previewRule?.id)">
+                              <div>
+                                <span
+                                  class="text-[rgb(var(--mdui-color-primary))]"
+                                  >{{ p.id }}</span
+                                >
+                                {{ p.text }}
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <span
+                              class="text-[rgb(var(--mdui-color-primary))]"
+                              >{{ previewRule?.id }}</span
+                            >
+                            {{ previewRule?.text }}
+                          </div>
+                        </template>
                       </ScrollWrapper>
                     </div>
                   </mdui-menu>
@@ -484,6 +756,15 @@ const copyContent = () => {
   border-radius: 18px;
   background: rgb(var(--mdui-color-background));
   cursor: text;
+}
+.ai-badge {
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  vertical-align: 1px;
+  font-size: 16px;
+  background: rgb(var(--mdui-color-primary-container));
+  color: rgb(var(--mdui-color-primary));
 }
 ::part(text-field__container) {
   border-radius: 999px;

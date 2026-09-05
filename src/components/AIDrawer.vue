@@ -33,8 +33,8 @@ const selectedModel = computed({
 const modelOptions = ['gpt-oss-120b', 'deepseek-v4-pro', 'deepseek-v4-flash']
 
 const TOKEN_LIMITS: Record<string, number> = {
-  'deepseek-v4-pro': 500_000,
-  'deepseek-v4-flash': 1_000_000,
+  'deepseek-v4-pro': 100_000,
+  'deepseek-v4-flash': 300_000,
 }
 const MODEL_KEY: Record<string, 'pro' | 'flash'> = {
   'deepseek-v4-pro': 'pro',
@@ -73,8 +73,7 @@ const tokenUsed = computed(() => {
 const showTokenBar = computed(() => selectedModel.value !== 'gpt-oss-120b')
 
 function formatTokenCount(n: number): string {
-  if (n < 100_000) return (n / 1000).toFixed(1) + 'K'
-  return (n / 1_000_000).toFixed(2) + 'M'
+  return (n / 1000).toFixed(1) + 'K'
 }
 
 const tokenTooltip = computed(() =>

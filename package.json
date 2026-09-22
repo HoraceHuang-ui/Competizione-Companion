@@ -22,8 +22,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && electron-builder",
-    "preview": "vite preview"
+    "build": "vite build && node native/build-hook.cjs && electron-builder",
+    "preview": "vite preview",
+    "build:hook": "node native/build-hook.cjs"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

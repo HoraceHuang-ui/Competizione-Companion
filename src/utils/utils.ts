@@ -5,7 +5,6 @@ import { trackCarDispSettings, trackIndex } from '@/utils/enums'
 import carData from '@/utils/carData'
 import { snackbar } from 'mdui'
 import trackData from '@/utils/trackData'
-import { nextTick } from 'vue'
 
 export const obj2Param = (obj: Record<string, any>) => {
   return Object.entries(obj)
@@ -196,14 +195,50 @@ export const isHipole = (name: string) => {
   return undefined
 }
 
-export const connectServer = (ip: string, tcpPort: number, name: string) => {
-  const iframe = document.createElement('iframe')
-  iframe.style.display = 'none'
-  iframe.src = `https://lonemeow.github.io/acc-connector/?hostname=${ip}&port=${tcpPort}&name=${encodeURIComponent(name)}&persistent=true`
-  document.body.appendChild(iframe)
-  iframe.onload = () => {
-    nextTick(() => {
-      document.body.removeChild(iframe)
+// ACC 直连（内置 ACC Connector）：把服务器加入注入历史并同步给主进程，
+// 注入的 DLL 会在 ACC 的 LAN 服务器发现时把该服务器作为局域网服务器返回
+export const connectServer = async (
+  ip: string,
+  tcpPort: number,
+  name: string,
+) => {
+  const store = useStore()
+  const port = Number(tcpPort)
+  store.addServerHistory({ name, hostname: ip, port })
+
+  if (!window.accConnector) return
+
+  try {
+    const status = await window.accConnector.getStatus()
+    if (!status.supported) {
+      snackbar({
+        message: translate('servers.connectWindowsOnly'),
+        autoCloseDelay: 4000,
+      })
+      return
+    }
+    if (!status.hookInstalled) {
+      snackbar({
+        message: translate('servers.connectNeedHook'),
+        autoCloseDelay: 4000,
+      })
+      return
+    }
+    if (!status.accRunning) {
+      snackbar({
+        message: translate('servers.connectWaitAcc', { name: name }),
+        autoCloseDelay: 4000,
+      })
+      return
+    }
+    snackbar({
+      message: translate('servers.connectInjected', { name: name }),
+      autoCloseDelay: 4000,
+    })
+  } catch {
+    snackbar({
+      message: translate('servers.connectInjected', { name: name }),
+      autoCloseDelay: 4000,
     })
   }
 }

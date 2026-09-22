@@ -6,6 +6,7 @@ import os from 'node:os'
 import brotli from 'brotli-compress'
 import axios from 'axios'
 import fs, { promises as fsPromises } from 'fs'
+import { initAccConnector } from './accConnector'
 
 const i18n = {
   en: {
@@ -96,6 +97,9 @@ async function createWindow() {
       // contextIsolation: false,
     },
   })
+  // ACC Connector 直连功能：命名管道 + hook 安装管理 + 状态监测
+  // （IPC 处理器在 accConnector 模块加载时已注册；这里仅启动管道与轮询）
+  initAccConnector(win)
   // if (store.get('max')) {
   //   win.maximize()
   // }
@@ -221,13 +225,18 @@ async function createWindow() {
     return targetName
   }
 
-  ipcMain.handle('fs:setupList', async (_event, car, track) => {
-    const setupsDir = path.join(
-      os.homedir(),
-      'Documents',
+  // ACC 调校目录：使用系统解析出的“文档”目录（known folder），
+  // 支持用户将 Documents 重定向到其他位置（如 D:\Documents、OneDrive 等）
+  function getSetupsDir(): string {
+    return path.join(
+      app.getPath('documents'),
       'Assetto Corsa Competizione',
       'Setups',
     )
+  }
+
+  ipcMain.handle('fs:setupList', async (_event, car, track) => {
+    const setupsDir = getSetupsDir()
     if (!fs.existsSync(setupsDir)) {
       return []
     }
@@ -253,12 +262,7 @@ async function createWindow() {
   ipcMain.handle(
     'fs:setupFile',
     async (_event, car, track, fileName, writeVal, overwrite = false) => {
-      const setupsDir = path.join(
-        os.homedir(),
-        'Documents',
-        'Assetto Corsa Competizione',
-        'Setups',
-      )
+      const setupsDir = getSetupsDir()
       const realCar = findOrCreateCaseInsensitiveName(setupsDir, car)
       const realTrack = findOrCreateCaseInsensitiveName(
         path.join(setupsDir, realCar || car),

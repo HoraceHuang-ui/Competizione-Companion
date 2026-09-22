@@ -21,6 +21,13 @@
       },
     ],
     artifactName: '${productName}-Windows-${version}-Setup.${ext}',
+    // ACC Connector 注入 DLL（npm run build 会在 Windows 上先执行 native/build-hook.js 构建）
+    extraResources: [
+      {
+        from: 'native/out/client-hooks.dll',
+        to: 'hook/client-hooks.dll',
+      },
+    ],
   },
   nsis: {
     oneClick: false,

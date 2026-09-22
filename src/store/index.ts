@@ -26,6 +26,12 @@ export const useStore = defineStore('userStore', {
     presets: {
       serverExePath: '',
     },
+    // ACC 直连（ACC Connector）注入历史记录：最新在前，最多 20 条，按 hostname+port 去重
+    serverHistory: [] as Array<{
+      name: string
+      hostname: string
+      port: number
+    }>,
     settings: {
       general: {
         lang: 'zh_CN',
@@ -68,6 +74,31 @@ export const useStore = defineStore('userStore', {
     },
     newConversation() {
       this.messages = []
+    },
+    // 注入（直连）一个服务器：去重后置顶，最多保留 20 条历史
+    addServerHistory(item: { name: string; hostname: string; port: number }) {
+      const idx = this.serverHistory.findIndex(
+        s => s.hostname === item.hostname && s.port === item.port,
+      )
+      if (idx !== -1) {
+        this.serverHistory.splice(idx, 1)
+      }
+      this.serverHistory.unshift({
+        name: item.name,
+        hostname: item.hostname,
+        port: item.port,
+      })
+      if (this.serverHistory.length > 20) {
+        this.serverHistory.length = 20
+      }
+    },
+    removeServerHistory(hostname: string, port: number) {
+      const idx = this.serverHistory.findIndex(
+        s => s.hostname === hostname && s.port === port,
+      )
+      if (idx !== -1) {
+        this.serverHistory.splice(idx, 1)
+      }
     },
   },
   persist: true,

@@ -114,6 +114,36 @@ contextBridge.exposeInMainWorld('shell', {
   },
 })
 
+contextBridge.exposeInMainWorld('accConnector', {
+  setServers: (servers: Array<{ name: string; hostname: string; port: number }>) => {
+    return ipcRenderer.invoke('accConnector:setServers', servers)
+  },
+  getStatus: () => {
+    return ipcRenderer.invoke('accConnector:getStatus')
+  },
+  installHook: () => {
+    return ipcRenderer.invoke('accConnector:installHook')
+  },
+  removeHook: () => {
+    return ipcRenderer.invoke('accConnector:removeHook')
+  },
+  discoverAccPath: () => {
+    return ipcRenderer.invoke('accConnector:discoverAccPath')
+  },
+  selectAccPath: () => {
+    return ipcRenderer.invoke('accConnector:selectAccPath')
+  },
+  onStatus: (callback: (status: any) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, status: any) => {
+      callback(status)
+    }
+    ipcRenderer.on('accConnector:status', listener)
+    return () => {
+      ipcRenderer.off('accConnector:status', listener)
+    }
+  },
+})
+
 contextBridge.exposeInMainWorld('brotli', {
   compress: (input: string) => {
     return ipcRenderer.invoke('brotli:compress', input)

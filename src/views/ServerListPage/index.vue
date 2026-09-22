@@ -7,6 +7,7 @@ import '@mdui/icons/keyboard-double-arrow-right--rounded.js'
 import '@mdui/icons/help-outline--rounded.js'
 import '@mdui/icons/grid-view--rounded.js'
 import '@mdui/icons/table-rows--rounded.js'
+import '@mdui/icons/history--rounded.js'
 import { computed, onMounted, ref } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { seriesColorMap } from '@/utils/enums'
@@ -16,6 +17,7 @@ import { useStore } from '@/store'
 import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 import MyCarousel from '@/components/MyCarousel.vue'
 import ServerListItem from '@/views/ServerListPage/components/ServerListItem.vue'
+import ConnectorDialog from '@/views/ServerListPage/components/ConnectorDialog.vue'
 import { obj2Param } from '@/utils/utils'
 
 const curPage = ref(1)
@@ -25,6 +27,7 @@ const loading = ref(false)
 const groups = ['Mixed', 'GT3', 'GT4', 'GT2', 'GTC', 'TCX']
 const store = useStore()
 const helpDialogOpen = ref(false)
+const connectorDialogOpen = ref(false)
 const helpPage = ref(1)
 const showingHipoleOffline = ref(false)
 
@@ -97,9 +100,6 @@ onMounted(() => {
   reqData()
 })
 
-const openExtUrl = (url: string) => {
-  window.electron.openExtLink(url)
-}
 const retrieveHipoleServers = () => {
   filters.value.name = 'HiPole.com |'
   filters.value.private = true
@@ -442,6 +442,21 @@ const retrieveHipoleServers = () => {
           </mdui-fab>
         </mdui-tooltip>
 
+        <mdui-tooltip
+          :content="$t('servers.connectHistory')"
+          placement="right"
+        >
+          <mdui-fab
+            variant="surface"
+            class="mb-4"
+            @click="connectorDialogOpen = true"
+          >
+            <mdui-icon-history--rounded
+              slot="icon"
+            ></mdui-icon-history--rounded>
+          </mdui-fab>
+        </mdui-tooltip>
+
         <mdui-tooltip placement="right-end" class="filter">
           <div class="relative">
             <mdui-fab>
@@ -568,42 +583,23 @@ const retrieveHipoleServers = () => {
             <mdui-button
               class="mt-4 font-bold"
               @click="
-                openExtUrl(
-                  'https://github.com/lonemeow/acc-connector/releases/download/v0.9.13/ACC-Connector-Setup-0.9.13.exe',
-                )
+                () => {
+                  helpDialogOpen = false
+                  helpPage = 1
+                  connectorDialogOpen = true
+                }
               "
               >{{ $t('servers.help.1_2') }}</mdui-button
             >
           </div>
           <div class="help-item">
             <ScrollWrapper class="flex flex-col items-center" show-bar="always">
-              <img src="@/assets/helpImages/2_accPath.png" class="rounded-xl" />
               <ul class="list-disc list-outside pl-4 mt-2">
                 <li>{{ $t('servers.help.2_1') }}</li>
                 <li>{{ $t('servers.help.2_2') }}</li>
-                <li>
-                  {{ $t('servers.help.2_3') }}
-                </li>
+                <li>{{ $t('servers.help.2_3') }}</li>
                 <li>{{ $t('servers.help.2_4') }}</li>
                 <li>{{ $t('servers.help.2_5') }}</li>
-              </ul>
-            </ScrollWrapper>
-          </div>
-
-          <div class="help-item">
-            <ScrollWrapper class="flex flex-col items-center" show-bar="always">
-              <img
-                src="@/assets/helpImages/3_installHook.png"
-                class="rounded-xl"
-              />
-              <ul class="list-disc list-outside pl-4 mt-2">
-                <li>
-                  {{ $t('servers.help.3_1') }}
-                </li>
-                <li>{{ $t('servers.help.3_2') }}</li>
-                <li>
-                  {{ $t('servers.help.3_3') }}
-                </li>
               </ul>
             </ScrollWrapper>
           </div>
@@ -615,28 +611,24 @@ const retrieveHipoleServers = () => {
                 class="rounded-xl"
               />
               <ul class="list-disc list-outside pl-4 mt-2">
-                <li>{{ $t('servers.help.4_1') }}</li>
+                <li>{{ $t('servers.help.3_1') }}</li>
                 <li>
-                  {{ $t('servers.help.4_2') }}
+                  {{ $t('servers.help.3_2') }}
                 </li>
                 <li>
-                  {{ $t('servers.help.4_3') }}
+                  {{ $t('servers.help.3_3') }}
                 </li>
-                <li>{{ $t('servers.help.4_4') }}</li>
+                <li>{{ $t('servers.help.3_4') }}</li>
               </ul>
             </ScrollWrapper>
           </div>
 
           <div class="help-item">
             <ScrollWrapper class="flex flex-col items-center" show-bar="always">
-              <img
-                src="@/assets/helpImages/5_removeHook.png"
-                class="rounded-xl"
-              />
               <ul class="list-disc list-outside pl-4 mt-2">
-                <li>{{ $t('servers.help.5_1') }}</li>
-                <li>{{ $t('servers.help.5_2') }}</li>
-                <li>{{ $t('servers.help.5_3') }}</li>
+                <li>{{ $t('servers.help.4_1') }}</li>
+                <li>{{ $t('servers.help.4_2') }}</li>
+                <li>{{ $t('servers.help.4_3') }}</li>
               </ul>
             </ScrollWrapper>
           </div>
@@ -644,10 +636,12 @@ const retrieveHipoleServers = () => {
         <Pagination
           type="horizontal"
           v-model="helpPage"
-          :total="5"
+          :total="4"
           :page-size="1"
         ></Pagination>
       </mdui-dialog>
+
+      <ConnectorDialog v-model:open="connectorDialogOpen" />
     </mdui-card>
 
     <div

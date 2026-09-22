@@ -34,6 +34,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      # Windows 构建前先编译 ACC Connector 注入 DLL（MSBuild + v143 + MASM）
+      - name: Setup MSBuild
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build ACC Connector hook DLL
+        if: runner.os == 'Windows'
+        run: npm run build:hook
+        shell: pwsh
+
       - name: Build Release Files
         run: npm run build
         env:

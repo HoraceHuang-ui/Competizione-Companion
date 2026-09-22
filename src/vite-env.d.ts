@@ -51,4 +51,27 @@ interface Window {
     show: (options: any) => Promise<string[]>
     showAndCopy: (options: any) => Promise<string>
   }
+  accConnector?: {
+    setServers: (
+      servers: Array<{ name: string; hostname: string; port: number }>,
+    ) => Promise<void>
+    getStatus: () => Promise<{
+      supported: boolean
+      dllAvailable: boolean
+      accPath: string | null
+      accPathValid: boolean
+      hookInstalled: boolean
+      hookMatches: boolean
+      hookConflict: boolean
+      accRunning: boolean
+      hookActive: boolean
+      pipeRunning: boolean
+      version: string
+    }>
+    installHook: () => Promise<any>
+    removeHook: () => Promise<any>
+    discoverAccPath: () => Promise<{ path: string | null }>
+    selectAccPath: () => Promise<any>
+    onStatus: (callback: (status: any) => void) => () => void
+  }
 }

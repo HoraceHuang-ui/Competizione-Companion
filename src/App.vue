@@ -101,6 +101,21 @@ watch(
   },
 )
 
+// ACC 直连：注入历史变化时同步到主进程（命名管道服务给注入 DLL 的服务器列表）
+watch(
+  () => store.serverHistory,
+  () => {
+    window.accConnector?.setServers(
+      store.serverHistory.map(s => ({
+        name: s.name,
+        hostname: s.hostname,
+        port: s.port,
+      })),
+    )
+  },
+  { deep: true, immediate: true },
+)
+
 const showBulletin = ref(false)
 const bulletin = ref(undefined)
 const queryBulletin = async () => {

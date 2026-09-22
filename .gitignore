@@ -28,3 +28,8 @@ release
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+# ACC connector hook build outputs
+native/out/
+native/**/x64/
+native/**/Debug/
+native/**/Release/

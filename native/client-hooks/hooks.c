@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// Derived from acc-connector <https://github.com/lonemeow/acc-connector>
+// Copyright (c) 2024 Ilpo Ruotsalainen
+// Modifications Copyright (c) 2026 HoraceHYY
+
 #include "client-hooks.h"
 #include "version.h"
 #include "../minhook/include/MinHook.h"
@@ -67,10 +72,13 @@ void handle_discovery(SOCKET s, DWORD id) {
         return;
     }
 
+    // 尽量切换为消息读取模式（与上游 C# GUI 的 PipeTransmissionMode.Message 兼容）。
+    // 但宿主应用（Electron/Node 的 net 命名管道）创建的是字节流管道，此调用会以
+    // ERROR_INVALID_PARAMETER(0x57) 失败；这不是致命错误，下面的循环按字节读取同样能拿到完整数据。
+    // 注意：此处绝不能因失败而提前返回，否则 shm 保持全零，钩子将不再伪造任何服务器。
     DWORD mode = PIPE_READMODE_MESSAGE;
     if (!SetNamedPipeHandleState(hPipe, &mode, NULL, NULL)) {
-        log_msg(L"SetNamedPipeHandleState(\"%s\") failed: 0x%x", NAMED_PIPE_NAME, GetLastError());
-        goto cleanup;
+        log_msg(L"SetNamedPipeHandleState(\"%s\") failed: 0x%x (continuing in byte-read mode)", NAMED_PIPE_NAME, GetLastError());
     }
 
     // 循环读取直到读满整个结构体或对端关闭（宿主应用使用字节流管道，单次 ReadFile 可能返回部分数据）
@@ -85,7 +93,6 @@ void handle_discovery(SOCKET s, DWORD id) {
 
     log_msg(L"Read %d bytes from pipe", totalRead);
 
-cleanup:
     CloseHandle(hPipe);
 }
 

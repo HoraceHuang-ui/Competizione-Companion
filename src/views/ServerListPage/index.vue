@@ -18,6 +18,7 @@ import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 import MyCarousel from '@/components/MyCarousel.vue'
 import ServerListItem from '@/views/ServerListPage/components/ServerListItem.vue'
 import ConnectorDialog from '@/views/ServerListPage/components/ConnectorDialog.vue'
+import { useConnectorDialog } from '@/composables/useConnectorDialog'
 import { obj2Param } from '@/utils/utils'
 
 const curPage = ref(1)
@@ -27,7 +28,8 @@ const loading = ref(false)
 const groups = ['Mixed', 'GT3', 'GT4', 'GT2', 'GTC', 'TCX']
 const store = useStore()
 const helpDialogOpen = ref(false)
-const connectorDialogOpen = ref(false)
+// 弹窗开关与服务器卡片的 >> 按钮共享（见 composables/useConnectorDialog）
+const { open: connectorDialogOpen, openConnectorDialog } = useConnectorDialog()
 const helpPage = ref(1)
 const showingHipoleOffline = ref(false)
 
@@ -443,13 +445,13 @@ const retrieveHipoleServers = () => {
         </mdui-tooltip>
 
         <mdui-tooltip
-          :content="$t('servers.connectHistory')"
+          :content="$t('servers.history')"
           placement="right"
         >
           <mdui-fab
             variant="surface"
             class="mb-4"
-            @click="connectorDialogOpen = true"
+            @click="openConnectorDialog"
           >
             <mdui-icon-history--rounded
               slot="icon"
@@ -586,7 +588,7 @@ const retrieveHipoleServers = () => {
                 () => {
                   helpDialogOpen = false
                   helpPage = 1
-                  connectorDialogOpen = true
+                  openConnectorDialog()
                 }
               "
               >{{ $t('servers.help.1_2') }}</mdui-button

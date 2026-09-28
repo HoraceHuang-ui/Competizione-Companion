@@ -19,6 +19,9 @@ export const useStore = defineStore('userStore', {
       msgId: 0,
       firstSetupFlag: false,
       aiModel: 'deepseek-v4-pro',
+      // ACC 是否正在运行：由主进程的状态广播写入（见 App.vue），
+      // 供主页与侧边栏的“启动 ACC”按钮做状态展示
+      accRunning: false,
     },
     servers: {
       listView: false,
@@ -31,6 +34,9 @@ export const useStore = defineStore('userStore', {
       name: string
       hostname: string
       port: number
+      // 加入直连列表的时间戳，用于弹窗展示“刚刚添加 / 添加于 MM/DD HH:mm”。
+      // 旧版本持久化的记录没有该字段，界面会直接不展示时间。
+      addedAt?: number
     }>,
     settings: {
       general: {
@@ -87,6 +93,8 @@ export const useStore = defineStore('userStore', {
         name: item.name,
         hostname: item.hostname,
         port: item.port,
+        // 重复添加同一服务器时同样刷新时间戳，与“移到最前”的语义保持一致
+        addedAt: Date.now(),
       })
       if (this.serverHistory.length > 20) {
         this.serverHistory.length = 20
@@ -101,5 +109,11 @@ export const useStore = defineStore('userStore', {
       }
     },
   },
-  persist: true,
+  persist: {
+    // accRunning 是运行时状态，不该随持久化回灌：若上次 ACC 正在运行时退出应用，
+    // 下次启动会在主进程首次上报前错误地显示“ACC正在运行”，因此恢复后强制归零。
+    afterRestore: ctx => {
+      ctx.store.$state.general.accRunning = false
+    },
+  },
 })

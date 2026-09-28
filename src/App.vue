@@ -10,7 +10,7 @@ import '@mdui/icons/announcement.js'
 import '@mdui/icons/assistant--rounded.js'
 import '@mdui/icons/format-paint--rounded.js'
 
-import { onMounted, provide, ref, watch } from 'vue'
+import { onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { setColorScheme, setTheme } from 'mdui'
@@ -84,6 +84,26 @@ const launchACC = () => {
   setTimeout(() => {
     launching.value = false
   }, 3000)
+}
+
+// ACC 运行状态同步：主页与侧边栏的“启动 ACC”按钮都依赖它做禁用/提示。
+// 先订阅广播，再补一次初始查询，避免启动瞬间广播早于订阅而丢掉状态。
+let accStatusUnsub: (() => void) | undefined
+
+const startAccStatusSync = () => {
+  accStatusUnsub = window.accConnector?.onStatus(s => {
+    store.general.accRunning = !!s?.accRunning
+  })
+  window.accConnector
+    ?.getStatus()
+    .then(s => {
+      if (s) {
+        store.general.accRunning = !!s.accRunning
+      }
+    })
+    .catch(() => {
+      // 主进程不可用时保持当前值
+    })
 }
 
 const updDialogShow = ref(false)
@@ -204,6 +224,12 @@ onMounted(() => {
   if (!store.settings.general.bgType) {
     store.settings.general.bgType = 'hime'
   }
+
+  startAccStatusSync()
+})
+
+onUnmounted(() => {
+  accStatusUnsub?.()
 })
 
 const onHyperLinkClick = (e: Event) => {
@@ -426,20 +452,36 @@ watch(
       </mdui-tooltip>
 
       <mdui-tooltip
-        :content="translate('general.launchACC')"
+        :content="
+          store.general.accRunning
+            ? translate('general.accRunning')
+            : translate('general.launchACC')
+        "
         placement="right"
         slot="bottom"
         v-if="mode !== 0"
       >
-        <mdui-button-icon class="mb-2" @click="launchACC" :disabled="launching">
-          <Transition name="fade" mode="out-in">
-            <mdui-circular-progress
-              v-if="launching"
-              class="p-2"
-            ></mdui-circular-progress>
-            <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
-          </Transition>
-        </mdui-button-icon>
+        <!-- 外层 div 既作为角标定位容器，也保证按钮 disabled（pointer-events:none）时
+             tooltip 仍能响应悬浮 -->
+        <div class="relative">
+          <mdui-button-icon
+            @click="launchACC"
+            :disabled="launching || store.general.accRunning"
+          >
+            <Transition name="fade" mode="out-in">
+              <mdui-circular-progress
+                v-if="launching"
+                class="p-2"
+              ></mdui-circular-progress>
+              <mdui-icon-send--rounded v-else></mdui-icon-send--rounded>
+            </Transition>
+          </mdui-button-icon>
+          <mdui-badge
+            v-if="store.general.accRunning"
+            variant="small"
+            class="absolute right-0 top-0 w-2.5 h-2.5 bg-green-500 dark:bg-green-400"
+          ></mdui-badge>
+        </div>
       </mdui-tooltip>
 
       <mdui-tooltip

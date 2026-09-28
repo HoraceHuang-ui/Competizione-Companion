@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// Derived from acc-connector <https://github.com/lonemeow/acc-connector>
+// Copyright (c) 2024 Ilpo Ruotsalainen
+// Modifications Copyright (c) 2026 HoraceHYY
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by proxy.rc

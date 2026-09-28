@@ -22,10 +22,20 @@
     ],
     artifactName: '${productName}-Windows-${version}-Setup.${ext}',
     // ACC Connector 注入 DLL（npm run build 会在 Windows 上先执行 native/build-hook.js 构建）
+    // 同时必须打包第三方许可证：该 DLL 是 acc-connector(MIT) 的衍生作品，并静态链接了
+    // MinHook(BSD-2-Clause)，两者都要求许可证随二进制副本一同分发。
     extraResources: [
       {
         from: 'native/out/client-hooks.dll',
         to: 'hook/client-hooks.dll',
+      },
+      {
+        from: 'native/LICENSE-acc-connector.txt',
+        to: 'hook/LICENSE-acc-connector.txt',
+      },
+      {
+        from: 'native/minhook/LICENSE.txt',
+        to: 'hook/LICENSE-minhook.txt',
       },
     ],
   },

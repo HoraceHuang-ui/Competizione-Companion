@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Derived from acc-connector <https://github.com/lonemeow/acc-connector>
+# Copyright (c) 2024 Ilpo Ruotsalainen
+# Modifications Copyright (c) 2026 HoraceHYY
 
 import os
 import sys
@@ -11,14 +15,32 @@ tabsep = "\n\t"
 
 exports = dll.DIRECTORY_ENTRY_EXPORT.symbols
 
+# Every generated file must carry the provenance header, otherwise regenerating
+# the proxy (proxy.c / proxy.def / proxy_asm.asm) would silently drop the
+# attribution required by the upstream MIT license.
+SPDX_C = """// SPDX-License-Identifier: MIT
+// Derived from acc-connector <https://github.com/lonemeow/acc-connector>
+// Copyright (c) 2024 Ilpo Ruotsalainen
+// Modifications Copyright (c) 2026 HoraceHYY
+
+"""
+
+SPDX_ASM = """; SPDX-License-Identifier: MIT
+; Derived from acc-connector <https://github.com/lonemeow/acc-connector>
+; Copyright (c) 2024 Ilpo Ruotsalainen
+; Modifications Copyright (c) 2026 HoraceHYY
+
+"""
+
 with open("proxy.def", "w") as f:
+    f.write(SPDX_ASM)
     f.write('EXPORTS\n')
     for export in exports:
         f.write('\t{} @{}\n'.format(export.name.decode(), export.ordinal))
 
 with open("proxy.c", "w") as f:
     f.write(
-f'''/* GENERATED FILE, DO NOT EDIT */
+f'''{SPDX_C}/* GENERATED FILE, DO NOT EDIT */
 
 #include "client-hooks.h"
 
@@ -60,11 +82,10 @@ void closeProxy() {{
 ''')
 
 with open("proxy_asm.asm", "w") as f:
-    f.write(
-'''.code
+    f.write(SPDX_ASM)
+    f.write('''.code
 extern procAddrs:QWORD
-'''
-)
+''')
     for i, export in enumerate(exports):
         name = export.name.decode()
         f.write(

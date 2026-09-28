@@ -5,6 +5,7 @@ import { trackCarDispSettings, trackIndex } from '@/utils/enums'
 import carData from '@/utils/carData'
 import { snackbar } from 'mdui'
 import trackData from '@/utils/trackData'
+import { useConnectorDialog } from '@/composables/useConnectorDialog'
 
 export const obj2Param = (obj: Record<string, any>) => {
   return Object.entries(obj)
@@ -205,6 +206,8 @@ export const connectServer = async (
   const store = useStore()
   const port = Number(tcpPort)
   store.addServerHistory({ name, hostname: ip, port })
+  // 加入直连列表的同时直接打开直连弹窗，方便立即查看列表 / 完成注入
+  useConnectorDialog().openConnectorDialog()
 
   if (!window.accConnector) return
 
@@ -217,30 +220,15 @@ export const connectServer = async (
       })
       return
     }
-    if (!status.hookInstalled) {
-      snackbar({
-        message: translate('servers.connectNeedHook'),
-        autoCloseDelay: 4000,
-      })
-      return
-    }
-    if (!status.accRunning) {
-      snackbar({
-        message: translate('servers.connectWaitAcc', { name: name }),
-        autoCloseDelay: 4000,
-      })
-      return
-    }
-    snackbar({
-      message: translate('servers.connectInjected', { name: name }),
-      autoCloseDelay: 4000,
-    })
   } catch {
-    snackbar({
-      message: translate('servers.connectInjected', { name: name }),
-      autoCloseDelay: 4000,
-    })
+    // 读取状态失败时仍然给出加入确认
   }
+  // 注入/取消注入、以及新增/删除直连服务器，在 ACC 正在运行时都需要重启 ACC 才生效；
+  // 具体状态与重启提示由自动打开的直连弹窗承载，这里只做一次加入确认。
+  snackbar({
+    message: translate('servers.connectAdded', { name: name }),
+    autoCloseDelay: 4000,
+  })
 }
 
 export const sortCars = (group = 'GT3') => {

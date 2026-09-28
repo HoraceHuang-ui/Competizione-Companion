@@ -104,10 +104,14 @@ onMounted(() => {
     >
       <mdui-button
         @click="launchGame"
-        :disabled="launching"
+        :disabled="launching || store.general.accRunning"
         :loading="launching"
         class="w-max mb-3 font-bold"
-        >{{ $t('general.launchACC') }}</mdui-button
+        >{{
+          store.general.accRunning
+            ? $t('general.accRunning')
+            : $t('general.launchACC')
+        }}</mdui-button
       >
       <span
         >{{ $t('status.apiFrom') }}

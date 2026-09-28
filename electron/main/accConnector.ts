@@ -49,7 +49,8 @@ let pollTimer: NodeJS.Timeout | null = null
 
 // ---------- ACC 路径 ----------
 
-const getUserDataFile = () => path.join(app.getPath('userData'), 'acc-connector.json')
+const getUserDataFile = () =>
+  path.join(app.getPath('userData'), 'acc-connector.json')
 
 function loadAccPath() {
   try {
@@ -80,7 +81,12 @@ function getBundledDllPath(): string {
   if (app.isPackaged) {
     return path.join(process.resourcesPath, 'hook', 'client-hooks.dll')
   }
-  return path.join(process.env.APP_ROOT || '', 'native', 'out', 'client-hooks.dll')
+  return path.join(
+    process.env.APP_ROOT || '',
+    'native',
+    'out',
+    'client-hooks.dll',
+  )
 }
 
 function isAccDirValid(acc: string): boolean {
@@ -134,7 +140,11 @@ export async function findAccInstallDir(): Promise<string | null> {
   const steamPath = await findSteamPath()
   if (!steamPath) return null
 
-  const libraryFoldersPath = path.join(steamPath, 'steamapps', 'libraryfolders.vdf')
+  const libraryFoldersPath = path.join(
+    steamPath,
+    'steamapps',
+    'libraryfolders.vdf',
+  )
   if (!fs.existsSync(libraryFoldersPath)) return null
 
   let vdfContent = ''
@@ -198,7 +208,9 @@ function buildServerData(): Buffer {
 
 const IPV4_RE = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/
 
-async function resolveServerIp(server: ConnectorServer): Promise<ResolvedServer> {
+async function resolveServerIp(
+  server: ConnectorServer,
+): Promise<ResolvedServer> {
   const match = IPV4_RE.exec(String(server.hostname || '').trim())
   if (match) {
     const ok = match.slice(1).every(p => Number(p) >= 0 && Number(p) <= 255)
@@ -273,8 +285,7 @@ function isAccRunning(): Promise<boolean> {
       { timeout: 5000, windowsHide: true },
       (err, stdout) => {
         resolve(
-          !!stdout &&
-            stdout.toLowerCase().includes('ac2-win64-shipping.exe'),
+          !!stdout && stdout.toLowerCase().includes('ac2-win64-shipping.exe'),
         )
       },
     )
@@ -330,7 +341,9 @@ function buildStatus(): ConnectorStatus {
   const hookPath = accPath ? getHookDllPath(accPath) : ''
   const hookInstalled = !!accValid && fs.existsSync(hookPath)
   const hookMatches =
-    hookInstalled && dllAvailable && fileSha256(hookPath) === fileSha256(bundled)
+    hookInstalled &&
+    dllAvailable &&
+    fileSha256(hookPath) === fileSha256(bundled)
 
   return {
     supported: process.platform === 'win32',
@@ -397,7 +410,9 @@ ipcMain.handle('accConnector:selectAccPath', async () => {
     if (fs.existsSync(path.join(selected, 'AC2', 'Binaries', 'Win64'))) {
       saveAccPath(selected)
     } else {
-      console.warn('[accConnector] Selected folder is not a valid ACC install dir')
+      console.warn(
+        '[accConnector] Selected folder is not a valid ACC install dir',
+      )
     }
   }
   return getStatus()

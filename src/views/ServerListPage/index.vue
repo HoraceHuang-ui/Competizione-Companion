@@ -30,8 +30,11 @@ const groups = ['Mixed', 'GT3', 'GT4', 'GT2', 'GTC', 'TCX']
 const store = useStore()
 const helpDialogOpen = ref(false)
 // 弹窗开关与服务器卡片的 >> 按钮共享（见 composables/useConnectorDialog）
-const { open: connectorDialogOpen, openConnectorDialog, addServerOpen } =
-  useConnectorDialog()
+const {
+  open: connectorDialogOpen,
+  openConnectorDialog,
+  addServerOpen,
+} = useConnectorDialog()
 // 注入已生效且 ACC 正在运行：左下角直连按钮进入“已连接”状态
 const connectorLive = computed(
   () => store.general.hookActive && store.general.accRunning,
@@ -450,10 +453,7 @@ const retrieveHipoleServers = () => {
           </mdui-fab>
         </mdui-tooltip>
 
-        <mdui-tooltip
-          :content="$t('servers.history')"
-          placement="right"
-        >
+        <mdui-tooltip :content="$t('servers.history')" placement="right">
           <!-- 外层 div 作为右上角 badge 的定位容器 -->
           <div class="relative">
             <mdui-fab
@@ -593,21 +593,11 @@ const retrieveHipoleServers = () => {
           :autoplay="false"
         >
           <div class="help-item">
-            {{ $t('servers.help.1_1') }}
-            <mdui-button
-              class="mt-4 font-bold"
-              @click="
-                () => {
-                  helpDialogOpen = false
-                  helpPage = 1
-                  openConnectorDialog()
-                }
-              "
-              >{{ $t('servers.help.1_2') }}</mdui-button
-            >
-          </div>
-          <div class="help-item">
             <ScrollWrapper class="flex flex-col items-center" show-bar="always">
+              <img
+                src="@/assets/helpImages/1_installHook.png"
+                class="rounded-xl"
+              />
               <ul class="list-disc list-outside pl-4 mt-2">
                 <li>{{ $t('servers.help.2_1') }}</li>
                 <li>{{ $t('servers.help.2_2') }}</li>
@@ -621,7 +611,7 @@ const retrieveHipoleServers = () => {
           <div class="help-item">
             <ScrollWrapper class="flex flex-col items-center" show-bar="always">
               <img
-                src="@/assets/helpImages/4_LANServer.png"
+                src="@/assets/helpImages/2_LANServer.png"
                 class="rounded-xl"
               />
               <ul class="list-disc list-outside pl-4 mt-2">
@@ -639,10 +629,13 @@ const retrieveHipoleServers = () => {
 
           <div class="help-item">
             <ScrollWrapper class="flex flex-col items-center" show-bar="always">
+              <img
+                src="@/assets/helpImages/3_removeHook.png"
+                class="rounded-xl"
+              />
               <ul class="list-disc list-outside pl-4 mt-2">
                 <li>{{ $t('servers.help.4_1') }}</li>
                 <li>{{ $t('servers.help.4_2') }}</li>
-                <li>{{ $t('servers.help.4_3') }}</li>
               </ul>
             </ScrollWrapper>
           </div>
@@ -650,7 +643,7 @@ const retrieveHipoleServers = () => {
         <Pagination
           type="horizontal"
           v-model="helpPage"
-          :total="4"
+          :total="3"
           :page-size="1"
         ></Pagination>
       </mdui-dialog>

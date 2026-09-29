@@ -18,6 +18,7 @@ import ServerCard from '@/views/ServerListPage/components/ServerCard.vue'
 import MyCarousel from '@/components/MyCarousel.vue'
 import ServerListItem from '@/views/ServerListPage/components/ServerListItem.vue'
 import ConnectorDialog from '@/views/ServerListPage/components/ConnectorDialog.vue'
+import AddServerDialog from '@/views/ServerListPage/components/AddServerDialog.vue'
 import { useConnectorDialog } from '@/composables/useConnectorDialog'
 import { obj2Param } from '@/utils/utils'
 
@@ -29,7 +30,8 @@ const groups = ['Mixed', 'GT3', 'GT4', 'GT2', 'GTC', 'TCX']
 const store = useStore()
 const helpDialogOpen = ref(false)
 // 弹窗开关与服务器卡片的 >> 按钮共享（见 composables/useConnectorDialog）
-const { open: connectorDialogOpen, openConnectorDialog } = useConnectorDialog()
+const { open: connectorDialogOpen, openConnectorDialog, addServerOpen } =
+  useConnectorDialog()
 // 注入已生效且 ACC 正在运行：左下角直连按钮进入“已连接”状态
 const connectorLive = computed(
   () => store.general.hookActive && store.general.accRunning,
@@ -654,6 +656,8 @@ const retrieveHipoleServers = () => {
       </mdui-dialog>
 
       <ConnectorDialog v-model:open="connectorDialogOpen" />
+      <!-- 手动添加服务器：作为兄弟节点渲染在直连弹窗之上 -->
+      <AddServerDialog v-model:open="addServerOpen" />
     </mdui-card>
 
     <div

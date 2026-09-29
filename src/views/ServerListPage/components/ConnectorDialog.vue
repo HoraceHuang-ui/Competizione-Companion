@@ -4,6 +4,7 @@ import { useStore } from '@/store'
 import { translate } from '@/i18n'
 import { snackbar } from 'mdui'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
+import { useConnectorDialog } from '@/composables/useConnectorDialog'
 import '@mdui/icons/history--rounded.js'
 import '@mdui/icons/delete--rounded.js'
 import '@mdui/icons/link--rounded.js'
@@ -14,8 +15,12 @@ import '@mdui/icons/check-circle--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/star--rounded.js'
 import '@mdui/icons/star-outline--rounded.js'
+import '@mdui/icons/add--rounded.js'
 
 const open = defineModel<boolean>('open', { default: false })
+
+// “手动添加服务器”弹窗由本组件触发，但渲染在页面层的兄弟节点上（原因见该 composable 的注释）
+const { openAddServerDialog } = useConnectorDialog()
 
 const store = useStore()
 const status = ref<any>(null)
@@ -407,14 +412,19 @@ onUnmounted(() => {
           class="flex flex-row justify-between items-center text-sm mb-1 mt-2"
         >
           <div class="font-bold">{{ $t('servers.connectHistory') }}</div>
-          <mdui-button
-            variant="text"
-            class="mr-1"
-            :disabled="unfavoritedCount === 0"
-            @click="clearUnfavorited"
-          >
-            {{ $t('servers.clearUnfavorited') }}
-          </mdui-button>
+          <div class="flex flex-row items-center">
+            <mdui-button
+              variant="text"
+              class="mr-1"
+              :disabled="unfavoritedCount === 0"
+              @click="clearUnfavorited"
+            >
+              {{ $t('servers.clearUnfavorited') }}
+            </mdui-button>
+            <mdui-button-icon @click="openAddServerDialog">
+              <mdui-icon-add--rounded></mdui-icon-add--rounded>
+            </mdui-button-icon>
+          </div>
         </div>
         <ScrollWrapper height="340px" show-bar="always">
           <div

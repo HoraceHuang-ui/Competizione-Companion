@@ -86,19 +86,21 @@ const launchACC = () => {
   }, 3000)
 }
 
-// ACC 运行状态同步：主页与侧边栏的“启动 ACC”按钮都依赖它做禁用/提示。
+// ACC 运行状态同步：主页/侧边栏的“启动 ACC”按钮与直连按钮的“已连接”状态都依赖它。
 // 先订阅广播，再补一次初始查询，避免启动瞬间广播早于订阅而丢掉状态。
 let accStatusUnsub: (() => void) | undefined
 
 const startAccStatusSync = () => {
   accStatusUnsub = window.accConnector?.onStatus(s => {
     store.general.accRunning = !!s?.accRunning
+    store.general.hookActive = !!s?.hookActive
   })
   window.accConnector
     ?.getStatus()
     .then(s => {
       if (s) {
         store.general.accRunning = !!s.accRunning
+        store.general.hookActive = !!s.hookActive
       }
     })
     .catch(() => {

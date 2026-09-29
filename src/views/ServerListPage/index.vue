@@ -7,7 +7,7 @@ import '@mdui/icons/keyboard-double-arrow-right--rounded.js'
 import '@mdui/icons/help-outline--rounded.js'
 import '@mdui/icons/grid-view--rounded.js'
 import '@mdui/icons/table-rows--rounded.js'
-import '@mdui/icons/history--rounded.js'
+import '@mdui/icons/link--rounded.js'
 import { computed, onMounted, ref } from 'vue'
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import { seriesColorMap } from '@/utils/enums'
@@ -30,6 +30,10 @@ const store = useStore()
 const helpDialogOpen = ref(false)
 // 弹窗开关与服务器卡片的 >> 按钮共享（见 composables/useConnectorDialog）
 const { open: connectorDialogOpen, openConnectorDialog } = useConnectorDialog()
+// 注入已生效且 ACC 正在运行：左下角直连按钮进入“已连接”状态
+const connectorLive = computed(
+  () => store.general.hookActive && store.general.accRunning,
+)
 const helpPage = ref(1)
 const showingHipoleOffline = ref(false)
 
@@ -448,15 +452,21 @@ const retrieveHipoleServers = () => {
           :content="$t('servers.history')"
           placement="right"
         >
-          <mdui-fab
-            variant="surface"
-            class="mb-4"
-            @click="openConnectorDialog"
-          >
-            <mdui-icon-history--rounded
-              slot="icon"
-            ></mdui-icon-history--rounded>
-          </mdui-fab>
+          <!-- 外层 div 作为右上角 badge 的定位容器 -->
+          <div class="relative">
+            <mdui-fab
+              :variant="connectorLive ? 'tertiary' : 'surface'"
+              class="mb-4"
+              @click="openConnectorDialog"
+            >
+              <mdui-icon-link--rounded slot="icon"></mdui-icon-link--rounded>
+            </mdui-fab>
+            <mdui-badge
+              v-if="connectorLive"
+              variant="small"
+              class="absolute right-0 top-0 w-2.5 h-2.5 bg-green-500 dark:bg-green-400"
+            ></mdui-badge>
+          </div>
         </mdui-tooltip>
 
         <mdui-tooltip placement="right-end" class="filter">

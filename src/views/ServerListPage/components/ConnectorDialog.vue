@@ -12,6 +12,8 @@ import '@mdui/icons/folder-open--rounded.js'
 import '@mdui/icons/refresh--rounded.js'
 import '@mdui/icons/check-circle--rounded.js'
 import '@mdui/icons/close--rounded.js'
+import '@mdui/icons/star--rounded.js'
+import '@mdui/icons/star-outline--rounded.js'
 
 const open = defineModel<boolean>('open', { default: false })
 
@@ -89,6 +91,25 @@ const removeHistory = (item: {
     message: translate('servers.historyRemoved'),
     autoCloseDelay: 3000,
   })
+}
+
+const toggleFavorite = (item: { hostname: string; port: number }) => {
+  store.toggleServerFavorite(item.hostname, item.port)
+}
+
+// 未收藏数量：为 0 时“清除未收藏”按钮无意义，直接禁用
+const unfavoritedCount = computed(
+  () => store.serverHistory.filter(s => !s.favorite).length,
+)
+
+const clearUnfavorited = () => {
+  const count = store.clearUnfavoritedServers()
+  if (count > 0) {
+    snackbar({
+      message: translate('servers.clearUnfavoritedDone', { count }),
+      autoCloseDelay: 3000,
+    })
+  }
 }
 
 const toggleHook = async () => {
@@ -265,7 +286,7 @@ onUnmounted(() => {
                 v-else
                 class="opacity-70 mr-2"
               ></mdui-icon-link-off--rounded>
-              <div class="font-bold">
+              <div class="font-bold text-sm">
                 {{
                   status?.hookInstalled && status?.hookMatches
                     ? $t('servers.hookInstalled')
@@ -316,19 +337,15 @@ onUnmounted(() => {
 
           <div
             v-if="status && !status.accPathValid"
-            class="text-sm opacity-70 mt-2"
+            class="text-xs opacity-60 mt-2"
           >
             {{ $t('servers.accPathRequired') }}
           </div>
-          <div
-            v-if="
-              status?.hookInstalled && !status?.hookActive && status?.accRunning
-            "
-            class="text-sm opacity-70 mt-2"
-          >
-            {{ $t('servers.injectNeedRestart') }}
+          <!-- ACC 运行时，注入/取消注入与增删直连服务器都要重启 ACC 才生效 -->
+          <div v-if="status?.accRunning" class="text-xs opacity-60 mt-2">
+            {{ $t('servers.accRunningRestartHint') }}
           </div>
-          <div v-if="status?.hookInstalled" class="text-xs opacity-60 mt-2">
+          <div v-if="status?.hookInstalled" class="text-xs opacity-60">
             {{ $t('servers.keepAppRunning') }}
           </div>
         </div>
@@ -386,9 +403,18 @@ onUnmounted(() => {
         </div>
 
         <!-- 直连列表 -->
-        <div class="flex flex-row justify-between text-sm mb-1 mt-2">
+        <div
+          class="flex flex-row justify-between items-center text-sm mb-1 mt-2"
+        >
           <div class="font-bold">{{ $t('servers.connectHistory') }}</div>
-          <div class="mr-2">{{ store.serverHistory?.length ?? 0 }} / 20</div>
+          <mdui-button
+            variant="text"
+            class="mr-1"
+            :disabled="unfavoritedCount === 0"
+            @click="clearUnfavorited"
+          >
+            {{ $t('servers.clearUnfavorited') }}
+          </mdui-button>
         </div>
         <ScrollWrapper height="340px" show-bar="always">
           <div
@@ -397,7 +423,7 @@ onUnmounted(() => {
           >
             {{ $t('servers.historyEmpty') }}
           </div>
-          <!-- 列表项本身不可点击（原先的点击快速注入已移除），仅删除按钮可交互 -->
+          <!-- 列表项本身不可点击，仅收藏/删除两个图标按钮可交互 -->
           <div
             v-for="item in historyView"
             :key="item.hostname + ':' + item.port"
@@ -419,6 +445,23 @@ onUnmounted(() => {
                 </span>
               </div>
             </div>
+            <!-- 收藏（实心=已收藏），在删除按钮左侧 -->
+            <mdui-button-icon
+              class="ml-2"
+              :class="
+                item.favorite
+                  ? 'text-[rgb(var(--mdui-color-primary))]'
+                  : 'opacity-60'
+              "
+              @click.stop="toggleFavorite(item)"
+            >
+              <mdui-icon-star--rounded
+                v-if="item.favorite"
+              ></mdui-icon-star--rounded>
+              <mdui-icon-star-outline--rounded
+                v-else
+              ></mdui-icon-star-outline--rounded>
+            </mdui-button-icon>
             <mdui-button-icon
               class="ml-2 opacity-60"
               @click.stop="removeHistory(item)"

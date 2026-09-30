@@ -144,6 +144,25 @@ contextBridge.exposeInMainWorld('accConnector', {
   },
 })
 
+// 自定义 AI 提供商（BYOK）：请求在主进程发起，增量内容通过事件推回渲染进程
+contextBridge.exposeInMainWorld('aiStream', {
+  start: (payload: any) => {
+    return ipcRenderer.invoke('ai:stream:start', payload)
+  },
+  abort: (id: string) => {
+    ipcRenderer.send('ai:stream:abort', id)
+  },
+  onEvent: (callback: (data: any) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, data: any) => {
+      callback(data)
+    }
+    ipcRenderer.on('ai:stream:event', listener)
+    return () => {
+      ipcRenderer.off('ai:stream:event', listener)
+    }
+  },
+})
+
 contextBridge.exposeInMainWorld('brotli', {
   compress: (input: string) => {
     return ipcRenderer.invoke('brotli:compress', input)

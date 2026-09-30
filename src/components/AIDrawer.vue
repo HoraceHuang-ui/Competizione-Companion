@@ -15,6 +15,9 @@ import 'mdui/components/collapse-item.js'
 import '@mdui/icons/keyboard-arrow-down--rounded.js'
 import ChipSelect from './ChipSelect.vue'
 import aiPrompt from '@/assets/AIPrompt.txt?raw'
+import { customAiFilled, streamCustomAi } from '@/utils/customAi'
+import { GPT_OSS_MODEL, requestGptOss, streamDeepSeekRaw } from '@/utils/builtinAi'
+import { snackbar } from 'mdui'
 
 const store = useStore()
 
@@ -31,6 +34,10 @@ const selectedModel = computed({
   },
 })
 const modelOptions = ['gpt-oss-120b', 'deepseek-v4-pro', 'deepseek-v4-flash']
+
+// 开启自定义 AI 提供商后，模型与内置额度都由用户自己的接口决定，
+// 因此内置的模型选择器与用量条不再展示，也不做内置额度拦截。
+const customAiOn = computed(() => store.settings.ai.enabled)
 
 const TOKEN_LIMITS: Record<string, number> = {
   'deepseek-v4-pro': 100_000,
@@ -55,6 +62,7 @@ function checkAndResetTokenUsage() {
 }
 
 function isTokenLimitExceeded(): boolean {
+  if (customAiOn.value) return false
   if (selectedModel.value === 'gpt-oss-120b') return false
   const key = MODEL_KEY[selectedModel.value]
   if (!key) return false
@@ -70,7 +78,9 @@ const tokenUsed = computed(() => {
   const key = tokenUsageKey.value
   return key ? store.tokenUsage[key].token : 0
 })
-const showTokenBar = computed(() => selectedModel.value !== 'gpt-oss-120b')
+const showTokenBar = computed(
+  () => !customAiOn.value && selectedModel.value !== 'gpt-oss-120b',
+)
 
 function formatTokenCount(n: number): string {
   return (n / 1000).toFixed(1) + 'K'
@@ -135,65 +145,83 @@ async function sendMessage() {
   }))
   userInput.value = ''
 
-  if (selectedModel.value === 'gpt-oss-120b') {
+  if (customAiOn.value) {
+    await sendCustomMessage(messages)
+  } else if (selectedModel.value === 'gpt-oss-120b') {
     await sendGptMessage(messages)
   } else {
-    await sendDeepSeekMessage(messages)
+    const result = await sendDeepSeekMessage(messages)
+    if (result === 'timeout') {
+      // DeepSeek 首次响应超时：自动把模型切到 GPT-OSS 并重新发送
+      store.general.aiModel = GPT_OSS_MODEL
+      snackbar({
+        message: translate('ai.deepseekTimeoutFallback'),
+        autoCloseDelay: 3000,
+      })
+      await sendGptMessage(messages)
+    }
   }
 
   loading.value = false
 }
 
+// 走用户在设置里填写的自定义接口（BYOK）
+async function sendCustomMessage(
+  messages: Array<{ role: string; content: string }>,
+) {
+  // 只做非空校验：四项里有任何一项为空都视为配置不完整
+  if (!customAiFilled(store.settings.ai)) {
+    store.addMessage({
+      role: 'assistant',
+      content: translate('ai.customAiError'),
+    })
+    return
+  }
+
+  store.addMessage({ role: 'assistant', content: '', reasoning: '' })
+  const msgIdx = store.messages.length - 1
+
+  const ok = await streamCustomAi(
+    store.settings.ai,
+    messages,
+    { maxTokens: 4096 },
+    {
+      onContent: text => {
+        const msg = store.messages[msgIdx]
+        if (msg) msg.content += text
+      },
+      onReasoning: text => {
+        const msg = store.messages[msgIdx]
+        if (msg) msg.reasoning = (msg.reasoning || '') + text
+      },
+    },
+  )
+
+  const finalMsg = store.messages[msgIdx]
+  if (!finalMsg) return
+
+  if (!ok) {
+    // 接口报错（网络错误、鉴权失败、地址或模型名写错等）统一提示去设置页检查
+    finalMsg.content = translate('ai.customAiError')
+    finalMsg.reasoning = ''
+    return
+  }
+
+  if (!finalMsg.content) {
+    finalMsg.content = translate('ai.invalidResponse')
+  }
+}
+
 async function sendGptMessage(
   messages: Array<{ role: string; content: string }>,
 ) {
-  const input = {
-    max_tokens: 10000,
-    top_p: 0.05,
-    top_k: 3,
-    temperature: 0.4,
-    stream: false,
-    messages,
-  }
   userInput.value = ''
   try {
-    const apiResult = await window.axios.post(
-      'https://api.cloudflare.com/client/v4/accounts/b666bcb97b0bdc3983313c378229ce79/ai/run/@cf/openai/gpt-oss-120b',
-      JSON.stringify(input),
-      {
-        headers: {
-          Authorization: 'Bearer qumdW8_T-1hXUTKo4rm7QVUlYwnXfv2i7Bxr2Pkc',
-          'Content-Type': 'application/json',
-        },
-      },
-    )
-    console.log('AI API result:', apiResult)
-    let aiContent = ''
-    let aiReasoning = ''
-    // Support both old and new API result shapes
-    const result = apiResult.result || apiResult
-    if (
-      result &&
-      result.choices &&
-      result.choices[0] &&
-      result.choices[0].message
-    ) {
-      aiContent = result.choices[0].message.content || ''
-      aiReasoning = result.choices[0].message.reasoning_content || ''
-    } else if (
-      apiResult.choices &&
-      apiResult.choices[0] &&
-      apiResult.choices[0].message
-    ) {
-      aiContent = apiResult.choices[0].message.content || ''
-      aiReasoning = apiResult.choices[0].message.reasoning_content || ''
-    } else {
-      aiContent = translate('ai.invalidResponse')
-    }
+    const { content, reasoning } = await requestGptOss(messages)
     store.addMessage({
       role: 'assistant',
-      content: aiContent,
-      reasoning: aiReasoning,
+      content,
+      reasoning,
     })
   } catch (e) {
     store.addMessage({
@@ -204,9 +232,11 @@ async function sendGptMessage(
   loading.value = false
 }
 
+// 返回 'timeout' 表示首次响应超时（由调用方决定是否回退到 GPT-OSS），
+// 'error' 表示其他失败，'ok' 表示正常完成
 async function sendDeepSeekMessage(
   messages: Array<{ role: string; content: string }>,
-) {
+): Promise<'ok' | 'timeout' | 'error'> {
   const input = {
     messages,
     model: selectedModel.value,
@@ -224,37 +254,16 @@ async function sendDeepSeekMessage(
     logprobs: false,
     top_logprobs: null,
   }
-  try {
-    // const response = await fetch('http://0.0.0.0:5005/ai/deepseek', {
-    const response = await fetch(
-      'https://api.hh17.top/competizione/ai/deepseek',
-      {
-        headers: {
-          'X-App-Token': 'maimaidx',
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify(input),
-      },
-    )
 
-    if (!response.ok || !response.body) {
-      throw new Error('Invalid response')
-    }
+  // 超时时可能已经先插入了一条空的助手消息（响应头已到、正文未到），需要撤掉
+  let addedMsgIdx: number | null = null
+  let buffer = ''
+  let streamUsage = 0
 
-    store.addMessage({ role: 'assistant', content: '', reasoning: '' })
-    const msgIdx = store.messages.length - 1
-
-    const reader = response.body.getReader()
-    const decoder = new TextDecoder()
-    let buffer = ''
-    let streamUsage = 0
-
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-
-      buffer += decoder.decode(value, { stream: true })
+  const status = await streamDeepSeekRaw(
+    input,
+    text => {
+      buffer += text
       const lines = buffer.split('\n')
       buffer = lines.pop() || ''
 
@@ -271,7 +280,7 @@ async function sendDeepSeekMessage(
             streamUsage = parsed.usage.total_tokens
           }
           const delta = parsed.choices?.[0]?.delta
-          const msg = store.messages[msgIdx]
+          const msg = addedMsgIdx === null ? null : store.messages[addedMsgIdx]
           if (delta && msg) {
             if (delta.content) {
               msg.content += delta.content
@@ -284,26 +293,49 @@ async function sendDeepSeekMessage(
           // ignore malformed JSON chunks
         }
       }
-    }
+    },
+    {
+      onOpen: () => {
+        store.addMessage({ role: 'assistant', content: '', reasoning: '' })
+        addedMsgIdx = store.messages.length - 1
+      },
+    },
+  )
 
-    // accumulate daily usage
-    if (streamUsage > 0) {
-      const key = MODEL_KEY[selectedModel.value]
-      if (key) {
-        store.tokenUsage[key].token += streamUsage
+  if (status === 'timeout') {
+    // 不留空消息，交给调用方回退到 GPT-OSS
+    if (addedMsgIdx !== null) {
+      const emptyMsg = store.messages[addedMsgIdx]
+      if (emptyMsg && !emptyMsg.content && !emptyMsg.reasoning) {
+        store.messages.splice(addedMsgIdx, 1)
       }
     }
+    return 'timeout'
+  }
 
-    const finalMsg = store.messages[msgIdx]
-    if (finalMsg && !finalMsg.content) {
-      finalMsg.content = translate('ai.invalidResponse')
-    }
-  } catch (e) {
+  if (status === 'error') {
     store.addMessage({
       role: 'assistant',
       content: translate('ai.invalidResponse'),
     })
+    return 'error'
   }
+
+  // accumulate daily usage
+  if (streamUsage > 0) {
+    const key = MODEL_KEY[selectedModel.value]
+    if (key) {
+      store.tokenUsage[key].token += streamUsage
+    }
+  }
+
+  if (addedMsgIdx !== null) {
+    const finalMsg = store.messages[addedMsgIdx]
+    if (finalMsg && !finalMsg.content) {
+      finalMsg.content = translate('ai.invalidResponse')
+    }
+  }
+  return 'ok'
 }
 
 const aiDrawerOpen = defineModel({
@@ -533,6 +565,7 @@ watch(loading, newVal => {
             </div>
           </mdui-tooltip>
           <ChipSelect
+            v-if="!customAiOn"
             v-model="selectedModel"
             :items="modelOptions"
             chip-class="text-xs h-10 rounded-full"

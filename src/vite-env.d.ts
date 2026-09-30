@@ -14,6 +14,11 @@ declare module '@/utils/carData' {
 interface Window {
   // expose in the `electron/preload/index.ts`
   ipcRenderer: import('electron').IpcRenderer
+  // 主进程转发请求（无 CORS 限制），见 electron/main/index.ts 的 axios:post / axios:get
+  axios: {
+    post: (url: string, body: any, config?: any) => Promise<any>
+    get: (url: string, config?: any) => Promise<any>
+  }
   fs?: {
     setupList: (car: string, track: string) => Promise<any>
     setupFile: (
@@ -46,6 +51,26 @@ interface Window {
   }
   shell?: {
     openDirectory: (directoryPath: string) => Promise<any>
+  }
+  // 自定义 AI 提供商（BYOK），见 electron/preload/index.ts
+  aiStream?: {
+    start: (payload: {
+      id: string
+      apiType: 'chatCompletions' | 'responses' | 'anthropic'
+      baseUrl: string
+      apiKey: string
+      model: string
+      messages: Array<{ role: string; content: string }>
+      maxTokens?: number
+    }) => Promise<{ ok: boolean; canceled?: boolean; error?: string }>
+    abort: (id: string) => void
+    onEvent: (
+      callback: (data: {
+        id: string
+        type: 'content' | 'reasoning' | 'usage'
+        value: string | number
+      }) => void,
+    ) => () => void
   }
   dialog?: {
     show: (options: any) => Promise<string[]>

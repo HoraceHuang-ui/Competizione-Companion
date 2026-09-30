@@ -7,6 +7,7 @@ import brotli from 'brotli-compress'
 import axios from 'axios'
 import fs, { promises as fsPromises } from 'fs'
 import { initAccConnector } from './accConnector'
+import { initAiStream } from './ai'
 
 const i18n = {
   en: {
@@ -74,6 +75,9 @@ const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 let tray = null
 const iconPath = path.join(process.env.VITE_PUBLIC, 'favicon.ico')
+
+// 自定义 AI 提供商（BYOK）的流式转发：IPC 处理器在模块加载时注册一次
+initAiStream()
 
 async function createWindow() {
   const locale = app.getLocale()

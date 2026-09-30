@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import type { CustomAiApiType } from '@/utils/customAi'
 
 export const useStore = defineStore('userStore', {
   state: () => ({
@@ -62,6 +63,14 @@ export const useStore = defineStore('userStore', {
         trackDisplay: 2, // 1: 英文全写, 2: 英文缩写, 3: 中文缩写
         setupLabelEn: false,
         alwaysViewOnly: false,
+      },
+      // 自定义 AI 提供商（BYOK）：开启后「AI 小助手」与「AI 事故分析」都改走用户自己的接口
+      ai: {
+        enabled: false,
+        apiType: 'chatCompletions' as CustomAiApiType,
+        baseUrl: '',
+        apiKey: '',
+        model: '',
       },
     },
     messages: [] as Array<{

@@ -20,6 +20,8 @@ import '@mdui/icons/add--rounded.js'
 import '@mdui/icons/close--rounded.js'
 import i18n, { translate } from '@/i18n'
 import { snackbar } from 'mdui'
+import { streamCustomAi } from '@/utils/customAi'
+import { requestGptOss, streamDeepSeekRaw } from '@/utils/builtinAi'
 
 const store = useStore()
 
@@ -169,6 +171,18 @@ const cancelAiAnalysis = () => {
   lastAiDesc = null
 }
 
+// DeepSeek 首次响应超时后的兜底：用 GPT-OSS 重新分析一次
+const runGptAnalysis = async (
+  messages: Array<{ role: string; content: string }>,
+): Promise<string> => {
+  try {
+    const { content } = await requestGptOss(messages)
+    return content
+  } catch {
+    return ''
+  }
+}
+
 // 以“事故简介”为提示词调用 AI，分析可能符合的投诉条款
 const runAiAnalysis = async () => {
   const desc = (formData.value.incidentDesc || '').trim()
@@ -210,58 +224,97 @@ const runAiAnalysis = async () => {
   }
 
   try {
-    const response = await fetch(
-      'https://api.hh17.top/competizione/ai/deepseek',
-      {
-        headers: {
-          'X-App-Token': 'maimaidx',
-          'Content-Type': 'application/json',
+    // 开启了自定义 AI 提供商时改走用户自己的接口，失败统一提示去设置页检查
+    if (store.settings.ai.enabled) {
+      let content = ''
+      const ok = await streamCustomAi(
+        store.settings.ai,
+        messages,
+        { maxTokens: 8192, signal: controller.signal },
+        {
+          onContent: text => {
+            content += text
+          },
+          onReasoning: text => {
+            aiReasoning.value += text
+          },
         },
-        method: 'POST',
-        body: JSON.stringify(input),
-        signal: controller.signal,
+      )
+      if (!ok) {
+        if (aiAbortController === controller) {
+          lastAiDesc = null
+          snackbar({
+            message: translate('ai.customAiError'),
+            autoCloseDelay: 3000,
+          })
+        }
+        return
+      }
+      console.log(content)
+      aiPinnedIds.value = parseAiClauses(content)
+      return
+    }
+
+    // 内置 DeepSeek 通道：首次响应超时后回退到 GPT-OSS
+    let content = ''
+    let buffer = ''
+    const status = await streamDeepSeekRaw(
+      input,
+      text => {
+        buffer += text
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          const trimmed = line.trim()
+          if (!trimmed.startsWith('data: ')) continue
+          const data = trimmed.slice(6)
+          if (data === '[DONE]') break
+
+          try {
+            const parsed = JSON.parse(data)
+            const delta = parsed.choices?.[0]?.delta
+            if (delta) {
+              if (delta.reasoning_content) {
+                aiReasoning.value += delta.reasoning_content
+              }
+              if (delta.content) {
+                content += delta.content
+              }
+            }
+          } catch {
+            // ignore malformed chunks
+          }
+        }
       },
+      { signal: controller.signal },
     )
 
-    if (!response.ok || !response.body) {
-      throw new Error('Invalid response')
-    }
-
-    const reader = response.body.getReader()
-    const decoder = new TextDecoder()
-    let buffer = ''
-    let content = ''
-
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-
-      buffer += decoder.decode(value, { stream: true })
-      const lines = buffer.split('\n')
-      buffer = lines.pop() || ''
-
-      for (const line of lines) {
-        const trimmed = line.trim()
-        if (!trimmed.startsWith('data: ')) continue
-        const data = trimmed.slice(6)
-        if (data === '[DONE]') break
-
-        try {
-          const parsed = JSON.parse(data)
-          const delta = parsed.choices?.[0]?.delta
-          if (delta) {
-            if (delta.reasoning_content) {
-              aiReasoning.value += delta.reasoning_content
-            }
-            if (delta.content) {
-              content += delta.content
-            }
-          }
-        } catch {
-          // ignore malformed chunks
-        }
+    if (status === 'timeout' && aiAbortController === controller) {
+      // DeepSeek 首次响应超时：改用 GPT-OSS 再分析一次并提示用户
+      snackbar({
+        message: translate('ai.deepseekTimeoutFallback'),
+        autoCloseDelay: 3000,
+      })
+      const fallback = await runGptAnalysis(messages)
+      // 兜底期间用户又改了事故简介：本次结果作废
+      if (aiAbortController !== controller) return
+      if (fallback) {
+        aiPinnedIds.value = parseAiClauses(fallback)
+      } else {
+        // GPT-OSS 也没成功，下次打开菜单允许重试
+        lastAiDesc = null
       }
+      return
     }
+
+    if (status === 'error' && aiAbortController === controller) {
+      // 请求自身失败（非被中断）：清空标记，下次打开菜单允许重试
+      lastAiDesc = null
+      return
+    }
+
+    console.log(content)
     aiPinnedIds.value = parseAiClauses(content)
   } catch {
     // 若为当前请求自身失败（非被中断），清空标记，下次打开菜单时允许重试；

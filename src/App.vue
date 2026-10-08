@@ -9,6 +9,7 @@ import '@mdui/icons/close--rounded.js'
 import '@mdui/icons/announcement.js'
 import '@mdui/icons/assistant--rounded.js'
 import '@mdui/icons/format-paint--rounded.js'
+import '@mdui/icons/layers--rounded.js'
 
 import { onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -59,6 +60,7 @@ const modes = [
   'general.livery',
   'general.launchACC',
   'general.settings',
+  'overlay.title',
 ]
 const pages = [
   'status',
@@ -69,6 +71,7 @@ const pages = [
   'livery',
   '',
   'settings',
+  'widgets',
 ]
 const nav = (index: number) => {
   mode.value = index
@@ -484,6 +487,19 @@ watch(
             class="absolute right-0 top-0 w-2.5 h-2.5 bg-green-500 dark:bg-green-400"
           ></mdui-badge>
         </div>
+      </mdui-tooltip>
+
+      <mdui-tooltip :content="translate('overlay.title')" placement="right">
+        <mdui-button-icon
+          class="mb-2"
+          :class="{
+            'bg-[rgb(var(--mdui-color-primary))] text-[rgb(var(--mdui-color-on-primary))]':
+              mode == 8,
+          }"
+          @click="nav(8)"
+        >
+          <mdui-icon-layers--rounded></mdui-icon-layers--rounded>
+        </mdui-button-icon>
       </mdui-tooltip>
 
       <mdui-tooltip

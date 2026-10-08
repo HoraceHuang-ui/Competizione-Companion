@@ -196,6 +196,89 @@ contextBridge.exposeInMainWorld('os', {
   },
 })
 
+// 桌面遥测窗（Overlay）：见 electron/main/overlay.ts
+// 主窗口与覆盖层窗口共用这份 preload，用载荷里的 scope 字段区分两种形态。
+contextBridge.exposeInMainWorld('overlay', {
+  getState: () => {
+    return ipcRenderer.invoke('overlay:getState')
+  },
+  getDisplays: () => {
+    return ipcRenderer.invoke('overlay:getDisplays')
+  },
+  addItem: (payload: {
+    widget: string
+    displayId?: number
+    baseWidth?: number
+    baseHeight?: number
+    props?: Record<string, unknown>
+  }) => {
+    return ipcRenderer.invoke('overlay:addItem', payload)
+  },
+  removeItem: (id: string) => {
+    return ipcRenderer.invoke('overlay:removeItem', id)
+  },
+  updateItems: (
+    patches: Array<{ id: string; patch: Record<string, unknown> }>,
+  ) => {
+    return ipcRenderer.invoke('overlay:updateItems', patches)
+  },
+  setEnabled: (enabled: boolean) => {
+    return ipcRenderer.invoke('overlay:setEnabled', enabled)
+  },
+  /** 游戏暂停 / 无数据时是否隐藏全部遥测窗（默认开启） */
+  setHideWhenPaused: (hide: boolean) => {
+    return ipcRenderer.invoke('overlay:setHideWhenPaused', hide)
+  },
+  setAllLocked: (locked: boolean) => {
+    return ipcRenderer.invoke('overlay:setAllLocked', locked)
+  },
+  clear: () => {
+    return ipcRenderer.invoke('overlay:clear')
+  },
+  // 拖动 / 缩放期间告知主进程保持可交互（false = 该覆盖层窗口完全穿透）
+  setBusy: (busy: boolean) => {
+    ipcRenderer.send('overlay:setBusy', busy)
+  },
+  // 主进程的光标命中检测结果：activeId 为光标压住的未锁定组件
+  onHover: (callback: (hover: { activeId: string | null; hintId: string | null }) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, hover: any) => {
+      callback(hover)
+    }
+    ipcRenderer.on('overlay:hover', listener)
+    return () => {
+      ipcRenderer.off('overlay:hover', listener)
+    }
+  },
+  // ACC 遥测数据流（~30Hz），见 electron/main/telemetry.ts
+  onTelemetry: (callback: (data: any) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, data: any) => {
+      callback(data)
+    }
+    ipcRenderer.on('telemetry:data', listener)
+    return () => {
+      ipcRenderer.off('telemetry:data', listener)
+    }
+  },
+  onState: (callback: (state: any) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, state: any) => {
+      callback(state)
+    }
+    ipcRenderer.on('overlay:state', listener)
+    return () => {
+      ipcRenderer.off('overlay:state', listener)
+    }
+  },
+  onRender: (callback: (payload: any) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, payload: any) => {
+      callback(payload)
+    }
+    ipcRenderer.on('overlay:render', listener)
+    return () => {
+      ipcRenderer.off('overlay:render', listener)
+    }
+  },
+})
+
 // --------- Preload scripts loading ---------
 function domReady(
   condition: DocumentReadyState[] = ['complete', 'interactive'],
@@ -306,11 +389,16 @@ function useLoading() {
 
 // ----------------------------------------------------------------------
 
-const { appendLoading, removeLoading } = useLoading()
-domReady().then(appendLoading)
+// 覆盖层窗口是透明的，而这里的启动画面是 #222 实底，会让整块屏幕变黑，跳过它
+const isOverlayWindow = /^#\/overlay(\?|$)/.test(window.location.hash)
 
-window.onmessage = ev => {
-  ev.data.payload === 'removeLoading' && setTimeout(removeLoading, 500)
+if (!isOverlayWindow) {
+  const { appendLoading, removeLoading } = useLoading()
+  domReady().then(appendLoading)
+
+  window.onmessage = ev => {
+    ev.data.payload === 'removeLoading' && setTimeout(removeLoading, 500)
+  }
+
+  setTimeout(removeLoading, 4999)
 }
-
-setTimeout(removeLoading, 4999)

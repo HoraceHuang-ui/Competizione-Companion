@@ -38,6 +38,13 @@ const router = VueRouter.createRouter({
       path: '/settings',
       component: () => import('../views/SettingsPage/SettingsPage.vue'),
     },
+    {
+      // 遥测窗管理面板。路径刻意不叫 /overlay ——
+      // #/overlay 是覆盖层窗口专用的入口 hash（见 src/main.ts），不能撞。
+      name: 'widgets',
+      path: '/widgets',
+      component: () => import('../views/OverlayPage/OverlayPage.vue'),
+    },
   ],
 })
 

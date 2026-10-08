@@ -3,6 +3,17 @@
   $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
   appId: 'com.horacehyy.competizione-companion',
   asar: true,
+  // 关掉 electron-builder 的「原生依赖重建」（rebuild-node-modules 步骤），原因有两个：
+  // 1) 不需要：运行期主进程只用到 brotli-compress / axios 这类纯 JS 包，dist（渲染层）和
+  //    dist-electron（主进程/预加载）都是 Vite 预先打包好的，asar 里没有任何需要按 Electron
+  //    ABI 重新编译的原生模块。唯一带 .node 的 @parcel/watcher 只是 sass 的传递依赖、
+  //    构建期用，而且它本身是 Node-API 预编译产物，重建与否都不影响打包产物。
+  // 2) 会直接报错：electron-builder 24.x 的并行重建会把 npm_execpath 交给 app-builder 去
+  //    fork/exec，pnpm 环境下它是 pnpm.cjs（不是 .exe），Windows 上直接抛
+  //    "%1 is not a valid Win32 application" 并中断打包，跟应用代码无关。
+  // 注意：以后若真的引入了运行期原生模块（.node），需要自己先按 Electron ABI 重建一次，
+  // 或临时把这一行去掉。
+  npmRebuild: false,
   productName: 'Competizione Companion x PXN',
   directories: {
     output: 'release/${version}',
@@ -28,6 +39,11 @@
       {
         from: 'native/out/client-hooks.dll',
         to: 'hook/client-hooks.dll',
+      },
+      // 共享内存读取器（npm run build 会先执行 native/build-shm-reader.cjs）
+      {
+        from: 'native/out/acc-shm-reader.exe',
+        to: 'shm/acc-shm-reader.exe',
       },
       {
         from: 'native/LICENSE-acc-connector.txt',

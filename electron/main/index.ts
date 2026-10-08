@@ -8,6 +8,10 @@ import axios from 'axios'
 import fs, { promises as fsPromises } from 'fs'
 import { initAccConnector } from './accConnector'
 import { initAiStream } from './ai'
+import { initOverlay, shutdownOverlay, getOverlayWindows, setGamePaused } from './overlay'
+import { initTelemetry, stopTelemetry } from './telemetry'
+import { ensureBroadcastConfig } from './acc-broadcast-config'
+import { initBroadcast, stopBroadcast } from './acc-broadcast'
 
 const i18n = {
   en: {
@@ -104,6 +108,34 @@ async function createWindow() {
   // ACC Connector 直连功能：命名管道 + hook 安装管理 + 状态监测
   // （IPC 处理器在 accConnector 模块加载时已注册；这里仅启动管道与轮询）
   initAccConnector(win)
+  // 桌面遥测窗：独立于主窗口的透明置顶覆盖层（详见 overlay.ts）
+  initOverlay({
+    preload,
+    rendererDist: RENDERER_DIST,
+    devServerUrl: VITE_DEV_SERVER_URL,
+    getMainWindow: () => win,
+  })
+  // 主窗口关闭时一并收掉覆盖层，否则 window-all-closed 不会触发，应用退不掉
+  win.on('closed', () => shutdownOverlay())
+  // ACC 遥测：主进程按 ~30Hz 广播给覆盖层窗口（见 telemetry.ts）
+  // 暂停 / 无数据时把状态回传给覆盖层，由它按设置决定是否隐藏遥测窗
+  initTelemetry({ getWindows: getOverlayWindows, onPausedChange: setGamePaused })
+  // ACC UDP 广播配置：每次启动都静默检查一遍（缺了就补、关了就开）。
+  // 车号 / 评级 / 组别内名次与车数 只能从这个广播拿，所以要保证它一直是打开的；
+  // 只在改动时打日志，用户无感（详见 acc-broadcast-config.ts）。
+  {
+    const result = ensureBroadcastConfig(app.getPath('documents'), message =>
+      console.log(message),
+    )
+    if (result.reason === 'ok') {
+      console.log(
+        `[broadcast] 配置正常：${result.file}（端口 ${result.port}），无需改动`,
+      )
+    }
+  }
+  // UDP 广播监听：注册 ACC 的 broadcasting（拿车号/评级/组别内名次与车数）。
+  // 注册失败（游戏没开广播 / 游戏启动后改过密码）会自动周期重试，游戏重启后自动接上。
+  initBroadcast({ documentsDir: app.getPath('documents'), logger: message => console.log(message) })
   // if (store.get('max')) {
   //   win.maximize()
   // }
@@ -539,6 +571,11 @@ async function createWindow() {
 }
 
 app.whenReady().then(createWindow)
+
+app.on('before-quit', () => {
+  stopTelemetry()
+  stopBroadcast()
+})
 
 app.on('window-all-closed', () => {
   win = null

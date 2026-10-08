@@ -33,3 +33,7 @@ native/out/
 native/**/x64/
 native/**/Debug/
 native/**/Release/
+
+acc-connector-main
+*.pdf
+*.zip

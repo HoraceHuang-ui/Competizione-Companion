@@ -11,7 +11,7 @@ import '@mdui/icons/undo--rounded.js'
 import '@mdui/icons/help-outline--rounded.js'
 import 'mdui/components/collapse.js'
 import 'mdui/components/collapse-item.js'
-import { computed, inject, Ref, ref, watch } from 'vue'
+import { computed, inject, Ref, ref, watch, onMounted } from 'vue'
 import { getColorFromImage, setColorScheme, setTheme, snackbar } from 'mdui'
 import {
   themeMap,
@@ -109,6 +109,27 @@ const changeTray = (checked: boolean) => {
   store.settings.general.minToTray = checked
   // window.electron.storeSet('tray', checked)
 }
+
+// 「游戏暂停时隐藏遥测窗」：状态存在主进程的覆盖层配置里（overlay.json），
+// 这里只做读写 + 展示，避免两处各存一份导致不同步。
+const hideOverlayWhenPaused = ref(true)
+const loadHideOverlayWhenPaused = async () => {
+  const state = await window.overlay?.getState()
+  if (state && state.scope === 'main') {
+    hideOverlayWhenPaused.value = state.hideWhenPaused !== false
+  }
+}
+const changeHideOverlayWhenPaused = async (event: Event) => {
+  const checked = (event.target as HTMLInputElement).checked
+  hideOverlayWhenPaused.value = checked
+  const state = await window.overlay?.setHideWhenPaused(checked)
+  if (state && state.scope === 'main') {
+    hideOverlayWhenPaused.value = state.hideWhenPaused !== false
+  }
+}
+onMounted(() => {
+  void loadHideOverlayWhenPaused()
+})
 
 const appVer = import.meta.env.VITE_APP_VERSION
 const updChecking = ref(false)
@@ -672,6 +693,16 @@ const setBgImage = () => {
                           "
                         >
                         </ChipSelect>
+                      </div>
+                    </div>
+                    <!-- 游戏暂停 / 无数据时整体隐藏遥测窗（各自显隐与方位会被保留，下场时原样恢复） -->
+                    <div class="item">
+                      <div class="item-in">
+                        <div>{{ $t('settings.hideOverlayWhenPaused') }}</div>
+                        <mdui-switch
+                          :checked="hideOverlayWhenPaused"
+                          @change="changeHideOverlayWhenPaused"
+                        ></mdui-switch>
                       </div>
                     </div>
                     <div class="item" v-if="lang !== 'en_US'">

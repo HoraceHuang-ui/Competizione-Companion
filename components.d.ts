@@ -9,6 +9,18 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AIDrawer: typeof import('./src/components/AIDrawer.vue')['default']
+    BaseOverlayDamage: typeof import('./src/components/overlay/BaseOverlayDamage.vue')['default']
+    BaseOverlayDriving: typeof import('./src/components/overlay/BaseOverlayDriving.vue')['default']
+    BaseOverlayElectronics: typeof import('./src/components/overlay/BaseOverlayElectronics.vue')['default']
+    BaseOverlayFuel: typeof import('./src/components/overlay/BaseOverlayFuel.vue')['default']
+    BaseOverlayLeaderboard: typeof import('./src/components/overlay/BaseOverlayLeaderboard.vue')['default']
+    BaseOverlayPenalty: typeof import('./src/components/overlay/BaseOverlayPenalty.vue')['default']
+    BaseOverlayRanking: typeof import('./src/components/overlay/BaseOverlayRanking.vue')['default']
+    BaseOverlaySession: typeof import('./src/components/overlay/BaseOverlaySession.vue')['default']
+    BaseOverlayTemplate: typeof import('./src/components/overlay/BaseOverlayTemplate.vue')['default']
+    BaseOverlayTest: typeof import('./src/components/overlay/BaseOverlayTest.vue')['default']
+    BaseOverlayTyre: typeof import('./src/components/overlay/BaseOverlayTyre.vue')['default']
+    BaseOverlayWeather: typeof import('./src/components/overlay/BaseOverlayWeather.vue')['default']
     CarSelector: typeof import('./src/components/CarSelector.vue')['default']
     ChipSelect: typeof import('./src/components/ChipSelect.vue')['default']
     FirstSetup: typeof import('./src/components/FirstSetup.vue')['default']
@@ -20,5 +32,6 @@ declare module 'vue' {
     ScrollWrapper: typeof import('./src/components/ScrollWrapper.vue')['default']
     TrackSelector: typeof import('./src/components/TrackSelector.vue')['default']
     UpdateDialog: typeof import('./src/components/UpdateDialog.vue')['default']
+    WeatherIcon: typeof import('./src/components/overlay/WeatherIcon.vue')['default']
   }
 }

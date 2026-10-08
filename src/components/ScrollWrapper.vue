@@ -210,7 +210,7 @@ defineExpose({
       @mouseleave="onMouseLeave"
     >
       <div ref="outerRef" class="content-wrapper" @scroll="onScroll">
-        <div ref="innerRef">
+        <div ref="innerRef" class="content-inner">
           <slot />
         </div>
       </div>
@@ -266,6 +266,13 @@ defineExpose({
   overflow: scroll;
 }
 
+/* 给自绘滚动条留出空间：原生滚动条会占布局空间，这条自绘的不会，所以内容右侧主动让出。
+   轨道宽 0.375rem，这里留 0.875rem，内容与滚动条之间有明显间隙 */
+.content-inner {
+  padding-right: 0.875rem;
+  box-sizing: border-box;
+}
+
 .track {
   position: absolute;
   bottom: 0;
@@ -274,7 +281,7 @@ defineExpose({
 
   &.vertical {
     top: 0;
-    right: 0.125rem;
+    right: 0;
     width: 0.375rem;
   }
   &.horizontal {

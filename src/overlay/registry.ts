@@ -9,6 +9,8 @@ import BaseOverlayRanking from '@/components/overlay/BaseOverlayRanking.vue'
 import BaseOverlayFuel from '@/components/overlay/BaseOverlayFuel.vue'
 import BaseOverlayLeaderboard from '@/components/overlay/BaseOverlayLeaderboard.vue'
 import BaseOverlayPenalty from '@/components/overlay/BaseOverlayPenalty.vue'
+import BaseOverlayRpm from '@/components/overlay/BaseOverlayRpm.vue'
+import BaseOverlayDeltaBar from '@/components/overlay/BaseOverlayDeltaBar.vue'
 import BaseOverlayTest from '@/components/overlay/BaseOverlayTest.vue'
 
 // 遥测窗注册表。
@@ -89,6 +91,20 @@ export const OVERLAY_WIDGETS: OverlayWidgetDef[] = [
     // 多行：第一名固定 + 用户 ±2 名（不够补位）；行高随字号自适应
     defaultSize: { width: 420, height: 132 },
     component: BaseOverlayLeaderboard,
+  },
+  {
+    id: 'rpm',
+    nameKey: 'overlay.widgetRpm',
+    // 14 盏 16px 圆灯 + 间距（胶囊形外框），横向一条
+    defaultSize: { width: 320, height: 26 },
+    component: BaseOverlayRpm,
+  },
+  {
+    id: 'deltaBar',
+    nameKey: 'overlay.widgetDeltaBar',
+    // 400×20 的长条（20:1）+ 下方数值胶囊；左右各留 34px 给满槽时溢出的胶囊
+    defaultSize: { width: 468, height: 48 },
+    component: BaseOverlayDeltaBar,
   },
   {
     id: 'penalty',

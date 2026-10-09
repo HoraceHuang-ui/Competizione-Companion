@@ -346,25 +346,8 @@ onBeforeUnmount(() => {
         :class="barInside ? 'is-inside' : 'is-below'"
         :style="{ marginTop: barInside ? 0 : `${CONTROL_BAR_GAP}px` }"
       >
-        <div
-          class="cc-overlay-tip-wrap"
-          @mouseenter="tip = 'lock'"
-          @mouseleave="tip = ''"
-        >
-          <mdui-button-icon class="cc-overlay-icon-btn" @click="onLockClick">
-            <!-- v-if 放在原生 span 上：直接给 mdui 自定义元素加 v-if 会让 vue-tsc
-                 把它当成 Vue 组件去解析，报 "does not exist on type" -->
-            <span v-if="item.locked">
-              <mdui-icon-lock--rounded></mdui-icon-lock--rounded>
-            </span>
-            <span v-else>
-              <mdui-icon-lock-open--rounded></mdui-icon-lock-open--rounded>
-            </span>
-          </mdui-button-icon>
-        </div>
-
-        <!-- 缩放只保留四角手柄：控制条里再放一个缩放按钮是重复的 -->
-        <span class="cc-overlay-sep"></span>
+        <!-- 锁定按钮已移除（用户要求）：锁定改成组件设置页侧边栏底部的全局开关 / Ctrl+Alt+L。
+             控制条只留透明度，拖动仍走整块区域。 -->
 
         <div
           class="cc-overlay-tip-wrap"

@@ -570,7 +570,10 @@ async function createWindow() {
   })
 }
 
+
 app.whenReady().then(createWindow)
+
+
 
 app.on('before-quit', () => {
   stopTelemetry()

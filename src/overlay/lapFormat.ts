@@ -63,6 +63,15 @@ export function formatDeltaSeconds(
 /** 小于这个秒数就按"显示为 0.000"处理（`toFixed(3)` 的半个刻度） */
 export const DELTA_ZERO_EPSILON_SECONDS = 0.0005
 
+/**
+ * delta 绝对值超过这个数（毫秒）时，**只把数值文本隐藏成 `--`**：
+ * 填充槽与红/绿色照旧展示（用户要求，Delta 组件与排名&圈速组件都生效）。
+ */
+export const DELTA_TEXT_MAX_MS = 10_000
+export function deltaTextHidden(valueMs: number | null | undefined): boolean {
+  return valueMs != null && Number.isFinite(valueMs) && Math.abs(valueMs) > DELTA_TEXT_MAX_MS
+}
+
 /** delta 是否应视为 0（= 界面显示 0.000 的那些值） */
 export function deltaIsZero(valueMs: number | null | undefined): boolean {
   if (valueMs == null || !Number.isFinite(valueMs)) return true

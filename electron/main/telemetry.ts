@@ -503,12 +503,46 @@ function stopReader() {
 }
 
 /**
+ * 读取器"活着但瞎了"的兜底：ACC 从服务器/单人退出到菜单、再进赛道时，游戏会**重建共享内存页**，
+ * 而读取器还握着**旧句柄** —— 读到的永远停在最后一份数据、`packetId` 不再前进，主进程就判定为
+ * "冻结/暂停"，表现就是**所有遥测窗回到赛道也拿不到数据、一直保持暂停态**（还叠加"暂停时隐藏" → 再也不显示）。
+ * 读取器只在**抛异常**时才重新等待共享内存，而读陈旧映射不会抛，所以它一直"活着但瞎了"。
+ * 对策：持续停更超过 READER_REOPEN_MS 就重启读取器（让它重新打开共享内存），并加退避避免真暂停时反复重启。
+ */
+const READER_REOPEN_MS = 4_000
+const READER_REOPEN_BACKOFF_MS = 15_000
+let lastReaderRestartAt = 0
+
+/**
  * 停更看门狗：读取器在跑但连一行数据都没来（ACC 退出 / 暂停 / 退回菜单）。
  * 只标记停更并打日志，**不再把界面刷成空状态**（保持最后一帧，用户要求）。
+ * ⚠️ 这里必须放在 `stale` 早退之前：否则一旦停更就永远不会再尝试恢复（踩过）。
  */
 function watchdog() {
-  if (!active || stale) return
-  if (Date.now() - lastLineAt <= STALE_MS) return
+  if (!active) return
+  const idle = Date.now() - lastLineAt
+  if (
+    idle > READER_REOPEN_MS &&
+    Date.now() - lastReaderRestartAt > READER_REOPEN_BACKOFF_MS
+  ) {
+    lastReaderRestartAt = Date.now()
+    console.log(
+      `[telemetry] 数据停更 ${Math.round(idle / 1000)}s，重启读取器以重新打开共享内存（换场次/回菜单后常见）`,
+    )
+    if (restartTimer) {
+      clearTimeout(restartTimer)
+      restartTimer = null
+    }
+    // ⚠️ 这里只能用模块级的 `child`：`proc` / `stopReader` 都是 startReader() 内部的局部量（踩过 ReferenceError）
+    if (child) {
+      child.removeAllListeners('exit')
+      child.kill()
+      child = null
+    }
+    restartTimer = setTimeout(startReader, 200)
+  }
+  if (stale) return
+  if (idle <= STALE_MS) return
   markStale('数据停更（ACC 退出或暂停）')
 }
 

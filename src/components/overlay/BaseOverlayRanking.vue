@@ -7,6 +7,7 @@ import {
   DELTA_FULL_SECONDS,
   deltaFillRatio,
   deltaSignOf,
+  deltaTextHidden,
   driverCategoryOf,
   formatDeltaSeconds,
   formatLapShort,
@@ -109,7 +110,10 @@ const currentLapText = computed(() => formatLapTimeMs(hasData.value ? tm.iCurren
 const deltaSign = computed(() => deltaSignOf(hasData.value ? tm.deltaLapTimeMs : null, tm.deltaPositive))
 const deltaPositive = computed(() => (deltaSign.value.faster ? 0 : 1))
 const deltaText = computed(() =>
-  formatDeltaSeconds(deltaSign.value.magnitudeMs, deltaPositive.value),
+  // 超过 10s：槽与颜色照旧，数值只显示 --
+  deltaTextHidden(deltaSign.value.magnitudeMs)
+    ? '--'
+    : formatDeltaSeconds(deltaSign.value.magnitudeMs, deltaPositive.value),
 )
 const deltaIsPositive = computed(() => !deltaSign.value.faster)
 /**
@@ -428,15 +432,21 @@ watch(
 /* delta 圆角矩形：0.5s 满槽；**唯一不放大字号**的内容（保持 14px）
    高度显式 30px、与车号矩形一致；**宽度铺满所在栅格列** —— 也就是"自适应到与下方
    圈数块里最宽的那个一样长"（列宽 = max(本列所有内容)），这样小 delta 的槽也看得清 */
+/* delta 槽：**固定宽度**（用户要求），按最宽的情况 "+9.999" 留量。
+   原来用 width:100% + min-width，宽度会跟着内容变（0.000 没有正负号就窄一点、有号就宽一点），
+   把整个组件宽度也带着一起抖。现在写死宽度 + flex:none，永不参与伸缩。
+   注：数字本身是等宽的（基座 .board 有 font-variant-numeric: tabular-nums），所以固定宽度后完全不会再跳。 */
 .delta {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  width: 100%;
+  flex: none;
+  /* 92px：20px 粗体下 "+9.999"（6 字符，等宽数字按 0.6em≈12px 算 = 72px）+ 16px 内边距 + 4px 边框，留足余量不裁字 */
+  width: 92px;
+  min-width: 92px;
   height: 30px;
-  min-width: 78px;
   padding: 0 8px;
   border-radius: 6px;
   border: 2px solid transparent;

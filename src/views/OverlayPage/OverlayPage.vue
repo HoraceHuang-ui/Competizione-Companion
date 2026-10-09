@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import '@mdui/icons/help-outline--rounded.js'
+import CarSelector from '@/components/CarSelector.vue'
+import ChipSelect from '@/components/ChipSelect.vue'
+import carData from '@/utils/carData'
 import {
   computed,
   inject,
@@ -14,6 +18,9 @@ import { translate } from '@/i18n'
 import { getWidget, OVERLAY_WIDGETS } from '@/overlay/registry'
 import { fillTelemetryPreview } from '@/overlay/telemetry'
 import { clampOpacity, forcedSettingsOf } from '@/overlay/fullscreen'
+
+/** preload 是否暴露了 setAllLocked（见 electron 侧）；没有就走逐组件 patch */
+const hasSetAllLocked = true
 import ScrollWrapper from '@/components/ScrollWrapper.vue'
 import type { MainOverlayPayload, OverlayItem } from '@/overlay/types'
 import himeDark from '@/assets/asseconHime/ASSECON_HIME_dark.jpg'
@@ -226,6 +233,95 @@ const setOpacity = (value: number) => patch({ opacity: value / 100 })
 const setScale = (value: number) => patch({ scale: value / 100 })
 const setLocked = (value: boolean) => patch({ locked: value })
 
+// ---------------- 「转速」组件的红线转速（用户要求：按车辆单独设置，默认 8000） ----------------
+/** 组别：直接用项目自带的车型库键（GT3 / GT4 / GTC / TCX） */
+const rpmGroups = Object.keys(carData as Record<string, unknown>)
+const rpmGroup = ref(rpmGroups[0] ?? 'GT3')
+/** CarSelector 的 v-model 是对象（车型键在 .value 里，BOP 页就是 curCar?.value），这里保持原样 */
+const rpmCar = ref<{ value?: string } | string | null>(null)
+watch(rpmGroup, () => { rpmCar.value = null }, { immediate: true })
+/** 已保存的按车红线表（来自该组件实例的 props） */
+/** 当前选中的车型键（CarSelector 给的是对象，键在 .value；也容忍直接给字符串） */
+const rpmCarKey = computed(() => {
+  const c = rpmCar.value
+  if (c == null) return ''
+  return typeof c === 'string' ? c : String((c as { value?: string }).value ?? '')
+})
+const rpmRedlineByCar = computed<Record<string, number>>(
+  () => ((previewItem.value.props as { redlineByCar?: Record<string, number> } | undefined)?.redlineByCar ?? {}),
+)
+/** 当前选中车的红线（没配过 = 8000） */
+const rpmRedline = computed(() => {
+  const v = Number(rpmRedlineByCar.value[rpmCarKey.value])
+  return Number.isFinite(v) && v > 0 ? v : 8000
+})
+/** 写回：合并进 props.redlineByCar 后下发（主进程 applyPatch 会做浅合并） */
+// ---------------- 「Delta 条」的显示数据（整圈 / Sector） ----------------
+/** ChipSelect 的选项值；标签走 i18n */
+const deltaModes = ['lap', 'sector']
+const deltaMode = computed<string>({
+  get: () => ((previewItem.value.props as { deltaMode?: string } | undefined)?.deltaMode === 'sector' ? 'sector' : 'lap'),
+  set: value => void applyWidgetProp('deltaMode', value),
+})
+
+/** 通用：把一项设置写进该组件实例的 props（主进程 applyPatch 会做浅合并） */
+async function applyWidgetProp(key: string, value: unknown) {
+  const self = item.value
+  const next = { ...(previewItem.value.props as Record<string, unknown>), [key]: value }
+  // 预览立即反映
+  ;(previewItem.value.props as Record<string, unknown>) = next
+  if (!self) return
+  const payload = await window.overlay?.updateItems([{ id: self.id, patch: { props: { [key]: value } } }])
+  if (payload) state.value = payload
+}
+
+/**
+ * 红线输入框：**失焦（change）后**才校验（用户要求），失败就还原成原转速值、不写回。
+ * 合法范围 1000..20000 rpm；空值 / 非数字 / 越界都算失败。
+ * （原来挂在 @input 上是边输边写、边钳位，用户要求改掉。）
+ */
+function onRedlineChange(event: Event) {
+  const input = event.target as HTMLInputElement | null
+  if (!input) return
+  const parsed = Number(input.value)
+  const valid = Number.isFinite(parsed) && parsed >= 1000 && parsed <= 20000
+  if (!valid) {
+    input.value = String(rpmRedline.value) // 校验失败：回到原值
+    return
+  }
+  void applyRedline(parsed)
+}
+
+async function applyRedline(next: number) {
+  const self = item.value
+  const value = Math.round(next)
+  if (!rpmCarKey.value || !Number.isFinite(value)) return
+  const bag = { ...rpmRedlineByCar.value, [rpmCarKey.value]: value }
+  // 预览立即反映
+  ;(previewItem.value.props as Record<string, unknown>) = {
+    ...(previewItem.value.props as Record<string, unknown>),
+    redlineByCar: bag,
+  }
+  if (!self) return
+  const payload = await window.overlay?.updateItems([{ id: self.id, patch: { props: { redlineByCar: bag } } }])
+  if (payload) state.value = payload
+}
+
+/** 全局锁定：面板里已知的每个组件（来自主进程 state 广播） */
+const overlayItems = ref<Array<{ id: string; locked?: boolean }>>([])
+const allLocked = computed(
+  () => overlayItems.value.length > 0 && overlayItems.value.every(i => !!i.locked),
+)
+async function onToggleAllLocked(value: boolean) {
+  if (hasSetAllLocked) {
+    await window.overlay?.setAllLocked?.(value)
+    return
+  }
+  // preload 没暴露时：对每个已知组件逐个下发
+  const patches = overlayItems.value.map(i => ({ id: i.id, patch: { locked: value } }))
+  if (patches.length) await window.overlay?.updateItems(patches)
+}
+
 /** 透明度滑杆的可用范围：普通组件 0..100%，被强制设置的组件按它的范围（全屏刹车 5..75%） */
 const opacityMin = computed(() => Math.round((previewForced.value?.opacity.min ?? 0) * 100))
 const opacityMax = computed(() => Math.round((previewForced.value?.opacity.max ?? 1) * 100))
@@ -254,6 +350,7 @@ onMounted(() => {
   // 非 Windows 不碰 overlay IPC（主进程那边也没有注册这些处理器）
   if (!isWindows) return
   unsubState = window.overlay?.onState(payload => {
+      overlayItems.value = ((payload as { items?: Array<{ id: string; locked?: boolean }> })?.items ?? [])
     state.value = payload as MainOverlayPayload
   })
   refresh()
@@ -384,18 +481,56 @@ onBeforeUnmount(() => {
                 <div class="w-14 text-right">{{ scalePercent }}%</div>
               </div>
 
-              <div class="flex flex-row items-center gap-3">
+              <!-- 单个组件的锁定开关已移除（用户要求）：锁定统一由侧边栏底部的全局开关 / Ctrl+Alt+L 控制 -->
+
+              <!-- 「转速」组件：红线转速（左标题 + 右横排：组别 / 车型 / 输入框） -->
+              <div
+                v-if="previewItem.widget === 'rpm'"
+                class="flex flex-row items-center gap-3"
+              >
                 <div class="w-28 shrink-0 opacity-80">
-                  {{ t('overlay.lockFeature') }}
+                  {{ t('overlay.rpmRedline') }}
                 </div>
-                <mdui-switch
-                  :checked="!!item?.locked"
-                  :disabled="!shown || !!previewForced?.locked"
-                  @change="setLocked($event.target.checked)"
-                ></mdui-switch>
-                <div class="text-sm opacity-60">
-                  {{ previewForced?.locked ? t('overlay.forcedLocked') : t('overlay.lockDesc') }}
+                <ChipSelect
+                  v-model="rpmGroup"
+                  chip-class="rounded-full"
+                  :items="rpmGroups"
+                  :item-label="(g: unknown) => String(g)"
+                  :chip-label="(g: unknown) => String(g)"
+                />
+                <CarSelector
+                  v-model="rpmCar"
+                  :group="rpmGroup"
+                  dropdown-placement="right"
+                  chip-class="border border-[rgb(var(--mdui-color-outline-variant))]"
+                />
+                <mdui-text-field
+                  class="rpm-input w-28 shrink-0 cursor-text h-[46px]"
+                  type="number"
+                  :value="String(rpmRedline)"
+                  :disabled="!rpmCarKey"
+                  :key="rpmCarKey || 'none'"
+                  @change="onRedlineChange($event)"
+                  variant="outlined"
+                ></mdui-text-field>
+                <div class="text-sm opacity-60">rpm</div>
+              </div>
+
+              <!-- 「Delta 条」：显示数据（整圈 / Sector） -->
+              <div
+                v-if="previewItem.widget === 'deltaBar'"
+                class="flex flex-row items-center gap-3"
+              >
+                <div class="w-28 shrink-0 opacity-80">
+                  {{ t('overlay.displayData') }}
                 </div>
+                <ChipSelect
+                  v-model="deltaMode"
+                  chip-class="rounded-full"
+                  :items="deltaModes"
+                  :item-label="(m: unknown) => t('overlay.' + (m === 'sector' ? 'deltaModeSector' : 'deltaModeLap'))"
+                  :chip-label="(m: unknown) => t('overlay.' + (m === 'sector' ? 'deltaModeSector' : 'deltaModeLap'))"
+                />
               </div>
 
               <div class="flex flex-row items-center gap-3">
@@ -455,8 +590,39 @@ onBeforeUnmount(() => {
             </mdui-list-item>
           </mdui-list>
           </ScrollWrapper>
+          <!-- 全局锁定（用户要求）：所有组件一起锁定/解锁；锁定后鼠标穿透到游戏，Ctrl+Alt+L 同效 -->
+          <div
+            class="mt-2 pt-3 border-t border-[rgb(var(--mdui-color-outline-variant))] flex flex-row items-center justify-between gap-2"
+          >
+            <!-- 左：锁定 + ?（tooltip 里有完整说明） -->
+            <div class="flex flex-row items-center gap-1">
+              <!-- 只显示「锁定」两个字；括号里的说明在 ? 的 tooltip 里 -->
+              <span class="opacity-80">{{ t('overlay.lockFeature') }}</span>
+              <mdui-tooltip placement="left">
+                <div slot="content">
+                  {{ t('overlay.lockGlobalTip') }}
+                </div>
+                <mdui-button-icon>
+                  <mdui-icon-help-outline--rounded></mdui-icon-help-outline--rounded>
+                </mdui-button-icon>
+              </mdui-tooltip>
+            </div>
+            <!-- 右：锁定开关 -->
+            <mdui-switch
+              :checked="allLocked"
+              @change="onToggleAllLocked($event.target.checked)"
+            ></mdui-switch>
+          </div>
         </div>
       </div>
     </mdui-card>
   </div>
 </template>
+
+<style scoped>
+/* 红线输入框：照抄「设置 → 偏好 → 炸服时提示」那套 CSS Part 自定义（胶囊形 + 底色） */
+.rpm-input::part(container) {
+  border-radius: 999px;
+  background: rgb(var(--mdui-color-on-secondary));
+}
+</style>

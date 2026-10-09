@@ -866,6 +866,15 @@ function sendRequestTrackData() {
 export const STALE_CAR_MS = 20_000
 
 /**
+ * 广播静默看门狗：连续这么久**一个报文都没收到**就重新注册。
+ * 为什么需要：ACC 换场次 / 回菜单再进赛道时会**静默丢掉**我们的注册（连错误都不回），
+ * 而 state.registered 仍为 true → REGISTER_RETRY_MS 的重试永远不跑（排行榜会一直空着）。
+ */
+export const SILENT_REOPEN_MS = 8_000
+let lastPacketAt = Date.now()
+let lastSilentResetAt = 0
+
+/**
  * 纯函数：由"报名条目 + 各车实时行"算出要用的 meta。抽出来是为了能用真实报文做单测。
  *
  * 认车顺序：
@@ -1323,6 +1332,7 @@ export function getTrackInfo(): TrackDataPacket | null {
 }
 
 function handleMessage(buffer: Buffer) {
+  lastPacketAt = Date.now()
   const type = buffer[0]
   switch (type) {
     case MSG.REGISTRATION_RESULT: {
@@ -1595,3 +1605,23 @@ export function getMyCurrentLapInvalid(localCarEntryId?: number | null): boolean
   }
   return null
 }
+
+// 广播静默看门狗（独立计时器）：见 SILENT_REOPEN_MS 的说明。
+setInterval(() => {
+  if (!state.socket) return
+  const silent = Date.now() - lastPacketAt
+  if (silent <= SILENT_REOPEN_MS) return
+  // 退避：刚重置过就再等一下，别刷屏
+  if (Date.now() - lastSilentResetAt < SILENT_REOPEN_MS) return
+  lastSilentResetAt = Date.now()
+  lastPacketAt = Date.now()
+  console.log(
+    `[broadcast] 已 ${Math.round(silent / 1000)}s 没收到任何报文，重新注册广播连接（换场次/回菜单后常见）`,
+  )
+  state.registered = false
+  state.registerAttempts = 0
+  state.cars.clear()
+  state.entries.clear()
+  sendRegister()
+  sendRequestEntryList()
+}, 2_000)
